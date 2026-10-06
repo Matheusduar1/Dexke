@@ -92,7 +92,7 @@ body { background-color: var(--bg-dark); }
 #selecao-time-banner button { padding: 8px 15px; background: white; color: var(--primary); border: none; border-radius: 5px; cursor: pointer; font-weight: bold;}
 
 /* Rodapé e Direitos Autorais */
-.app-footer { margin-top: auto; background-color: #ffffff; padding: 25px 20px; text-align: center; display: flex; flex-direction: column; gap: 12px; align-items: center; }
+.app-footer { margin-top: auto; background-color: #1a1a1a; padding: 25px 20px; text-align: center; display: flex; flex-direction: column; gap: 12px; align-items: center; }
 .app-footer a { display: flex; justify-content: center; align-items: center; gap: 8px; color: #fff; text-decoration: none; font-weight: bold; font-size: 15px; transition: 0.2s;}
 .app-footer a:hover { color: var(--primary); transform: translateY(-2px);}
-.copyright-notice { color: #888; font-size: 11px; max-width: 600px; line-height: 1.5; margin: 0 auto; }
+.copyright-notice { color: white; font-size: 11px; max-width: 600px; line-height: 1.5; margin: 0 auto; }
