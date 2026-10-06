@@ -8,12 +8,26 @@
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Arial', sans-serif; }
 body { background-color: var(--bg-dark); }
 
-.app-container { background-color: #e0e0e0; width: 100%; max-width: 1200px; margin: 0 auto; min-height: 100vh; box-shadow: 0 0 20px rgba(0,0,0,0.8); display: flex; flex-direction: column; }
-.header { background-color: var(--primary); padding: 10px; display: flex; gap: 5px; flex-wrap: wrap; }
-.nav-btn { flex: 1; padding: 10px; font-size: 13px; background-color: transparent; border: 1px solid white; color: white; font-weight: bold; border-radius: 5px; cursor: pointer; transition: 0.2s; text-align: center;}
+/* CORREÇÃO DO LAYOUT 100% DESKTOP */
+.app-container { 
+    background-color: #e0e0e0; 
+    width: 100%; 
+    max-width: 100%; /* Toma a tela toda */
+    margin: 0; 
+    min-height: 100vh; 
+    display: flex; 
+    flex-direction: column; 
+}
+
+/* HEADER COM DROP DE IDIOMA */
+.header { background-color: var(--primary); padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;}
+.nav-buttons { display: flex; gap: 5px; flex: 1; flex-wrap: wrap; }
+.nav-btn { flex: 1; min-width: 80px; padding: 10px; font-size: 13px; background-color: transparent; border: 1px solid white; color: white; font-weight: bold; border-radius: 5px; cursor: pointer; transition: 0.2s; text-align: center;}
 .nav-btn.active { background-color: white; color: var(--primary); }
 .nav-btn:hover { background-color: rgba(255,255,255,0.2); }
 .nav-btn.active:hover { background-color: white; }
+
+.lang-selector-container select { padding: 8px; border-radius: 4px; border: none; font-weight: bold; background: white; color: var(--primary); cursor: pointer; outline: none; box-shadow: 0 2px 4px rgba(0,0,0,0.2);}
 
 .search-container { padding: 15px; background-color: #fff; border-bottom: 2px solid #ccc; display: flex; flex-direction: column; gap: 10px;}
 .search-container input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 5px; font-size: 15px; }
@@ -83,7 +97,7 @@ body { background-color: var(--bg-dark); }
 .team-slot-name { font-size: 13px; text-transform: capitalize; font-weight: bold; text-align: center;}
 .team-slot-remove { position: absolute; top: -8px; right: -8px; background: red; color: white; border-radius: 50%; width: 24px; height: 24px; display: flex; justify-content: center; align-items: center; font-size: 14px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.3);}
 
-.type-table { width: 100%; border-collapse: collapse; font-size: 12px; text-align: center; }
+.type-table { width: 100%; border-collapse: collapse; font-size: 12px; text-align: center; margin: 0 auto; }
 .type-table th, .type-table td { border: 1px solid #ddd; padding: 6px; }
 .type-table th { background: var(--primary); color: white; text-transform: uppercase; font-size: 11px;}
 
@@ -91,7 +105,6 @@ body { background-color: var(--bg-dark); }
 #selecao-time-banner { background-color: var(--primary); color: white; padding: 15px; justify-content: space-between; align-items: center; font-weight: bold; position: sticky; top: 0; z-index: 10; box-shadow: 0 4px 6px rgba(0,0,0,0.2);}
 #selecao-time-banner button { padding: 8px 15px; background: white; color: var(--primary); border: none; border-radius: 5px; cursor: pointer; font-weight: bold;}
 
-/* Rodapé e Direitos Autorais */
 .app-footer { margin-top: auto; background-color: #1a1a1a; padding: 25px 20px; text-align: center; display: flex; flex-direction: column; gap: 12px; align-items: center; }
 .app-footer a { display: flex; justify-content: center; align-items: center; gap: 8px; color: #fff; text-decoration: none; font-weight: bold; font-size: 15px; transition: 0.2s;}
 .app-footer a:hover { color: var(--primary); transform: translateY(-2px);}
