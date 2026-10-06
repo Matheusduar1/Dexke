@@ -5,14 +5,13 @@ function escapeHTML(str) {
     );
 }
 
-// CORREÇÃO: 2x agora usa a cor do Fogo (#F08030)
 function getCorEficacia(mult) {
-    if (mult >= 4) return { bg: '#e74c3c', text: 'white' };    // Vermelho (4x)
-    if (mult === 2) return { bg: '#F08030', text: 'white' };   // Laranja Fogo (2x)
-    if (mult === 1) return { bg: '#f7f7f7', text: 'black' };   // Cinza quase branco (1x)
-    if (mult === 0.5) return { bg: '#999999', text: 'white' }; // Cinza (0.5x)
-    if (mult === 0.25) return { bg: '#d9d9d9', text: 'black' };// Cinza um pouco mais escuro que 1x (0.25x)
-    if (mult === 0) return { bg: '#1a1a1a', text: 'white' };   // Quase preto (0x)
+    if (mult >= 4) return { bg: '#e74c3c', text: 'white' };    
+    if (mult === 2) return { bg: '#F08030', text: 'white' };   
+    if (mult === 1) return { bg: '#f7f7f7', text: 'black' };   
+    if (mult === 0.5) return { bg: '#999999', text: 'white' }; 
+    if (mult === 0.25) return { bg: '#d9d9d9', text: 'black' };
+    if (mult === 0) return { bg: '#1a1a1a', text: 'white' };   
     return { bg: '#fff', text: 'black' };
 }
 
@@ -52,7 +51,6 @@ try {
 let timeAtualIndex = 0;
 let modoSelecaoTimeSlot = null; 
 
-// 1. INICIALIZAÇÃO
 async function iniciarApp() {
     try {
         const [resPoke, resMoves, resAbil] = await Promise.all([
@@ -61,7 +59,6 @@ async function iniciarApp() {
             fetch('https://pokeapi.co/api/v2/ability?limit=350')
         ]);
 
-        // NOVA LÓGICA: Buscar os 18 tipos para mapear rapidamente os Pokémons e exibi-los na lista inicial
         const mapTipos = {};
         const promessasTipos = Object.keys(coresTipos).map(t => fetch(`https://pokeapi.co/api/v2/type/${t}`).then(r => r.json()));
         const dadosTipos = await Promise.all(promessasTipos);
@@ -70,13 +67,13 @@ async function iniciarApp() {
             tipoAPI.pokemon.forEach(p => {
                 const nomePoke = p.pokemon.name;
                 if(!mapTipos[nomePoke]) mapTipos[nomePoke] = [];
-                mapTipos[nomePoke][p.slot - 1] = tipoAPI.name; // Garante que tipo 1 e tipo 2 fiquem na ordem
+                mapTipos[nomePoke][p.slot - 1] = tipoAPI.name; 
             });
         });
 
         todosPokemon = (await resPoke.json()).results.map(p => {
             const parts = p.url.split('/');
-            const pTypes = mapTipos[p.name] ? mapTipos[p.name].filter(Boolean) : []; // Pega os tipos mapeados
+            const pTypes = mapTipos[p.name] ? mapTipos[p.name].filter(Boolean) : []; 
             return { 
                 name: escapeHTML(p.name), 
                 id: parseInt(parts[parts.length - 2]),
@@ -102,7 +99,6 @@ async function iniciarApp() {
     }
 }
 
-// 2. ABAS
 function mudarAba(event, abaId) {
     document.querySelectorAll('.aba-content').forEach(el => {
         el.classList.remove('active');
@@ -130,7 +126,6 @@ function cancelarSelecaoTime() {
     mudarAba(null, 'teams');
 }
 
-// 3. FILTROS E LISTAS
 function filtrarLista() {
     const termo = escapeHTML(document.getElementById('searchInput').value.toLowerCase());
     const gen = document.getElementById('genFilter').value;
@@ -210,7 +205,6 @@ async function tratarCliquePokemon(id) {
     }
 }
 
-// 4. MODAL POKEMON E SHINY
 async function abrirDetalhes(id) {
     document.getElementById('pokemon-modal').classList.remove('hidden');
     document.getElementById('detail-moves-list').innerHTML = ''; 
@@ -308,7 +302,6 @@ async function abrirDetalheAbility(nome) {
 
 function fecharModal(modalId) { document.getElementById(modalId).classList.add('hidden'); }
 
-// 5. CÁLCULO DE DANO E EVOLUÇÕES
 async function calcularDano(tiposPokemon) {
     const container = document.getElementById('detail-damage');
     container.innerHTML = "Calculando...";
@@ -351,7 +344,6 @@ async function buscarEvolucoes(url) {
     } catch (e) { container.innerHTML = "Linha evolutiva indisponível."; }
 }
 
-// 6. TIMES E TABELAS GLOBAIS
 function mudarTimeSelecionado() {
     timeAtualIndex = parseInt(document.getElementById('team-selector').value);
     renderizarTime();
