@@ -1,4 +1,5 @@
-#Dexke
+Dexke
+
 📙 Dexke - Pokédex & Team Builder Avançado
 
 O Dexke é uma aplicação web responsiva (Mobile e Desktop) desenvolvida com Vanilla JavaScript, HTML5 e CSS3. Muito mais do que uma simples Pokédex, o Dexke oferece um construtor de times robusto, análise de fraquezas cruzadas, e detalhes minuciosos sobre habilidades e ataques de todas as gerações.
@@ -43,7 +44,8 @@ Requisito: Uma conexão ativa com a internet para buscar os dados em tempo real 
 
 Todo o banco de dados deste projeto é fornecido graciosamente pela PokéAPI, uma API RESTful de consumo gratuito incrivelmente detalhada sobre a franquia Pokémon.
 
-Gostaria de deixar um agradecimento especial aos mantenedores do projeto open-source: Repositório Oficial: https://github.com/PokeAPI/pokeapi
+Gostaria de deixar um agradecimento especial aos mantenedores do projeto open-source:
+Repositório Oficial: https://github.com/PokeAPI/pokeapi
 
 O Dexke faz uso massivo e eficiente dos seguintes endpoints fornecidos por eles:
 
@@ -64,5 +66,11 @@ HTML5: Estruturação semântica e acessível.
 CSS3: Estilização com Flexbox/Grid, variáveis de ambiente para o tema, UI responsiva inspirada em aplicativos mobile, e design limpo.
 
 Vanilla JavaScript (ES6+): Lógica assíncrona (async/await, fetch), manipulação agressiva do DOM, lógica matemática para matriz de tipos, e persistência de dados utilizando a API do localStorage.
+
+⚖️ Direitos Autorais e Aviso Legal
+
+Pokémon e todos os nomes e imagens relacionados são marcas registradas e propriedades exclusivas da Nintendo, Game Freak e The Pokémon Company.
+
+O Dexke é um projeto não oficial, sem fins lucrativos, criado exclusivamente para fins educacionais, de estudo e para a comunidade de fãs. Este projeto não possui nenhuma afiliação, patrocínio ou aprovação oficial da Nintendo, Game Freak ou The Pokémon Company.
 
 Feito com dedicação para a comunidade de treinadores Pokémon.
