@@ -1,79 +1,67 @@
-// --- SISTEMA DE IDIOMAS (i18n) ---
+// --- SISTEMA DE IDIOMAS (i18n) E TRADUÇÃO DINÂMICA ---
 const dicionario = {
     pt_BR: {
         tab_dexke: "Dexke", tab_moves: "Moves", tab_abilities: "Habilidades", tab_types: "Tipos", tab_teams: "Times",
         loading: "🔄 Carregando dados da PokéAPI...", loading_sub: "Isso pode levar alguns segundos na primeira vez.",
         choosing_poke: "Escolhendo Pokémon para o Time...", cancel: "Cancelar",
         search_poke: "Buscar Pokémon...", search_move: "Buscar Move...", search_ability: "Buscar Habilidade...",
-        all_regions: "Todas as Regiões", all_types: "Todos os Tipos",
-        type_chart_title: "Tabela de Eficácia de Tipos",
-        team_analysis: "Análise de Fraquezas do Time",
+        all_regions: "Todas as Regiões", all_types: "Todos os Tipos", type_chart_title: "Tabela de Eficácia de Tipos", team_analysis: "Análise de Fraquezas do Time",
         footer_made: "Feito por Matheusduar1",
+        copyright: "Pokémon e todos os nomes e imagens relacionados são marcas registradas e propriedades exclusivas da Nintendo, Game Freak e The Pokémon Company. Dexke é um projeto não oficial, sem fins lucrativos, criado exclusivamente para fins educacionais e de estudo.",
         basic_data: "Dados Básicos", height: "Altura:", weight: "Peso:", abilities: "Habilidades:",
-        base_stats: "Base Stats", total: "Total:",
-        weak_res: "Fraquezas e Resistências", evo_chain: "Linha Evolutiva",
+        base_stats: "Base Stats", total: "Total:", weak_res: "Fraquezas e Resistências", evo_chain: "Linha Evolutiva",
         available_moves: "Moves Disponíveis", load_moves: "Carregar Lista de Moves",
         move_type: "Tipo:", move_power: "Poder:", move_acc: "Precisão:", move_class: "Classe:",
         team_1: "Time 1", team_2: "Time 2", team_3: "Time 3", team_4: "Time 4", team_5: "Time 5", team_6: "Time 6",
-        js_load_moves: "<i>Carregando dados precisos...</i>",
-        js_lvl_moves: "Aprende por Nível", js_tm_moves: "Aprende por Máquina", js_no_moves: "Nenhum golpe encontrado.",
-        js_calc: "Calculando...", js_normal_dmg: "<p>Recebe dano normal de tudo.</p>",
-        js_no_evo: "Linha evolutiva indisponível.",
-        js_add_poke: "<p style='color:#777; font-size: 14px;'>Adicione Pokémon para ver a análise cruzada.</p>",
-        js_gen_table: "<i>Gerando tabela de análise...</i>",
+        js_load_moves: "<i>Carregando dados precisos...</i>", js_lvl_moves: "Aprende por Nível", js_tm_moves: "Aprende por Máquina", js_no_moves: "Nenhum golpe encontrado.",
+        js_calc: "Calculando...", js_normal_dmg: "<p>Recebe dano normal de tudo.</p>", js_no_evo: "Linha evolutiva indisponível.",
+        js_add_poke: "<p style='color:#777; font-size: 14px;'>Adicione Pokémon para ver a análise cruzada.</p>", js_gen_table: "<i>Gerando tabela de análise...</i>",
         js_atk_def: "Atq \\ Def", js_def_atk: "DEFESA ➔<br><br>ATAQUE ⬇",
         js_chart_desc: "Leia a linha do <strong style='color:var(--primary)'>ATAQUE</strong> na esquerda e cruze com a coluna da <strong style='color:var(--primary)'>DEFESA</strong> no topo.",
-        js_no_desc: "Sem descrição disponível."
+        js_no_desc: "Sem descrição disponível.", js_translating: "Traduzindo...",
+        evo_lvl: "Nível", evo_trade: "Troca", evo_item: "Pedra/Item", evo_happy: "Felicidade"
     },
     en_US: {
         tab_dexke: "Dexke", tab_moves: "Moves", tab_abilities: "Abilities", tab_types: "Type Chart", tab_teams: "Teams",
         loading: "🔄 Loading PokéAPI data...", loading_sub: "This may take a few seconds the first time.",
         choosing_poke: "Choosing Pokémon for the Team...", cancel: "Cancel",
         search_poke: "Search Pokémon...", search_move: "Search Move...", search_ability: "Search Ability...",
-        all_regions: "All Regions", all_types: "All Types",
-        type_chart_title: "Type Matchup Chart",
-        team_analysis: "Team Weakness Analysis",
+        all_regions: "All Regions", all_types: "All Types", type_chart_title: "Type Matchup Chart", team_analysis: "Team Weakness Analysis",
         footer_made: "Made by Matheusduar1",
+        copyright: "Pokémon and all respective names are trademark & copyright of Nintendo, Game Freak, and The Pokémon Company. Dexke is an unofficial, non-profit project created exclusively for educational purposes.",
         basic_data: "Basic Data", height: "Height:", weight: "Weight:", abilities: "Abilities:",
-        base_stats: "Base Stats", total: "Total:",
-        weak_res: "Weaknesses & Resistances", evo_chain: "Evolution Chain",
+        base_stats: "Base Stats", total: "Total:", weak_res: "Weaknesses & Resistances", evo_chain: "Evolution Chain",
         available_moves: "Available Moves", load_moves: "Load Moves List",
         move_type: "Type:", move_power: "Power:", move_acc: "Accuracy:", move_class: "Class:",
         team_1: "Team 1", team_2: "Team 2", team_3: "Team 3", team_4: "Team 4", team_5: "Team 5", team_6: "Team 6",
-        js_load_moves: "<i>Loading precise data...</i>",
-        js_lvl_moves: "Learned by Level Up", js_tm_moves: "Learned by Machine (TM/HM)", js_no_moves: "No moves found.",
-        js_calc: "Calculating...", js_normal_dmg: "<p>Takes normal damage from everything.</p>",
-        js_no_evo: "Evolution chain unavailable.",
-        js_add_poke: "<p style='color:#777; font-size: 14px;'>Add Pokémon to see the cross analysis.</p>",
-        js_gen_table: "<i>Generating analysis table...</i>",
+        js_load_moves: "<i>Loading precise data...</i>", js_lvl_moves: "Learned by Level Up", js_tm_moves: "Learned by TM/HM", js_no_moves: "No moves found.",
+        js_calc: "Calculating...", js_normal_dmg: "<p>Takes normal damage from everything.</p>", js_no_evo: "Evolution chain unavailable.",
+        js_add_poke: "<p style='color:#777; font-size: 14px;'>Add Pokémon to see the cross analysis.</p>", js_gen_table: "<i>Generating analysis table...</i>",
         js_atk_def: "Atk \\ Def", js_def_atk: "DEFENSE ➔<br><br>ATTACK ⬇",
         js_chart_desc: "Read the <strong style='color:var(--primary)'>ATTACK</strong> row on the left and cross with the <strong style='color:var(--primary)'>DEFENSE</strong> column on top.",
-        js_no_desc: "No description available."
+        js_no_desc: "No description available.", js_translating: "Translating...",
+        evo_lvl: "Level", evo_trade: "Trade", evo_item: "Item/Stone", evo_happy: "Happiness"
     },
     es_ES: {
         tab_dexke: "Dexke", tab_moves: "Movimientos", tab_abilities: "Habilidades", tab_types: "Tipos", tab_teams: "Equipos",
-        loading: "🔄 Cargando datos de PokéAPI...", loading_sub: "Esto puede tomar unos segundos la primera vez.",
+        loading: "🔄 Cargando datos de PokéAPI...", loading_sub: "Esto puede tomar unos segundos.",
         choosing_poke: "Eligiendo Pokémon para el Equipo...", cancel: "Cancelar",
         search_poke: "Buscar Pokémon...", search_move: "Buscar Movimiento...", search_ability: "Buscar Habilidad...",
-        all_regions: "Todas las Regiones", all_types: "Todos los Tipos",
-        type_chart_title: "Tabla de Eficacia de Tipos",
-        team_analysis: "Análisis de Debilidades del Equipo",
+        all_regions: "Todas las Regiones", all_types: "Todos los Tipos", type_chart_title: "Tabla de Eficacia de Tipos", team_analysis: "Análisis de Debilidades",
         footer_made: "Hecho por Matheusduar1",
+        copyright: "Pokémon y todos los nombres e imágenes están registrados por Nintendo, Game Freak y The Pokémon Company. Dexke es un proyecto no oficial con fines educativos.",
         basic_data: "Datos Básicos", height: "Altura:", weight: "Peso:", abilities: "Habilidades:",
-        base_stats: "Estadísticas Base", total: "Total:",
-        weak_res: "Debilidades y Resistencias", evo_chain: "Cadena Evolutiva",
-        available_moves: "Movimientos Disponibles", load_moves: "Cargar Lista de Movimientos",
+        base_stats: "Estadísticas Base", total: "Total:", weak_res: "Debilidades y Resistencias", evo_chain: "Cadena Evolutiva",
+        available_moves: "Movimientos Disponibles", load_moves: "Cargar Lista",
         move_type: "Tipo:", move_power: "Poder:", move_acc: "Precisión:", move_class: "Clase:",
         team_1: "Equipo 1", team_2: "Equipo 2", team_3: "Equipo 3", team_4: "Equipo 4", team_5: "Equipo 5", team_6: "Equipo 6",
-        js_load_moves: "<i>Cargando datos precisos...</i>",
-        js_lvl_moves: "Aprende por Nivel", js_tm_moves: "Aprende por Máquina (MT/MO)", js_no_moves: "No se encontraron movimientos.",
-        js_calc: "Calculando...", js_normal_dmg: "<p>Recibe daño normal de todo.</p>",
-        js_no_evo: "Cadena evolutiva no disponible.",
-        js_add_poke: "<p style='color:#777; font-size: 14px;'>Añade Pokémon para ver el análisis cruzado.</p>",
-        js_gen_table: "<i>Generando tabla de análisis...</i>",
+        js_load_moves: "<i>Cargando datos precisos...</i>", js_lvl_moves: "Aprende por Nivel", js_tm_moves: "Aprende por Máquina (MT/MO)", js_no_moves: "No se encontraron movimientos.",
+        js_calc: "Calculando...", js_normal_dmg: "<p>Recibe daño normal de todo.</p>", js_no_evo: "Cadena evolutiva no disponible.",
+        js_add_poke: "<p style='color:#777; font-size: 14px;'>Añade Pokémon para ver el análisis.</p>", js_gen_table: "<i>Generando tabla de análisis...</i>",
         js_atk_def: "Atq \\ Def", js_def_atk: "DEFENSA ➔<br><br>ATAQUE ⬇",
         js_chart_desc: "Lee la fila de <strong style='color:var(--primary)'>ATAQUE</strong> a la izquierda y cruza con la columna de <strong style='color:var(--primary)'>DEFENSA</strong> arriba.",
-        js_no_desc: "Sin descripción disponible."
+        js_no_desc: "Sin descripción disponible.", js_translating: "Traduciendo...",
+        evo_lvl: "Nivel", evo_trade: "Intercambio", evo_item: "Piedra/Objeto", evo_happy: "Felicidad"
     }
 };
 
@@ -82,31 +70,28 @@ function t(key) { return dicionario[idiomaAtual][key] || key; }
 
 function mudarIdioma(lang) {
     idiomaAtual = lang;
-    
-    // Atualiza os textos fixos do HTML
-    document.querySelectorAll('[data-i18n]').forEach(el => {
-        el.innerHTML = dicionario[lang][el.getAttribute('data-i18n')];
-    });
-
-    // Atualiza os placeholders de input
-    document.querySelectorAll('[data-i18n-ph]').forEach(el => {
-        el.placeholder = dicionario[lang][el.getAttribute('data-i18n-ph')];
-    });
-
-    // Atualiza as tabelas se estiverem abertas
+    document.querySelectorAll('[data-i18n]').forEach(el => { el.innerHTML = dicionario[lang][el.getAttribute('data-i18n')]; });
+    document.querySelectorAll('[data-i18n-ph]').forEach(el => { el.placeholder = dicionario[lang][el.getAttribute('data-i18n-ph')]; });
     document.getElementById('desc-chart-global').innerHTML = t('js_chart_desc');
     renderizarTime(); 
     if(document.getElementById('aba-typechart').classList.contains('active')) {
-        document.getElementById('global-type-chart').innerHTML = ''; // Força recriar
-        gerarTabelaDeTiposGlobal();
+        document.getElementById('global-type-chart').innerHTML = ''; gerarTabelaDeTiposGlobal();
     }
 }
 
-// --- FUNÇÕES CORE ---
-function escapeHTML(str) {
-    if (!str) return '';
-    return str.toString().replace(/[&<>'"]/g, tag => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'}[tag] || tag));
+// O tradutor consumirá a API pública e gratuita do MyMemory
+async function traduzirTextoDinamico(textoIngles) {
+    if (!textoIngles || idiomaAtual === 'en_US') return textoIngles;
+    const target = idiomaAtual === 'es_ES' ? 'es' : 'pt-br';
+    try {
+        const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(textoIngles)}&langpair=en|${target}`);
+        const data = await res.json();
+        if(data && data.responseData && data.responseData.translatedText) return data.responseData.translatedText;
+    } catch (e) { console.warn("Erro ao traduzir"); }
+    return textoIngles; // Fallback se falhar
 }
+
+function escapeHTML(str) { if (!str) return ''; return str.toString().replace(/[&<>'"]/g, tag => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'}[tag] || tag)); }
 
 function getCorEficacia(mult) {
     if (mult >= 4) return { bg: '#e74c3c', text: 'white' };    
@@ -117,48 +102,26 @@ function getCorEficacia(mult) {
     if (mult === 0) return { bg: '#1a1a1a', text: 'white' };   
     return { bg: '#fff', text: 'black' };
 }
+function formatarMultiplicador(mult) { return mult === 0.5 ? '½' : (mult === 0.25 ? '¼' : mult); }
 
-function formatarMultiplicador(mult) {
-    if (mult === 0.5) return '½';
-    if (mult === 0.25) return '¼';
-    return mult;
-}
-
-const coresTipos = {
-    normal: '#A8A878', fighting: '#C03028', flying: '#A890F0', poison: '#A040A0', ground: '#E0C068', rock: '#B8A038',
-    bug: '#A8B820', ghost: '#705898', steel: '#B8B8D0', fire: '#F08030', water: '#6890F0', grass: '#78C850', 
-    electric: '#F8D030', psychic: '#F85888', ice: '#98D8D8', dragon: '#7038F8', dark: '#705848', fairy: '#EE99AC'
-};
+const coresTipos = { normal: '#A8A878', fighting: '#C03028', flying: '#A890F0', poison: '#A040A0', ground: '#E0C068', rock: '#B8A038', bug: '#A8B820', ghost: '#705898', steel: '#B8B8D0', fire: '#F08030', water: '#6890F0', grass: '#78C850', electric: '#F8D030', psychic: '#F85888', ice: '#98D8D8', dragon: '#7038F8', dark: '#705848', fairy: '#EE99AC' };
 
 let todosPokemon = [], todosMoves = [], todasAbilities = [], pokemonAtualParaMoves = []; 
 let isShiny = false, currentPokemonNormalUrl = '', currentPokemonShinyUrl = '';
 const moveCache = {}, abilityCache = {}, cacheRelacoesTipos = {};
-
 let timesSalvos = [[], [], [], [], [], []];
-try { const mem = localStorage.getItem('dexke_times'); if(mem) timesSalvos = JSON.parse(mem); } 
-catch (e) { localStorage.removeItem('dexke_times'); }
+try { const mem = localStorage.getItem('dexke_times'); if(mem) timesSalvos = JSON.parse(mem); } catch (e) { localStorage.removeItem('dexke_times'); }
 
 let timeAtualIndex = 0, modoSelecaoTimeSlot = null; 
 
 async function iniciarApp() {
     try {
-        const [resPoke, resMoves, resAbil] = await Promise.all([
-            fetch('https://pokeapi.co/api/v2/pokemon?limit=1025'),
-            fetch('https://pokeapi.co/api/v2/move?limit=1000'),
-            fetch('https://pokeapi.co/api/v2/ability?limit=350')
-        ]);
-
+        const [resPoke, resMoves, resAbil] = await Promise.all([ fetch('https://pokeapi.co/api/v2/pokemon?limit=1025'), fetch('https://pokeapi.co/api/v2/move?limit=1000'), fetch('https://pokeapi.co/api/v2/ability?limit=350') ]);
         const mapTipos = {};
         const promessasTipos = Object.keys(coresTipos).map(t => fetch(`https://pokeapi.co/api/v2/type/${t}`).then(r => r.json()));
         const dadosTipos = await Promise.all(promessasTipos);
         
-        dadosTipos.forEach(tipoAPI => {
-            tipoAPI.pokemon.forEach(p => {
-                const nomePoke = p.pokemon.name;
-                if(!mapTipos[nomePoke]) mapTipos[nomePoke] = [];
-                mapTipos[nomePoke][p.slot - 1] = tipoAPI.name; 
-            });
-        });
+        dadosTipos.forEach(tipoAPI => { tipoAPI.pokemon.forEach(p => { const nomePoke = p.pokemon.name; if(!mapTipos[nomePoke]) mapTipos[nomePoke] = []; mapTipos[nomePoke][p.slot - 1] = tipoAPI.name; }); });
 
         todosPokemon = (await resPoke.json()).results.map(p => {
             const parts = p.url.split('/');
@@ -179,22 +142,13 @@ async function iniciarApp() {
 function mudarAba(event, abaId) {
     document.querySelectorAll('.aba-content').forEach(el => { el.classList.remove('active'); el.classList.add('hidden'); });
     document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
-    
-    const abaAlvo = document.getElementById(`aba-${abaId}`);
-    abaAlvo.classList.remove('hidden'); abaAlvo.classList.add('active');
-    
+    const abaAlvo = document.getElementById(`aba-${abaId}`); abaAlvo.classList.remove('hidden'); abaAlvo.classList.add('active');
     if(event && event.target) event.target.classList.add('active');
     if(abaId === 'typechart') { document.getElementById('global-type-chart').innerHTML = ''; gerarTabelaDeTiposGlobal(); }
 }
 
-function iniciarSelecaoTime(indexSlot) {
-    modoSelecaoTimeSlot = indexSlot; mudarAba(null, 'dexke'); 
-    document.getElementById('selecao-time-banner').style.display = 'flex'; 
-}
-
-function cancelarSelecaoTime() {
-    modoSelecaoTimeSlot = null; document.getElementById('selecao-time-banner').style.display = 'none'; mudarAba(null, 'teams');
-}
+function iniciarSelecaoTime(indexSlot) { modoSelecaoTimeSlot = indexSlot; mudarAba(null, 'dexke'); document.getElementById('selecao-time-banner').style.display = 'flex'; }
+function cancelarSelecaoTime() { modoSelecaoTimeSlot = null; document.getElementById('selecao-time-banner').style.display = 'none'; mudarAba(null, 'teams'); }
 
 function filtrarLista() {
     const termo = escapeHTML(document.getElementById('searchInput').value.toLowerCase());
@@ -207,7 +161,7 @@ function filtrarLista() {
     const [min, max] = limites[gen];
     
     document.getElementById('pokemon-list').innerHTML = todosPokemon.filter(p => p.id >= min && p.id <= max && (p.name.includes(termo) || p.id == termo) && (tipoFiltro === 'all' || p.types.includes(tipoFiltro))).map(p => `
-        <div class="list-item" onclick="tratarCliquePokemon(${p.id})">
+        <div class="list-item" onclick="tratarCliquePokemon('${p.name}')">
             <div class="list-img-box"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${p.id}.png" loading="lazy"></div>
             <div class="list-info"><span class="list-name">${p.name.replace(/-/g, ' ')}</span><span style="font-size:12px; color:#777">#${p.id.toString().padStart(3, '0')}</span>
             <div class="list-types">${p.types.map(t => `<span class="list-type-badge" style="background-color: ${coresTipos[t]}">${t}</span>`).join('')}</div></div>
@@ -230,34 +184,56 @@ function filtrarAbilitiesGlobal() {
     document.getElementById('abilities-list').innerHTML = todasAbilities.filter(a => a.name.includes(termo)).slice(0, 100).map(a => `<div class="list-item" onclick="abrirDetalheAbility('${a.name}')"><span class="list-name">${a.name.replace(/-/g, ' ')}</span></div>`).join('');
 }
 
-async function tratarCliquePokemon(id) {
+async function tratarCliquePokemon(idOuNome) {
     if (modoSelecaoTimeSlot !== null) {
-        const p = await (await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`)).json();
+        const p = await (await fetch(`https://pokeapi.co/api/v2/pokemon/${idOuNome}`)).json();
         timesSalvos[timeAtualIndex][modoSelecaoTimeSlot] = { id: p.id, name: escapeHTML(p.name), types: p.types.map(t => escapeHTML(t.type.name)) };
         localStorage.setItem('dexke_times', JSON.stringify(timesSalvos));
         cancelarSelecaoTime(); renderizarTime();
-    } else abrirDetalhes(id);
+    } else abrirDetalhes(idOuNome);
 }
 
-async function abrirDetalhes(id) {
+// 4. MODAL POKEMON E GERAÇÃO DE FORMAS/MEGAS
+async function abrirDetalhes(idOuNome) {
     document.getElementById('pokemon-modal').classList.remove('hidden');
     document.getElementById('detail-moves-list').innerHTML = ''; 
-    const p = await (await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`)).json();
+    
+    // Busca dados do Pokemon especifico e da Espécie base
+    const p = await (await fetch(`https://pokeapi.co/api/v2/pokemon/${idOuNome}`)).json();
+    const spc = await (await fetch(p.species.url)).json();
     pokemonAtualParaMoves = p.moves; 
 
+    // Imagens Shiny e Normal
     isShiny = false;
     currentPokemonNormalUrl = p.sprites.other['official-artwork'].front_default || p.sprites.front_default;
     currentPokemonShinyUrl = p.sprites.other['official-artwork'].front_shiny || p.sprites.front_shiny || currentPokemonNormalUrl;
-    
     document.getElementById('shiny-toggle').style.color = '#ccc';
     document.getElementById('detail-img').src = currentPokemonNormalUrl;
     
     document.getElementById('detail-name').textContent = escapeHTML(p.name).replace(/-/g, ' ');
-    document.getElementById('detail-id').textContent = '#' + p.id.toString().padStart(3, '0');
+    document.getElementById('detail-id').textContent = '#' + spc.id.toString().padStart(3, '0'); // Id real na Dex
+    document.getElementById('detail-gen').textContent = spc.generation.name.toUpperCase().replace('GENERATION-', 'GEN ');
     document.getElementById('detail-types').innerHTML = p.types.map(t => `<span class="type-badge" style="background-color: ${coresTipos[t.type.name]}">${escapeHTML(t.type.name)}</span>`).join('');
     document.getElementById('detail-height').textContent = (p.height / 10).toFixed(1);
     document.getElementById('detail-weight').textContent = (p.weight / 10).toFixed(1);
     document.getElementById('detail-abilities').innerHTML = p.abilities.map(a => `<span onclick="abrirDetalheAbility('${a.ability.name}')">${escapeHTML(a.ability.name).replace(/-/g, ' ')}</span>`).join(' | ');
+
+    // Geração dos botões de Mega / Formas Especiais dinamicamente
+    let togglesHtml = '';
+    if(spc.varieties && spc.varieties.length > 1) {
+        togglesHtml += `<button class="form-btn form-base" onclick="abrirDetalhes('${spc.name}')">Base</button>`;
+        spc.varieties.forEach(v => {
+            const vName = v.pokemon.name;
+            if(vName.includes('-mega-x')) togglesHtml += `<button class="form-btn form-mega-x" onclick="abrirDetalhes('${vName}')">X</button>`;
+            else if(vName.includes('-mega-y')) togglesHtml += `<button class="form-btn form-mega-y" onclick="abrirDetalhes('${vName}')">Y</button>`;
+            else if(vName.includes('-mega-z')) togglesHtml += `<button class="form-btn form-mega-z" onclick="abrirDetalhes('${vName}')">Z</button>`; // Futuro
+            else if(vName.includes('-mega')) togglesHtml += `<button class="form-btn form-mega-x" style="background:#555;" onclick="abrirDetalhes('${vName}')">M</button>`;
+            else if(vName.includes('-gmax')) togglesHtml += `<button class="form-btn form-dmax" onclick="abrirDetalhes('${vName}')">DMax</button>`;
+            else if(vName.includes('-alola')) togglesHtml += `<button class="form-btn form-alola" onclick="abrirDetalhes('${vName}')">A</button>`;
+            else if(vName.includes('-hisui')) togglesHtml += `<button class="form-btn form-hisui" onclick="abrirDetalhes('${vName}')">H</button>`;
+        });
+    }
+    document.getElementById('form-toggles').innerHTML = togglesHtml;
 
     let totalStats = 0;
     document.getElementById('detail-stats').innerHTML = p.stats.map(s => {
@@ -301,6 +277,7 @@ async function carregarMovesDoPokemon() {
     container.innerHTML = finalHtml || t('js_no_moves');
 }
 
+// 5. TRADUÇÕES E DETALHES DE GOLPES E HABILIDADES
 async function abrirDetalheMove(nome) {
     document.getElementById('move-modal').classList.remove('hidden');
     if(!moveCache[nome]) moveCache[nome] = await (await fetch(`https://pokeapi.co/api/v2/move/${nome}`)).json();
@@ -311,20 +288,26 @@ async function abrirDetalheMove(nome) {
     document.getElementById('gm-power').textContent = move.power || '--'; document.getElementById('gm-accuracy').textContent = move.accuracy ? move.accuracy + '%' : '--';
     document.getElementById('gm-pp').textContent = move.pp; document.getElementById('gm-class').textContent = getIconeClasse(move.damage_class.name); document.getElementById('gm-class').className = `class-badge class-${move.damage_class.name}`;
     
-    const engEntry = move.flavor_text_entries.find(e => e.language.name === 'en'); // PokeAPI is mostly english
-    document.getElementById('gm-desc').textContent = engEntry ? engEntry.flavor_text.replace(/\n|\f/g, ' ') : t('js_no_desc');
+    document.getElementById('gm-desc').innerHTML = `<i>${t('js_translating')}</i>`;
+    const engEntry = move.flavor_text_entries.find(e => e.language.name === 'en');
+    let textoBase = engEntry ? engEntry.flavor_text.replace(/\n|\f/g, ' ') : t('js_no_desc');
+    document.getElementById('gm-desc').textContent = await traduzirTextoDinamico(textoBase);
 }
 
 async function abrirDetalheAbility(nome) {
     document.getElementById('ability-modal').classList.remove('hidden');
-    document.getElementById('ab-name').textContent = nome.replace(/-/g, ' '); document.getElementById('ab-desc').innerHTML = t('js_load_moves');
+    document.getElementById('ab-name').textContent = nome.replace(/-/g, ' '); 
+    document.getElementById('ab-desc').innerHTML = `<i>${t('js_translating')}</i>`;
+    
     if(!abilityCache[nome]) abilityCache[nome] = await (await fetch(`https://pokeapi.co/api/v2/ability/${nome}`)).json();
     const engEntry = abilityCache[nome].flavor_text_entries.find(e => e.language.name === 'en');
-    document.getElementById('ab-desc').textContent = engEntry ? engEntry.flavor_text.replace(/\n|\f/g, ' ') : t('js_no_desc');
+    let textoBase = engEntry ? engEntry.flavor_text.replace(/\n|\f/g, ' ') : t('js_no_desc');
+    document.getElementById('ab-desc').textContent = await traduzirTextoDinamico(textoBase);
 }
 
 function fecharModal(modalId) { document.getElementById(modalId).classList.add('hidden'); }
 
+// 6. CÁLCULO DE DANO E EVOLUÇÕES (AGORA COM MÉTODOS)
 async function calcularDano(tiposPokemon) {
     const container = document.getElementById('detail-damage'); container.innerHTML = t('js_calc');
     let multiplicadores = {}; Object.keys(coresTipos).forEach(t => multiplicadores[t] = 1); 
@@ -345,14 +328,39 @@ async function calcularDano(tiposPokemon) {
     container.innerHTML = html || t('js_normal_dmg');
 }
 
+// Lógica de parser do trigger da evolução
+function parseEvolutionMethod(details) {
+    if(!details || details.length === 0) return '';
+    const d = details[0];
+    const trigger = d.trigger.name;
+    if(trigger === 'level-up') {
+        if(d.min_level) return `${t('evo_lvl')} ${d.min_level}`;
+        if(d.min_happiness) return t('evo_happy');
+        return t('evo_lvl');
+    }
+    if(trigger === 'trade') return t('evo_trade');
+    if(trigger === 'use-item' && d.item) return escapeHTML(d.item.name).replace(/-/g, ' ');
+    return trigger;
+}
+
 async function buscarEvolucoes(url) {
     const container = document.getElementById('detail-evolutions');
     try {
         const spcData = await (await fetch(url)).json(); const evoData = await (await fetch(spcData.evolution_chain.url)).json();
         let cadeia = [], atual = evoData.chain;
-        while (atual) { cadeia.push({ name: escapeHTML(atual.species.name), id: atual.species.url.split('/')[6] }); atual = atual.evolves_to[0]; }
+        while (atual) { 
+            const evoMethod = parseEvolutionMethod(atual.evolution_details);
+            cadeia.push({ name: escapeHTML(atual.species.name), id: atual.species.url.split('/')[6], method: evoMethod }); 
+            atual = atual.evolves_to[0]; 
+        }
         container.innerHTML = cadeia.map((c, i) => `
-            <div class="evo-item" onclick="fecharModal('pokemon-modal'); abrirDetalhes(${c.id})"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${c.id}.png"><div>${c.name}</div></div>
+            <div style="display:flex; flex-direction:column; align-items:center;">
+                <div class="evo-item" onclick="fecharModal('pokemon-modal'); abrirDetalhes('${c.name}')">
+                    <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${c.id}.png">
+                    <div>${c.name}</div>
+                </div>
+                ${i > 0 && c.method ? `<div class="evo-method">${c.method}</div>` : ''}
+            </div>
             ${i < cadeia.length - 1 ? '<div class="evo-arrow">➜</div>' : ''}
         `).join('');
     } catch (e) { container.innerHTML = t('js_no_evo'); }
@@ -365,7 +373,7 @@ async function renderizarTime() {
     const time = timesSalvos[timeAtualIndex]; while(time.length < 6) time.push(null);
     let htmlSlots = '';
     for(let i=0; i<6; i++) {
-        if(time[i]) htmlSlots += `<div class="team-slot" onclick="tratarCliquePokemon(${time[i].id})"><div class="team-slot-remove" onclick="event.stopPropagation(); removerDoTime(${i})">X</div><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${time[i].id}.png"><div class="team-slot-name">${escapeHTML(time[i].name).replace(/-/g, ' ')}</div></div>`;
+        if(time[i]) htmlSlots += `<div class="team-slot" onclick="tratarCliquePokemon('${time[i].name}')"><div class="team-slot-remove" onclick="event.stopPropagation(); removerDoTime(${i})">X</div><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${time[i].id}.png"><div class="team-slot-name">${escapeHTML(time[i].name).replace(/-/g, ' ')}</div></div>`;
         else htmlSlots += `<div class="team-slot" style="background:transparent; border: 2px dashed #999;" onclick="iniciarSelecaoTime(${i})"><span style="color:#999; font-size:32px;">+</span></div>`;
     }
     document.getElementById('team-slots').innerHTML = htmlSlots;
