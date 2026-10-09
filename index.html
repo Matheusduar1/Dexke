@@ -5,12 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dexke</title>
     <meta name="description" content="Pokédex completa, Tabela de Tipos e Team Builder competitivo.">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self' https://pokeapi.co; img-src 'self' data: https://raw.githubusercontent.com; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline';">
+    <!-- Removido o bloqueio restrito de API na CSP para permitir a API de Tradução -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://*; img-src 'self' data: https://*; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline';">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="app-container">
-        <!-- Menu de Navegação e Seletor de Idiomas -->
+        <!-- Menu e Idiomas -->
         <header class="header">
             <div class="nav-buttons">
                 <button class="nav-btn active" onclick="mudarAba(event, 'dexke')" data-i18n="tab_dexke">Dexke</button>
@@ -21,14 +22,13 @@
             </div>
             <div class="lang-selector-container">
                 <select id="lang-selector" onchange="mudarIdioma(this.value)">
-                    <option value="pt_BR">PT_BR</option>
-                    <option value="en_US">EN_US</option>
-                    <option value="es_ES">ES_ES</option>
+                    <option value="pt_BR">PT-BR</option>
+                    <option value="en_US">EN-US</option>
+                    <option value="es_ES">ES-ES</option>
                 </select>
             </div>
         </header>
 
-        <!-- Loading Global -->
         <div id="loading-global" class="loading-message">
             <p data-i18n="loading">🔄 Carregando dados da PokéAPI...</p>
             <p style="font-size: 12px; margin-top: 10px;" data-i18n="loading_sub">Isso pode levar alguns segundos na primeira vez.</p>
@@ -47,112 +47,59 @@
                 <div class="filter-group">
                     <select id="genFilter" onchange="filtrarLista()">
                         <option value="all" data-i18n="all_regions">Todas as Regiões</option>
-                        <optgroup label="Geração 1 (1-151)">
-                            <option value="rby">Red / Blue / Yellow</option>
-                            <option value="frlg">FireRed / LeafGreen</option>
-                            <option value="lgpe">Let's Go Pikachu / Eevee</option>
-                        </optgroup>
-                        <optgroup label="Geração 2 (152-251)">
-                            <option value="gsc">Gold / Silver / Crystal</option>
-                            <option value="hgss">HeartGold / SoulSilver</option>
-                        </optgroup>
-                        <optgroup label="Geração 3 (252-386)">
-                            <option value="rse">Ruby / Sapphire / Emerald</option>
-                            <option value="oras">OmegaRuby / AlphaSapphire</option>
-                        </optgroup>
-                        <optgroup label="Geração 4 (387-493)">
-                            <option value="dppt">Diamond / Pearl / Platinum</option>
-                            <option value="bdsp">Brilliant Diamond / Shining Pearl</option>
-                        </optgroup>
-                        <optgroup label="Geração 5 (494-649)">
-                            <option value="bw">Black / White & B2 / W2</option>
-                        </optgroup>
-                        <optgroup label="Geração 6 (650-721)">
-                            <option value="xy">X / Y</option>
-                            <option value="za">Legends: Z-A</option>
-                        </optgroup>
-                        <optgroup label="Geração 7 (722-809)">
-                            <option value="sm">Sun / Moon & Ultra S/M</option>
-                        </optgroup>
-                        <optgroup label="Geração 8 (810-898)">
-                            <option value="swsh">Sword / Shield</option>
-                        </optgroup>
-                        <optgroup label="Hisui (899-905)">
-                            <option value="la">Legends: Arceus</option>
-                        </optgroup>
-                        <optgroup label="Geração 9 (906-1025)">
-                            <option value="sv">Scarlet / Violet</option>
-                        </optgroup>
+                        <optgroup label="Geração 1 (1-151)"><option value="rby">Red / Blue / Yellow</option><option value="frlg">FireRed / LeafGreen</option><option value="lgpe">Let's Go Pikachu / Eevee</option></optgroup>
+                        <optgroup label="Geração 2 (152-251)"><option value="gsc">Gold / Silver / Crystal</option><option value="hgss">HeartGold / SoulSilver</option></optgroup>
+                        <optgroup label="Geração 3 (252-386)"><option value="rse">Ruby / Sapphire / Emerald</option><option value="oras">OmegaRuby / AlphaSapphire</option></optgroup>
+                        <optgroup label="Geração 4 (387-493)"><option value="dppt">Diamond / Pearl / Platinum</option><option value="bdsp">Brilliant Diamond / Shining Pearl</option></optgroup>
+                        <optgroup label="Geração 5 (494-649)"><option value="bw">Black / White & B2 / W2</option></optgroup>
+                        <optgroup label="Geração 6 (650-721)"><option value="xy">X / Y</option><option value="za">Legends: Z-A</option></optgroup>
+                        <optgroup label="Geração 7 (722-809)"><option value="sm">Sun / Moon & Ultra S/M</option></optgroup>
+                        <optgroup label="Geração 8 (810-898)"><option value="swsh">Sword / Shield</option></optgroup>
+                        <optgroup label="Hisui (899-905)"><option value="la">Legends: Arceus</option></optgroup>
+                        <optgroup label="Geração 9 (906-1025)"><option value="sv">Scarlet / Violet</option></optgroup>
                     </select>
 
                     <select id="typeFilter" onchange="filtrarLista()">
                         <option value="all" data-i18n="all_types">Todos os Tipos</option>
-                        <option value="normal">Normal</option>
-                        <option value="fighting">Fighting</option>
-                        <option value="flying">Flying</option>
-                        <option value="poison">Poison</option>
-                        <option value="ground">Ground</option>
-                        <option value="rock">Rock</option>
-                        <option value="bug">Bug</option>
-                        <option value="ghost">Ghost</option>
-                        <option value="steel">Steel</option>
-                        <option value="fire">Fire</option>
-                        <option value="water">Water</option>
-                        <option value="grass">Grass</option>
-                        <option value="electric">Electric</option>
-                        <option value="psychic">Psychic</option>
-                        <option value="ice">Ice</option>
-                        <option value="dragon">Dragon</option>
-                        <option value="dark">Dark</option>
-                        <option value="fairy">Fairy</option>
+                        <option value="normal">Normal</option><option value="fighting">Fighting</option><option value="flying">Flying</option>
+                        <option value="poison">Poison</option><option value="ground">Ground</option><option value="rock">Rock</option>
+                        <option value="bug">Bug</option><option value="ghost">Ghost</option><option value="steel">Steel</option>
+                        <option value="fire">Fire</option><option value="water">Water</option><option value="grass">Grass</option>
+                        <option value="electric">Electric</option><option value="psychic">Psychic</option><option value="ice">Ice</option>
+                        <option value="dragon">Dragon</option><option value="dark">Dark</option><option value="fairy">Fairy</option>
                     </select>
                 </div>
             </div>
             <div id="pokemon-list" class="list-container"></div>
         </div>
 
-        <!-- ABA MOVES -->
+        <!-- OUTRAS ABAS -->
         <div id="aba-moves" class="aba-content hidden">
-            <div class="search-container">
-                <input type="text" id="searchMoveInput" placeholder="Buscar Move..." data-i18n-ph="search_move" onkeyup="filtrarMovesGlobal()">
-            </div>
+            <div class="search-container"><input type="text" id="searchMoveInput" placeholder="Buscar Move..." data-i18n-ph="search_move" onkeyup="filtrarMovesGlobal()"></div>
             <div id="moves-list" class="list-container"></div>
         </div>
 
-        <!-- ABA HABILIDADES -->
         <div id="aba-abilities" class="aba-content hidden">
-            <div class="search-container">
-                <input type="text" id="searchAbilityInput" placeholder="Buscar Habilidade..." data-i18n-ph="search_ability" onkeyup="filtrarAbilitiesGlobal()">
-            </div>
+            <div class="search-container"><input type="text" id="searchAbilityInput" placeholder="Buscar Habilidade..." data-i18n-ph="search_ability" onkeyup="filtrarAbilitiesGlobal()"></div>
             <div id="abilities-list" class="list-container"></div>
         </div>
 
-        <!-- ABA TABELA DE TIPOS GLOBAL -->
         <div id="aba-typechart" class="aba-content hidden">
             <div class="info-section" style="margin: 15px;">
                 <h3 style="text-align: center; font-size: 18px;" data-i18n="type_chart_title">Tabela de Eficácia de Tipos</h3>
-                <p id="desc-chart-global" style="text-align: center; margin-bottom: 15px; font-size: 12px; color: #555;">
-                    Leia a linha do <strong style="color:var(--primary)">ATAQUE</strong> na esquerda e cruze com a coluna da <strong style="color:var(--primary)">DEFESA</strong> no topo.
-                </p>
-                <div id="global-type-chart" style="overflow-x: auto; padding-bottom: 10px;">
-                    <i>Gerando tabela...</i>
-                </div>
+                <p id="desc-chart-global" style="text-align: center; margin-bottom: 15px; font-size: 12px; color: #555;">Leia a linha do ATAQUE na esquerda e cruze com a coluna da DEFESA no topo.</p>
+                <div id="global-type-chart" style="overflow-x: auto; padding-bottom: 10px;"><i>Gerando tabela...</i></div>
             </div>
         </div>
 
-        <!-- ABA TIMES (TEAM BUILDER) -->
         <div id="aba-teams" class="aba-content hidden">
             <div class="search-container">
                 <select id="team-selector" onchange="mudarTimeSelecionado()">
-                    <option value="0" data-i18n="team_1">Time 1</option>
-                    <option value="1" data-i18n="team_2">Time 2</option>
-                    <option value="2" data-i18n="team_3">Time 3</option>
-                    <option value="3" data-i18n="team_4">Time 4</option>
-                    <option value="4" data-i18n="team_5">Time 5</option>
-                    <option value="5" data-i18n="team_6">Time 6</option>
+                    <option value="0" data-i18n="team_1">Time 1</option><option value="1" data-i18n="team_2">Time 2</option>
+                    <option value="2" data-i18n="team_3">Time 3</option><option value="3" data-i18n="team_4">Time 4</option>
+                    <option value="4" data-i18n="team_5">Time 5</option><option value="5" data-i18n="team_6">Time 6</option>
                 </select>
             </div>
-            
             <div class="team-builder-container">
                 <div id="team-slots" class="team-slots-grid"></div>
                 <div class="info-section" style="margin-top: 15px;">
@@ -162,31 +109,34 @@
             </div>
         </div>
 
-        <!-- RODAPÉ COM GITHUB E DIREITOS AUTORAIS -->
         <footer class="app-footer">
             <a href="https://github.com/Matheusduar1/" target="_blank" rel="noopener noreferrer">
-                <svg height="24" viewBox="0 0 16 16" width="24" fill="currentColor">
-                    <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path>
-                </svg>
+                <svg height="24" viewBox="0 0 16 16" width="24" fill="currentColor"><path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path></svg>
                 <span data-i18n="footer_made">Feito por Matheusduar1</span>
             </a>
-            <p class="copyright-notice">
-                Pokémon e todos os nomes e imagens relacionados são marcas registradas e propriedades exclusivas da Nintendo, Game Freak e The Pokémon Company. Dexke é um projeto não oficial, sem fins lucrativos, criado exclusivamente para fins educacionais e de estudo.
+            <p class="copyright-notice" data-i18n="copyright">
+                Pokémon e todos os nomes e imagens...
             </p>
         </footer>
     </div>
 
-    <!-- Modais -->
+    <!-- MODAL POKÉMON -->
     <div id="pokemon-modal" class="modal hidden">
         <div class="modal-content">
             <span class="close-btn" onclick="fecharModal('pokemon-modal')">&times;</span>
-            <span id="shiny-toggle" onclick="toggleShiny()" title="Shiny Toggle">⭐</span>
             
-            <div class="modal-header">
+            <!-- Header do Modal (Shiny e Formas) -->
+            <div style="display: flex; align-items: center; position: absolute; top: 15px; left: 15px; gap: 10px; z-index: 2;">
+                <span id="shiny-toggle" onclick="toggleShiny()" title="Shiny Toggle">⭐</span>
+                <div id="form-toggles" class="form-toggles"></div>
+            </div>
+            
+            <div class="modal-header" style="margin-top: 25px;">
                 <img id="detail-img" src="" alt="Pokemon">
                 <div class="detail-title">
                     <h2 id="detail-name">Nome</h2>
-                    <span id="detail-id">#000</span>
+                    <span id="detail-id" style="font-weight: bold;">#000</span>
+                    <span id="detail-gen" style="font-size: 11px; color: #888; margin-left: 8px; text-transform: uppercase;"></span>
                 </div>
                 <div id="detail-types" class="types"></div>
             </div>
@@ -220,6 +170,7 @@
         </div>
     </div>
 
+    <!-- MODAL MOVES E HABILIDADES -->
     <div id="move-modal" class="modal hidden" style="z-index: 101;">
         <div class="modal-content" style="height: auto; max-height: 80%;">
             <span class="close-btn" onclick="fecharModal('move-modal')">&times;</span>
