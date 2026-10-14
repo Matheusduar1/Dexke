@@ -3,9 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dexke</title>
-    <meta name="description" content="Pokédex completa, Tabela de Tipos, Team Builder e Simulador 1v1.">
+    <title>Dexke - Dex, Team Builder & Simulador 1v1</title>
+
+    <!-- 1. SEO, Autoria e Palavras-Chave do Projeto -->
+    <meta name="author" content="Matheus Duarte">
+    <meta name="description" content="Dexke: Dex completa com formas especiais e Megas, Tabela de Tipos, Construtor de Times competitivo, guia de Moves, Habilidades, Itens, Naturezas e Simulador de Batalhas 1v1.">
+    <meta name="keywords" content="Dexke, Pokémon, Pokédex, Dex, Team Builder, Simulador de Batalha Pokémon, Pokémon 1v1, Pokémon Showdown, Tabela de Tipos, Moves, Habilidades, Naturezas, Itens Pokémon, Mega Evolução, Formas Regionais, PokéAPI, Matheus Duarte">
+    <meta name="robots" content="index, follow">
+
+    <!-- 2. URL Oficial (Quando comprar seu domínio próprio, troque o link nas 2 linhas abaixo) -->
+    <link rel="canonical" href="https://matheusduar1.github.io/Dexke/">
+    <meta property="og:url" content="https://matheusduar1.github.io/Dexke/">
+
+    <!-- 3. Aparência de App Nativo no Mobile -->
+    <meta name="theme-color" content="#c84b31">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Dexke">
+
+    <!-- 4. Open Graph (Pré-visualização no WhatsApp, Discord, LinkedIn com o Camerupt #323) -->
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="pt_BR">
+    <meta property="og:site_name" content="Dexke">
+    <meta property="og:title" content="Dexke - Dex, Team Builder & Simulador 1v1">
+    <meta property="og:description" content="Explore todos os Pokémon e formas especiais, monte seu time competitivo, consulte a tabela de tipos e lute contra a IA no simulador 1v1!">
+    <meta property="og:image" content="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/323.png">
+    <meta property="og:image:alt" content="Camerupt - Mascote da pré-visualização do Dexke">
+
+    <!-- 5. Twitter / X Card (Com o Camerupt #323) -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Dexke - Dex, Team Builder & Simulador 1v1">
+    <meta name="twitter:description" content="Dex completa, análise de fraquezas de time e simulador de batalha 1v1 direto no navegador.">
+    <meta name="twitter:image" content="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/323.png">
+
+    <!-- 6. Segurança (CSP) -->
     <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://*; img-src 'self' data: https://*; style-src 'self' 'unsafe-inline' https://*; font-src 'self' https://* data:; script-src 'self' 'unsafe-inline';">
+
+    <!-- Ícone da Aba do Navegador (Favicon) -->
+    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png">
+
+    <!-- Fontes e CSS -->
     <link href="https://fonts.cdnfonts.com/css/pokemon-solid" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
@@ -213,7 +251,7 @@
                     <button class="btn-dark" style="background: var(--primary); font-size: 16px; padding: 15px;" onclick="iniciarBatalha1v1()" data-i18n="start_battle">⚔️ Iniciar Batalha 1v1!</button>
                 </div>
 
-                <!-- Arena de Batalha (Sem o botão de voltar redundante) -->
+                <!-- Arena de Batalha -->
                 <div id="battle-arena" class="info-section hidden" style="margin: 15px;">
                     <div class="arena-field">
                         <!-- Lado CPU -->
