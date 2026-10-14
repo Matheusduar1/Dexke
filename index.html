@@ -4,27 +4,45 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dexke</title>
-    <meta name="description" content="Pokédex completa, Tabela de Tipos e Team Builder competitivo.">
-    <!-- Removido o bloqueio restrito de API na CSP para permitir a API de Tradução -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://*; img-src 'self' data: https://*; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline';">
+    <meta name="description" content="Pokédex completa, Tabela de Tipos, Team Builder e Simulador 1v1.">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://*; img-src 'self' data: https://*; style-src 'self' 'unsafe-inline' https://*; font-src 'self' https://* data:; script-src 'self' 'unsafe-inline';">
+    <link href="https://fonts.cdnfonts.com/css/pokemon-solid" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <!-- Overlay da Sidebar -->
+    <div id="sidebar-overlay" class="sidebar-overlay hidden" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar Lateral Esquerda -->
+    <aside id="sidebar" class="sidebar">
+        <div class="sidebar-header">
+            <span class="dexke-logo">Dexke</span>
+            <button class="close-sidebar-btn" onclick="toggleSidebar()">&times;</button>
+        </div>
+        <nav class="sidebar-nav">
+            <button class="nav-btn active" onclick="mudarAba(event, 'dexke')" data-i18n="tab_dexke">Pokédex</button>
+            <button class="nav-btn" onclick="mudarAba(event, 'moves')" data-i18n="tab_moves">Moves</button>
+            <button class="nav-btn" onclick="mudarAba(event, 'abilities')" data-i18n="tab_abilities">Habilidades</button>
+            <button class="nav-btn" onclick="mudarAba(event, 'items')" data-i18n="tab_items">Itens</button>
+            <button class="nav-btn" onclick="mudarAba(event, 'natures')" data-i18n="tab_natures">Naturezas</button>
+            <button class="nav-btn" onclick="mudarAba(event, 'typechart')" data-i18n="tab_types">Tipos</button>
+            <button class="nav-btn" onclick="mudarAba(event, 'teams')" data-i18n="tab_teams">Times</button>
+            <button class="nav-btn battle-tab-btn" onclick="mudarAba(event, 'battle')" data-i18n="tab_battle">⚔️ Batalha 1v1</button>
+        </nav>
+    </aside>
+
     <div class="app-container">
-        <!-- Menu e Idiomas -->
-        <header class="header">
-            <div class="nav-buttons">
-                <button class="nav-btn active" onclick="mudarAba(event, 'dexke')" data-i18n="tab_dexke">Dexke</button>
-                <button class="nav-btn" onclick="mudarAba(event, 'moves')" data-i18n="tab_moves">Moves</button>
-                <button class="nav-btn" onclick="mudarAba(event, 'abilities')" data-i18n="tab_abilities">Habilidades</button>
-                <button class="nav-btn" onclick="mudarAba(event, 'typechart')" data-i18n="tab_types">Tipos</button>
-                <button class="nav-btn" onclick="mudarAba(event, 'teams')" data-i18n="tab_teams">Times</button>
+        <!-- Cabeçalho Inteligente (Smart Sticky Header) -->
+        <header id="main-header" class="header">
+            <div class="header-left">
+                <button class="hamburger-btn" onclick="toggleSidebar()" title="Menu">☰</button>
+                <span class="dexke-logo" onclick="mudarAba(null, 'dexke')">Dexke</span>
             </div>
             <div class="lang-selector-container">
                 <select id="lang-selector" onchange="mudarIdioma(this.value)">
-                    <option value="pt_BR">PT-BR</option>
-                    <option value="en_US">EN-US</option>
-                    <option value="es_ES">ES-ES</option>
+                    <option value="pt_BR">PT_BR</option>
+                    <option value="en_US">EN_US</option>
+                    <option value="es_ES">ES_ES</option>
                 </select>
             </div>
         </header>
@@ -42,11 +60,11 @@
             </div>
 
             <div class="search-container">
-                <input type="text" id="searchInput" placeholder="Buscar Pokémon..." data-i18n-ph="search_poke" onkeyup="filtrarLista()">
+                <input type="text" id="searchInput" placeholder="Buscar Pokémon (Ex: Ursaluna, Bloodmoon)..." data-i18n-ph="search_poke" onkeyup="filtrarLista()">
                 
                 <div class="filter-group">
                     <select id="genFilter" onchange="filtrarLista()">
-                        <option value="all" data-i18n="all_regions">Todas as Regiões</option>
+                        <option value="all" data-i18n="all_regions">Todas as Regiões & Especiais</option>
                         <optgroup label="Geração 1 (1-151)"><option value="rby">Red / Blue / Yellow</option><option value="frlg">FireRed / LeafGreen</option><option value="lgpe">Let's Go Pikachu / Eevee</option></optgroup>
                         <optgroup label="Geração 2 (152-251)"><option value="gsc">Gold / Silver / Crystal</option><option value="hgss">HeartGold / SoulSilver</option></optgroup>
                         <optgroup label="Geração 3 (252-386)"><option value="rse">Ruby / Sapphire / Emerald</option><option value="oras">OmegaRuby / AlphaSapphire</option></optgroup>
@@ -57,6 +75,7 @@
                         <optgroup label="Geração 8 (810-898)"><option value="swsh">Sword / Shield</option></optgroup>
                         <optgroup label="Hisui (899-905)"><option value="la">Legends: Arceus</option></optgroup>
                         <optgroup label="Geração 9 (906-1025)"><option value="sv">Scarlet / Violet</option></optgroup>
+                        <optgroup label="Especiais / Formas"><option value="special">Formas Especiais (Bloodmoon, Regionais, Megas)</option></optgroup>
                     </select>
 
                     <select id="typeFilter" onchange="filtrarLista()">
@@ -73,17 +92,34 @@
             <div id="pokemon-list" class="list-container"></div>
         </div>
 
-        <!-- OUTRAS ABAS -->
+        <!-- ABA MOVES -->
         <div id="aba-moves" class="aba-content hidden">
             <div class="search-container"><input type="text" id="searchMoveInput" placeholder="Buscar Move..." data-i18n-ph="search_move" onkeyup="filtrarMovesGlobal()"></div>
             <div id="moves-list" class="list-container"></div>
         </div>
 
+        <!-- ABA HABILIDADES -->
         <div id="aba-abilities" class="aba-content hidden">
             <div class="search-container"><input type="text" id="searchAbilityInput" placeholder="Buscar Habilidade..." data-i18n-ph="search_ability" onkeyup="filtrarAbilitiesGlobal()"></div>
             <div id="abilities-list" class="list-container"></div>
         </div>
 
+        <!-- ABA ITENS -->
+        <div id="aba-items" class="aba-content hidden">
+            <div class="search-container"><input type="text" id="searchItemInput" placeholder="Buscar Item..." data-i18n-ph="search_item" onkeyup="filtrarItemsGlobal()"></div>
+            <div id="items-list" class="list-container"></div>
+        </div>
+
+        <!-- ABA NATUREZAS -->
+        <div id="aba-natures" class="aba-content hidden">
+            <div class="search-container"><input type="text" id="searchNatureInput" placeholder="Buscar Natureza..." data-i18n-ph="search_nature" onkeyup="renderizarNatures()"></div>
+            <div class="info-section" style="margin: 15px;">
+                <h3 data-i18n="natures_title">Tabela de Naturezas (Natures)</h3>
+                <div id="natures-list" class="list-container" style="padding: 10px 0;"></div>
+            </div>
+        </div>
+
+        <!-- ABA TABELA DE TIPOS -->
         <div id="aba-typechart" class="aba-content hidden">
             <div class="info-section" style="margin: 15px;">
                 <h3 style="text-align: center; font-size: 18px;" data-i18n="type_chart_title">Tabela de Eficácia de Tipos</h3>
@@ -92,6 +128,7 @@
             </div>
         </div>
 
+        <!-- ABA TIMES -->
         <div id="aba-teams" class="aba-content hidden">
             <div class="search-container">
                 <select id="team-selector" onchange="mudarTimeSelecionado()">
@@ -109,29 +146,136 @@
             </div>
         </div>
 
+        <!-- ABA BATALHA 1v1 (SHOWDOWN LITE) -->
+        <div id="aba-battle" class="aba-content hidden">
+            <div class="battle-wrapper">
+                <!-- Configuração da Batalha -->
+                <div id="battle-setup" class="battle-setup-grid">
+                    <!-- Card Jogador -->
+                    <div class="info-section battle-card">
+                        <h3 data-i18n="your_pokemon">Seu Pokémon (Lv. 100)</h3>
+                        <select id="p1-poke-select" onchange="carregarConfigBatalha('p1')"></select>
+                        <div class="battle-setup-preview">
+                            <img id="p1-setup-img" src="" alt="P1">
+                            <div id="p1-setup-types" class="types"></div>
+                        </div>
+                        <label data-i18n="abilities">Habilidade:</label>
+                        <select id="p1-ability"></select>
+                        <label data-i18n="item_label">Item:</label>
+                        <select id="p1-item"></select>
+                        <label data-i18n="nature_label">Natureza:</label>
+                        <select id="p1-nature" onchange="atualizarPreviewStats('p1')"></select>
+                        
+                        <label style="margin-top:8px; display:block;"><strong data-i18n="ivs_label">IVs (0 - 31) & Stats Finais:</strong></label>
+                        <div id="p1-ivs" class="iv-grid"></div>
+
+                        <label style="margin-top:8px; display:block;"><strong data-i18n="moves_label">Moves (Escolha 4):</strong></label>
+                        <div class="moves-select-grid">
+                            <select id="p1-move-0"></select>
+                            <select id="p1-move-1"></select>
+                            <select id="p1-move-2"></select>
+                            <select id="p1-move-3"></select>
+                        </div>
+                    </div>
+
+                    <!-- Card Máquina (CPU) -->
+                    <div class="info-section battle-card">
+                        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #ddd; padding-bottom:5px; margin-bottom:10px;">
+                            <h3 style="border:none; margin:0; padding:0;" data-i18n="cpu_pokemon">Pokémon da Máquina (Lv. 100)</h3>
+                            <button class="btn-small" onclick="randomizarCPU()" data-i18n="random_cpu">🎲 Aleatório</button>
+                        </div>
+                        <select id="p2-poke-select" onchange="carregarConfigBatalha('p2')"></select>
+                        <div class="battle-setup-preview">
+                            <img id="p2-setup-img" src="" alt="P2">
+                            <div id="p2-setup-types" class="types"></div>
+                        </div>
+                        <label data-i18n="abilities">Habilidade:</label>
+                        <select id="p2-ability"></select>
+                        <label data-i18n="item_label">Item:</label>
+                        <select id="p2-item"></select>
+                        <label data-i18n="nature_label">Natureza:</label>
+                        <select id="p2-nature" onchange="atualizarPreviewStats('p2')"></select>
+                        
+                        <label style="margin-top:8px; display:block;"><strong data-i18n="ivs_label">IVs (0 - 31) & Stats Finais:</strong></label>
+                        <div id="p2-ivs" class="iv-grid"></div>
+
+                        <label style="margin-top:8px; display:block;"><strong data-i18n="moves_label">Moves (Escolha 4):</strong></label>
+                        <div class="moves-select-grid">
+                            <select id="p2-move-0"></select>
+                            <select id="p2-move-1"></select>
+                            <select id="p2-move-2"></select>
+                            <select id="p2-move-3"></select>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="padding: 0 15px 15px 15px;">
+                    <button class="btn-dark" style="background: var(--primary); font-size: 16px; padding: 15px;" onclick="iniciarBatalha1v1()" data-i18n="start_battle">⚔️ Iniciar Batalha 1v1!</button>
+                </div>
+
+                <!-- Arena de Batalha (Sem o botão de voltar redundante) -->
+                <div id="battle-arena" class="info-section hidden" style="margin: 15px;">
+                    <div class="arena-field">
+                        <!-- Lado CPU -->
+                        <div class="combatant cpu-side">
+                            <div class="hp-box">
+                                <div style="display:flex; justify-content:space-between; font-weight:bold;">
+                                    <span id="arena-p2-name">CPU</span>
+                                    <span>Lv. 100</span>
+                                </div>
+                                <div class="hp-bar-bg"><div id="arena-p2-hp-bar" class="hp-bar-fill"></div></div>
+                                <div style="font-size:11px; text-align:right;" id="arena-p2-hp-text">100/100</div>
+                            </div>
+                            <img id="arena-p2-img" src="" alt="CPU Sprite">
+                        </div>
+
+                        <!-- Lado Jogador -->
+                        <div class="combatant player-side">
+                            <img id="arena-p1-img" src="" alt="Player Sprite">
+                            <div class="hp-box">
+                                <div style="display:flex; justify-content:space-between; font-weight:bold;">
+                                    <span id="arena-p1-name">Player</span>
+                                    <span>Lv. 100</span>
+                                </div>
+                                <div class="hp-bar-bg"><div id="arena-p1-hp-bar" class="hp-bar-fill"></div></div>
+                                <div style="font-size:11px; text-align:right;" id="arena-p1-hp-text">100/100</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Controles de Ataque -->
+                    <div id="battle-controls" class="battle-moves-grid"></div>
+
+                    <!-- Log da Batalha -->
+                    <div id="battle-log" class="battle-log"></div>
+                </div>
+            </div>
+        </div>
+
         <footer class="app-footer">
             <a href="https://github.com/Matheusduar1/" target="_blank" rel="noopener noreferrer">
                 <svg height="24" viewBox="0 0 16 16" width="24" fill="currentColor"><path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path></svg>
                 <span data-i18n="footer_made">Feito por Matheusduar1</span>
             </a>
             <p class="copyright-notice" data-i18n="copyright">
-                Pokémon e todos os nomes e imagens...
+                Pokémon e todos os nomes e imagens relacionados são marcas registradas e propriedades exclusivas da Nintendo, Game Freak e The Pokémon Company. Dexke é um projeto não oficial, sem fins lucrativos, criado exclusivamente para fins educacionais e de estudo.
             </p>
         </footer>
     </div>
 
     <!-- MODAL POKÉMON -->
     <div id="pokemon-modal" class="modal hidden">
-        <div class="modal-content">
+        <div class="modal-content" id="poke-modal-touch">
+            <button class="modal-nav-arrow left" onclick="navegarModal('pokemon', -1, this)">&#10094;</button>
+            <button class="modal-nav-arrow right" onclick="navegarModal('pokemon', 1, this)">&#10095;</button>
             <span class="close-btn" onclick="fecharModal('pokemon-modal')">&times;</span>
             
-            <!-- Header do Modal (Shiny e Formas) -->
-            <div style="display: flex; align-items: center; position: absolute; top: 15px; left: 15px; gap: 10px; z-index: 2;">
+            <div style="display: flex; align-items: center; position: absolute; top: 15px; left: 15px; gap: 10px; z-index: 2; flex-wrap: wrap; max-width: 80%;">
                 <span id="shiny-toggle" onclick="toggleShiny()" title="Shiny Toggle">⭐</span>
                 <div id="form-toggles" class="form-toggles"></div>
             </div>
             
-            <div class="modal-header" style="margin-top: 25px;">
+            <div class="modal-header" style="margin-top: 30px;">
                 <img id="detail-img" src="" alt="Pokemon">
                 <div class="detail-title">
                     <h2 id="detail-name">Nome</h2>
@@ -146,7 +290,10 @@
                     <h3 data-i18n="basic_data">Dados Básicos</h3>
                     <p><strong data-i18n="height">Altura:</strong> <span id="detail-height"></span>m</p>
                     <p><strong data-i18n="weight">Peso:</strong> <span id="detail-weight"></span>kg</p>
-                    <p><strong data-i18n="abilities">Habilidades:</strong> <span id="detail-abilities" class="clickable-list"></span></p>
+                    <div style="margin-top:8px;">
+                        <strong data-i18n="abilities">Habilidades:</strong>
+                        <div id="detail-abilities" class="abilities-box-container"></div>
+                    </div>
                 </div>
                 <div class="info-section">
                     <h3 data-i18n="base_stats">Base Stats</h3>
@@ -158,7 +305,7 @@
                     <div id="detail-damage" class="damage-grid">Carregando...</div>
                 </div>
                 <div class="info-section" id="evolution-container">
-                    <h3 data-i18n="evo_chain">Linha Evolutiva</h3>
+                    <h3 data-i18n="evo_chain">Linha Evolutiva & Formas</h3>
                     <div id="detail-evolutions" class="evo-chain">Carregando...</div>
                 </div>
                 <div class="info-section">
@@ -170,9 +317,11 @@
         </div>
     </div>
 
-    <!-- MODAL MOVES E HABILIDADES -->
-    <div id="move-modal" class="modal hidden" style="z-index: 101;">
-        <div class="modal-content" style="height: auto; max-height: 80%;">
+    <!-- MODAL MOVES -->
+    <div id="move-modal" class="modal hidden" style="z-index: 205;">
+        <div class="modal-content" id="move-modal-touch" style="height: auto; max-height: 85%;">
+            <button class="modal-nav-arrow left" onclick="navegarModal('move', -1, this)">&#10094;</button>
+            <button class="modal-nav-arrow right" onclick="navegarModal('move', 1, this)">&#10095;</button>
             <span class="close-btn" onclick="fecharModal('move-modal')">&times;</span>
             <div class="info-section" style="margin-top: 20px;">
                 <h3 id="gm-name" style="font-size: 22px; text-transform: uppercase;">Nome do Golpe</h3>
@@ -183,15 +332,40 @@
                 <p><strong data-i18n="move_class">Classe:</strong> <span id="gm-class" class="class-badge"></span></p>
                 <p style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #ddd;" id="gm-desc"></p>
             </div>
+            <div class="info-section">
+                <h3 data-i18n="poke_with_move">Pokémon que aprendem este Move</h3>
+                <div id="gm-pokemons" class="mini-poke-grid"></div>
+            </div>
         </div>
     </div>
 
-    <div id="ability-modal" class="modal hidden" style="z-index: 101;">
-        <div class="modal-content" style="height: auto; max-height: 80%;">
+    <!-- MODAL HABILIDADES -->
+    <div id="ability-modal" class="modal hidden" style="z-index: 205;">
+        <div class="modal-content" id="ability-modal-touch" style="height: auto; max-height: 85%;">
+            <button class="modal-nav-arrow left" onclick="navegarModal('ability', -1, this)">&#10094;</button>
+            <button class="modal-nav-arrow right" onclick="navegarModal('ability', 1, this)">&#10095;</button>
             <span class="close-btn" onclick="fecharModal('ability-modal')">&times;</span>
             <div class="info-section" style="margin-top: 20px;">
                 <h3 id="ab-name" style="font-size: 22px; text-transform: uppercase;">Nome da Habilidade</h3>
                 <p style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #ddd;" id="ab-desc"></p>
+            </div>
+            <div class="info-section">
+                <h3 data-i18n="poke_with_ability">Pokémon com esta Habilidade</h3>
+                <div id="ab-pokemons" class="mini-poke-grid"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL ITENS -->
+    <div id="item-modal" class="modal hidden" style="z-index: 205;">
+        <div class="modal-content" id="item-modal-touch" style="height: auto; max-height: 80%;">
+            <button class="modal-nav-arrow left" onclick="navegarModal('item', -1, this)">&#10094;</button>
+            <button class="modal-nav-arrow right" onclick="navegarModal('item', 1, this)">&#10095;</button>
+            <span class="close-btn" onclick="fecharModal('item-modal')">&times;</span>
+            <div class="info-section" style="margin-top: 20px; text-align:center;">
+                <img id="it-img" src="" style="width:64px; height:64px; image-rendering: pixelated;">
+                <h3 id="it-name" style="font-size: 20px; text-transform: uppercase;">Nome do Item</h3>
+                <p style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #ddd; text-align:left;" id="it-desc"></p>
             </div>
         </div>
     </div>
