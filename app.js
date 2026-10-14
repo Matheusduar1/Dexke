@@ -121,7 +121,6 @@ function formatarMultiplicador(mult) { return mult === 0.5 ? '½' : (mult === 0.
 
 const coresTipos = { normal: '#A8A878', fighting: '#C03028', flying: '#A890F0', poison: '#A040A0', ground: '#E0C068', rock: '#B8A038', bug: '#A8B820', ghost: '#705898', steel: '#B8B8D0', fire: '#F08030', water: '#6890F0', grass: '#78C850', electric: '#F8D030', psychic: '#F85888', ice: '#98D8D8', dragon: '#7038F8', dark: '#705848', fairy: '#EE99AC' };
 
-// DADOS DE NATUREZAS (25 Natures Oficiais)
 const naturesData = [
     { name: 'Hardy', up: null, down: null },
     { name: 'Lonely', up: 'attack', down: 'defense' },
@@ -150,7 +149,6 @@ const naturesData = [
     { name: 'Quirky', up: null, down: null }
 ];
 
-// ITENS COMPETITIVOS PARA BATALHA 1v1
 const battleItems = [
     { id: 'leftovers', name: 'Leftovers (Restos - Cura 1/16 por turno)' },
     { id: 'life-orb', name: 'Life Orb (+30% Dano, -10% HP)' },
@@ -331,12 +329,77 @@ async function tratarCliquePokemon(idOuNome) {
     } else abrirDetalhes(idOuNome);
 }
 
-// --- 5. NAVEGAÇÃO ENTRE MODAIS (SETAS E SWIPE MOBILE) ---
-function navegarModal(tipo, direcao, btnEl) {
+// --- 5. ANIMAÇÃO DE BARALHO DE CARTAS E GESTOS MOBILE (SWIPE) ---
+function animarTransicaoCarta(touchElId, direcao, startOffsetX = 0) {
+    const modalContent = document.getElementById(touchElId);
+    if (!modalContent) return;
+    const modalParent = modalContent.parentElement;
+
+    // Limpa clones e classes residuais caso o utilizador deslize rapidamente
+    modalParent.querySelectorAll('.modal-card-clone').forEach(c => c.remove());
+    modalContent.classList.remove('card-reveal-under', 'card-enter-left');
+    modalContent.style.transform = '';
+    modalContent.style.transition = '';
+
+    const rect = modalContent.getBoundingClientRect();
+    const clone = modalContent.cloneNode(true);
+
+    // Remove IDs do clone para não interferir nas atualizações do DOM real
+    clone.removeAttribute('id');
+    clone.querySelectorAll('[id]').forEach(el => el.removeAttribute('id'));
+    clone.classList.add('modal-card-clone');
+
+    clone.style.position = 'fixed';
+    clone.style.top = rect.top + 'px';
+    clone.style.left = rect.left + 'px';
+    clone.style.width = rect.width + 'px';
+    clone.style.height = rect.height + 'px';
+    clone.style.transform = '';
+    clone.style.transition = '';
+
+    modalParent.appendChild(clone);
+    clone.scrollTop = modalContent.scrollTop;
+
+    if (direcao === 1) {
+        // AVANÇAR (Direita -> Esquerda): A carta atual (clone) sai da frente e revela a próxima por baixo
+        clone.style.zIndex = '260';
+        modalContent.style.zIndex = '210';
+        clone.style.setProperty('--drag-x', `${startOffsetX}px`);
+        clone.style.setProperty('--drag-rot', `${(startOffsetX * 0.04).toFixed(2)}deg`);
+
+        clone.classList.add('card-exit-left');
+        modalContent.classList.add('card-reveal-under');
+    } else {
+        // VOLTAR (Esquerda -> Direita): A carta anterior entra pela esquerda sobrepondo a atual (clone)
+        clone.style.zIndex = '210';
+        modalContent.style.zIndex = '260';
+
+        clone.classList.add('card-stay-under');
+        modalContent.classList.add('card-enter-left');
+    }
+
+    setTimeout(() => {
+        clone.remove();
+        modalContent.classList.remove('card-reveal-under', 'card-enter-left');
+        modalContent.style.zIndex = '';
+    }, 360);
+}
+
+function navegarModal(tipo, direcao, btnEl, startOffsetX = 0) {
     if (btnEl) {
         btnEl.classList.add('clicked-orange');
         setTimeout(() => btnEl.classList.remove('clicked-orange'), 220);
     }
+
+    const mapTouchIds = {
+        pokemon: 'poke-modal-touch',
+        move: 'move-modal-touch',
+        ability: 'ability-modal-touch',
+        item: 'item-modal-touch'
+    };
+
+    animarTransicaoCarta(mapTouchIds[tipo], direcao, startOffsetX);
+
     if (tipo === 'pokemon' && listaFiltradaPokemon.length > 0) {
         let idx = listaFiltradaPokemon.findIndex(p => p.name === atualModalPokemon);
         if (idx === -1) idx = 0;
@@ -366,18 +429,51 @@ function configurarSwipeModais() {
     ];
     mapSwipe.forEach(cfg => {
         const el = document.getElementById(cfg.id);
-        let startX = 0, startY = 0;
+        let startX = 0, startY = 0, currentDx = 0, isDraggingCard = false;
+
         el.addEventListener('touchstart', e => {
             startX = e.changedTouches[0].screenX;
             startY = e.changedTouches[0].screenY;
+            currentDx = 0;
+            isDraggingCard = false;
+            el.style.transition = 'none';
         }, { passive: true });
+
+        el.addEventListener('touchmove', e => {
+            const dx = e.changedTouches[0].screenX - startX;
+            const dy = e.changedTouches[0].screenY - startY;
+
+            if (!isDraggingCard && Math.abs(dx) > 15 && Math.abs(dx) > Math.abs(dy) * 1.3) {
+                isDraggingCard = true;
+            }
+
+            if (isDraggingCard) {
+                currentDx = dx;
+                // Se arrastar para a esquerda (avançar), a carta acompanha o dedo para sair da frente
+                if (dx < 0) {
+                    el.style.transform = `translateX(${dx}px) rotate(${(dx * 0.04).toFixed(2)}deg)`;
+                } else {
+                    // Se arrastar para a direita (voltar), recua levemente preparando a entrada da carta anterior
+                    el.style.transform = `scale(${Math.max(0.93, 1 - dx / 1200)})`;
+                }
+            }
+        }, { passive: true });
+
         el.addEventListener('touchend', e => {
             const dx = e.changedTouches[0].screenX - startX;
             const dy = e.changedTouches[0].screenY - startY;
-            if (Math.abs(dx) > 65 && Math.abs(dx) > Math.abs(dy) * 1.5) {
-                if (dx < 0) navegarModal(cfg.tipo, 1, null);
-                else navegarModal(cfg.tipo, -1, null);
+
+            el.style.transition = '';
+            el.style.transform = '';
+
+            if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.3) {
+                if (dx < 0) {
+                    navegarModal(cfg.tipo, 1, null, currentDx);
+                } else {
+                    navegarModal(cfg.tipo, -1, null, 0);
+                }
             }
+            isDraggingCard = false;
         }, { passive: true });
     });
 }
@@ -386,6 +482,16 @@ function configurarSwipeModais() {
 async function abrirDetalhes(idOuNome) {
     document.getElementById('pokemon-modal').classList.remove('hidden');
     document.getElementById('detail-moves-list').innerHTML = ''; 
+
+    // Pré-carrega visualmente na hora para que a carta de baixo já mostre o Pokémon correto durante a animação
+    const cachedPoke = todosPokemon.find(pk => pk.name === idOuNome || pk.id == idOuNome);
+    if (cachedPoke) {
+        atualModalPokemon = cachedPoke.name;
+        document.getElementById('detail-name').textContent = cachedPoke.name.replace(/-/g, ' ');
+        document.getElementById('detail-id').textContent = '#' + cachedPoke.id.toString().padStart(3, '0');
+        document.getElementById('detail-img').src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${cachedPoke.id}.png`;
+        document.getElementById('detail-types').innerHTML = cachedPoke.types.map(t => `<span class="type-badge" style="background-color: ${coresTipos[t]}">${escapeHTML(t)}</span>`).join('');
+    }
     
     const p = await (await fetch(`https://pokeapi.co/api/v2/pokemon/${idOuNome}`)).json();
     const spc = await (await fetch(p.species.url)).json();
@@ -498,6 +604,8 @@ function renderizarMiniCardsPokemon(listaPokes, containerId) {
 async function abrirDetalheMove(nome) {
     atualModalMove = nome;
     document.getElementById('move-modal').classList.remove('hidden');
+    document.getElementById('gm-name').textContent = nome.replace(/-/g, ' ');
+
     if(!moveCache[nome]) moveCache[nome] = await (await fetch(`https://pokeapi.co/api/v2/move/${nome}`)).json();
     const move = moveCache[nome];
     
