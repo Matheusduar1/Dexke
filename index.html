@@ -308,12 +308,13 @@
             <button class="modal-nav-arrow right" onclick="navegarModal('pokemon', 1, this)">&#10095;</button>
             <span class="close-btn" onclick="fecharModal('pokemon-modal')">&times;</span>
             
-            <div style="display: flex; align-items: center; position: absolute; top: 15px; left: 15px; gap: 10px; z-index: 2; flex-wrap: wrap; max-width: 80%;">
-                <span id="shiny-toggle" onclick="toggleShiny()" title="Shiny Toggle">⭐</span>
-                <div id="form-toggles" class="form-toggles"></div>
-            </div>
+            <!-- A estrela Shiny continua fixa no canto esquerdo -->
+            <span id="shiny-toggle" onclick="toggleShiny()" title="Shiny Toggle" style="position: absolute; top: 15px; left: 20px; z-index: 10;">⭐</span>
             
             <div class="modal-header" style="margin-top: 30px;">
+                <!-- Os botões de forma no fluxo normal -->
+                <div id="form-toggles" class="form-toggles" style="justify-content: center; margin-bottom: 15px;"></div>
+                
                 <img id="detail-img" src="" alt="Pokemon">
                 <div class="detail-title">
                     <h2 id="detail-name">Nome</h2>
