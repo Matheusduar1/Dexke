@@ -38,7 +38,7 @@
     <meta name="twitter:image" content="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/323.png">
 
     <!-- 6. Segurança (CSP) -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://*; img-src 'self' data: https://*; media-src 'self' https://*; style-src 'self' 'unsafe-inline' https://*; font-src 'self' https://* data:; script-src 'self' 'unsafe-inline';">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://*; img-src 'self' data: https://*; media-src 'self' https://* blob: data:; style-src 'self' 'unsafe-inline' https://*; font-src 'self' https://* data:; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' 'unsafe-eval' blob: https://cdn.emulatorjs.org; connect-src 'self' https://* blob: data:; worker-src 'self' blob: https://cdn.emulatorjs.org; child-src 'self' blob:;">
 
     <!-- Ícone da Aba do Navegador (Favicon) -->
     <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png">
@@ -66,6 +66,7 @@
             <button class="nav-btn" onclick="mudarAba(event, 'typechart')" data-i18n="tab_types">Tipos</button>
             <button class="nav-btn" onclick="mudarAba(event, 'teams')" data-i18n="tab_teams">Times</button>
             <button class="nav-btn battle-tab-btn" onclick="mudarAba(event, 'battle')" data-i18n="tab_battle">⚔️ Batalha 1v1</button>
+            <button class="nav-btn" onclick="mudarAba(event, 'gba')" data-i18n="tab_gba">🎮 Emulador GBA</button>
         </nav>
     </aside>
 
@@ -304,6 +305,31 @@
 
                     <!-- Log da Batalha -->
                     <div id="battle-log" class="battle-log"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ABA EMULADOR GBA (o usuário fornece a própria ROM) -->
+        <div id="aba-gba" class="aba-content hidden">
+            <div class="info-section" style="margin: 15px;">
+                <h3 data-i18n="gba_title">Emulador GBA</h3>
+                <p data-i18n="gba_desc">Selecione o arquivo .gba (ou .zip) do seu jogo. A ROM é lida apenas no seu navegador e não é enviada para nenhum servidor.</p>
+                <div id="gba-picker"><input type="file" id="gba-rom-input" accept=".gba,.zip,.7z" onchange="iniciarGBA(this)" style="margin: 12px 0;"></div>
+                <button id="gba-reset" class="btn-small hidden" onclick="gbaTrocarRom()" data-i18n="gba_reset">Trocar ROM</button>
+                <p class="gba-note" data-i18n="gba_note">O Dexke não inclui nem distribui ROMs. Use apenas jogos que você possui legalmente. A ROM fica salva só neste navegador e abre sozinha nas próximas vezes. Use "Trocar ROM" para mudar de jogo.</p>
+                <div id="gba-slot">
+                    <div id="gba-wrapper" class="gba-wrapper hidden">
+                        <div id="gba-bar" class="gba-bar">
+                            <span>🎮 GBA</span>
+                            <span>
+                                <button onclick="gbaTamanho(-80)" title="Diminuir">&#8722;</button>
+                                <button onclick="gbaTamanho(80)" title="Aumentar">+</button>
+                                <button onclick="gbaMinimizar()" title="Minimizar / Restaurar">&#9601;</button>
+                                <button onclick="mudarAba(null, 'gba')" title="Voltar para a aba do jogo">&#10530;</button>
+                            </span>
+                        </div>
+                        <div class="gba-game-box"><div id="gba-game"></div></div>
+                    </div>
                 </div>
             </div>
         </div>

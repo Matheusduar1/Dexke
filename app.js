@@ -2,6 +2,7 @@
 const dicionario = {
     pt_BR: {
         tab_dexke: "Dex", tab_moves: "Moves", tab_abilities: "Habilidades", tab_items: "Itens", tab_natures: "Naturezas", tab_types: "Tipos", tab_teams: "Times", tab_battle: "⚔️ Batalha 1v1",
+        tab_gba: "🎮 Emulador GBA", gba_title: "Emulador GBA", gba_desc: "Selecione o arquivo .gba (ou .zip) do seu jogo. A ROM é lida apenas no seu navegador e não é enviada para nenhum servidor.", gba_note: "O Dexke não inclui nem distribui ROMs. Use apenas jogos que você possui legalmente. A ROM fica salva só neste navegador e abre sozinha nas próximas vezes. Use \"Trocar ROM\" para mudar de jogo.", gba_reset: "Trocar ROM",
         loading: "🔄 Carregando dados da PokéAPI...", loading_sub: "Isso pode levar alguns segundos na primeira vez.",
         choosing_poke: "Escolhendo Pokémon para o Time...", cancel: "Cancelar",
         search_poke: "Buscar Pokémon (Ex: Ursaluna, Bloodmoon)...", search_move: "Buscar Move...", search_ability: "Buscar Habilidade...", search_item: "Buscar Item...", search_nature: "Buscar Natureza...",
@@ -28,6 +29,7 @@ const dicionario = {
     },
     en_US: {
         tab_dexke: "Dex", tab_moves: "Moves", tab_abilities: "Abilities", tab_items: "Items", tab_natures: "Natures", tab_types: "Type Chart", tab_teams: "Teams", tab_battle: "⚔️ 1v1 Battle",
+        tab_gba: "🎮 GBA Emulator", gba_title: "GBA Emulator", gba_desc: "Select the .gba (or .zip) file of your game. The ROM is read only in your browser and is never uploaded to any server.", gba_note: "Dexke does not include or distribute ROMs. Only use games you legally own. The ROM is saved only in this browser and opens automatically next time. Use \"Change ROM\" to switch games.", gba_reset: "Change ROM",
         loading: "🔄 Loading PokéAPI data...", loading_sub: "This may take a few seconds the first time.",
         choosing_poke: "Choosing Pokémon for the Team...", cancel: "Cancel",
         search_poke: "Search Pokémon (e.g. Ursaluna, Bloodmoon)...", search_move: "Search Move...", search_ability: "Search Ability...", search_item: "Search Item...", search_nature: "Search Nature...",
@@ -54,6 +56,7 @@ const dicionario = {
     },
     es_ES: {
         tab_dexke: "Dex", tab_moves: "Movimientos", tab_abilities: "Habilidades", tab_items: "Objetos", tab_natures: "Naturalezas", tab_types: "Tipos", tab_teams: "Equipos", tab_battle: "⚔️ Batalla 1v1",
+        tab_gba: "🎮 Emulador GBA", gba_title: "Emulador GBA", gba_desc: "Selecciona el archivo .gba (o .zip) de tu juego. La ROM se lee solo en tu navegador y no se envía a ningún servidor.", gba_note: "Dexke no incluye ni distribuye ROMs. Usa solo juegos que poseas legalmente. La ROM se guarda solo en este navegador y se abre sola la próxima vez. Usa \"Cambiar ROM\" para cambiar de juego.", gba_reset: "Cambiar ROM",
         loading: "🔄 Cargando datos de PokéAPI...", loading_sub: "Esto puede tomar unos segundos.",
         choosing_poke: "Eligiendo Pokémon para el Equipo...", cancel: "Cancelar",
         search_poke: "Buscar Pokémon (Ej: Ursaluna, Bloodmoon)...", search_move: "Buscar Movimiento...", search_ability: "Buscar Habilidad...", search_item: "Buscar Objeto...", search_nature: "Buscar Naturaleza...",
@@ -299,6 +302,7 @@ function mudarAba(event, abaId) {
     if(event && event.target) event.target.classList.add('active');
     if(abaId === 'typechart') { document.getElementById('global-type-chart').innerHTML = ''; gerarTabelaDeTiposGlobal(); }
     
+    if(abaId === 'gba') { gbaDock('inline'); gbaAoAbrirAba(); } else gbaDock('float');
     document.getElementById('sidebar').classList.remove('open');
     document.getElementById('sidebar-overlay').classList.add('hidden');
 }
@@ -1294,5 +1298,117 @@ async function executarTurnoBatalha(moveIdxJogador) {
         estadoBatalha.turno++;
     }
 }
+
+// --- 11. EMULADOR GBA (EmulatorJS) - ROM salva no navegador do próprio usuário ---
+let gbaIniciado = false;
+
+function gbaDB() {
+    return new Promise((resolve, reject) => {
+        const req = indexedDB.open('dexke_gba', 1);
+        req.onupgradeneeded = () => req.result.createObjectStore('roms');
+        req.onsuccess = () => resolve(req.result);
+        req.onerror = () => reject(req.error);
+    });
+}
+async function gbaSalvarRom(nome, blob) {
+    const db = await gbaDB();
+    return new Promise((resolve, reject) => {
+        const tx = db.transaction('roms', 'readwrite');
+        tx.objectStore('roms').put({ nome, blob }, 'rom');
+        tx.oncomplete = resolve; tx.onerror = () => reject(tx.error);
+    });
+}
+async function gbaCarregarRom() {
+    const db = await gbaDB();
+    return new Promise((resolve, reject) => {
+        const req = db.transaction('roms').objectStore('roms').get('rom');
+        req.onsuccess = () => resolve(req.result || null);
+        req.onerror = () => reject(req.error);
+    });
+}
+async function gbaApagarRom() {
+    const db = await gbaDB();
+    return new Promise((resolve, reject) => {
+        const tx = db.transaction('roms', 'readwrite');
+        tx.objectStore('roms').delete('rom');
+        tx.oncomplete = resolve; tx.onerror = () => reject(tx.error);
+    });
+}
+
+function gbaRodar(blob, nome) {
+    if (gbaIniciado) return;
+    gbaIniciado = true;
+    document.getElementById('gba-picker').classList.add('hidden');
+    document.getElementById('gba-reset').classList.remove('hidden');
+    document.getElementById('gba-wrapper').classList.remove('hidden');
+
+    window.EJS_player = '#gba-game';
+    window.EJS_core = 'gba';
+    window.EJS_gameUrl = URL.createObjectURL(blob);
+    window.EJS_gameName = nome.replace(/\.[^.]+$/, '');
+    window.EJS_pathtodata = 'https://cdn.emulatorjs.org/stable/data/';
+    window.EJS_startOnLoaded = true;
+    window.EJS_color = '#c84b31';
+    window.EJS_language = 'pt-BR';
+
+    const s = document.createElement('script');
+    s.src = window.EJS_pathtodata + 'loader.js';
+    document.body.appendChild(s);
+}
+
+// Primeira vez: usuário escolhe o arquivo -> salva no navegador e inicia
+async function iniciarGBA(input) {
+    const arquivo = input.files && input.files[0];
+    if (!arquivo) return;
+    try {
+        await gbaSalvarRom(arquivo.name, arquivo);
+        if (navigator.storage && navigator.storage.persist) navigator.storage.persist();
+    } catch (e) { console.warn('Não foi possível salvar a ROM neste navegador', e); }
+    gbaRodar(arquivo, arquivo.name);
+}
+
+// Ao abrir a aba: se já existe ROM salva, inicia sozinho
+async function gbaAoAbrirAba() {
+    if (gbaIniciado) return;
+    try {
+        const salvo = await gbaCarregarRom();
+        if (salvo && salvo.blob) gbaRodar(salvo.blob, salvo.nome || 'game');
+    } catch (e) { console.warn('Erro ao ler ROM salva', e); }
+}
+
+async function gbaTrocarRom() {
+    try { await gbaApagarRom(); } catch (e) {}
+    location.reload();
+}
+
+// Move o emulador entre a aba (grande) e um canto da tela (flutuante) sem pausar o jogo
+function gbaDock(modo) {
+    if (!gbaIniciado) return;
+    const w = document.getElementById('gba-wrapper');
+    if (modo === 'float') {
+        if (w.parentElement !== document.body) document.body.appendChild(w);
+        w.classList.add('gba-floating');
+    } else {
+        w.classList.remove('gba-floating', 'gba-collapsed');
+        const slot = document.getElementById('gba-slot');
+        if (w.parentElement !== slot) slot.appendChild(w);
+    }
+    setTimeout(() => window.dispatchEvent(new Event('resize')), 50);
+}
+function gbaMinimizar() { document.getElementById('gba-wrapper').classList.toggle('gba-collapsed'); }
+
+// Tamanho da janelinha flutuante (salvo no navegador)
+function gbaAplicarTamanho(w) {
+    document.documentElement.style.setProperty('--gba-w', w + 'px');
+    setTimeout(() => window.dispatchEvent(new Event('resize')), 50);
+}
+function gbaTamanho(delta) {
+    let w = 420;
+    try { w = parseInt(localStorage.getItem('dexke_gba_w')) || 420; } catch (e) {}
+    w = Math.max(240, Math.min(1000, w + delta));
+    try { localStorage.setItem('dexke_gba_w', w); } catch (e) {}
+    gbaAplicarTamanho(w);
+}
+try { const wSalvo = parseInt(localStorage.getItem('dexke_gba_w')); if (wSalvo) document.documentElement.style.setProperty('--gba-w', wSalvo + 'px'); } catch (e) {}
 
 iniciarApp();
