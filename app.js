@@ -1,7 +1,7 @@
 // --- 1. SISTEMA DE IDIOMAS (i18n) E TRADUÇÃO DINÂMICA ---
 const dicionario = {
     pt_BR: {
-        tab_dexke: "Pokédex", tab_moves: "Moves", tab_abilities: "Habilidades", tab_items: "Itens", tab_natures: "Naturezas", tab_types: "Tipos", tab_teams: "Times", tab_battle: "⚔️ Batalha 1v1",
+        tab_dexke: "Dex", tab_moves: "Moves", tab_abilities: "Habilidades", tab_items: "Itens", tab_natures: "Naturezas", tab_types: "Tipos", tab_teams: "Times", tab_battle: "⚔️ Batalha 1v1",
         loading: "🔄 Carregando dados da PokéAPI...", loading_sub: "Isso pode levar alguns segundos na primeira vez.",
         choosing_poke: "Escolhendo Pokémon para o Time...", cancel: "Cancelar",
         search_poke: "Buscar Pokémon (Ex: Ursaluna, Bloodmoon)...", search_move: "Buscar Move...", search_ability: "Buscar Habilidade...", search_item: "Buscar Item...", search_nature: "Buscar Natureza...",
@@ -27,7 +27,7 @@ const dicionario = {
         evo_lvl: "Nível", evo_trade: "Troca", evo_item: "Item:", evo_happy: "Felicidade", evo_special: "Forma Especial"
     },
     en_US: {
-        tab_dexke: "Pokédex", tab_moves: "Moves", tab_abilities: "Abilities", tab_items: "Items", tab_natures: "Natures", tab_types: "Type Chart", tab_teams: "Teams", tab_battle: "⚔️ 1v1 Battle",
+        tab_dexke: "Dex", tab_moves: "Moves", tab_abilities: "Abilities", tab_items: "Items", tab_natures: "Natures", tab_types: "Type Chart", tab_teams: "Teams", tab_battle: "⚔️ 1v1 Battle",
         loading: "🔄 Loading PokéAPI data...", loading_sub: "This may take a few seconds the first time.",
         choosing_poke: "Choosing Pokémon for the Team...", cancel: "Cancel",
         search_poke: "Search Pokémon (e.g. Ursaluna, Bloodmoon)...", search_move: "Search Move...", search_ability: "Search Ability...", search_item: "Search Item...", search_nature: "Search Nature...",
@@ -53,7 +53,7 @@ const dicionario = {
         evo_lvl: "Level", evo_trade: "Trade", evo_item: "Item:", evo_happy: "Happiness", evo_special: "Special Form"
     },
     es_ES: {
-        tab_dexke: "Pokédex", tab_moves: "Movimientos", tab_abilities: "Habilidades", tab_items: "Objetos", tab_natures: "Naturalezas", tab_types: "Tipos", tab_teams: "Equipos", tab_battle: "⚔️ Batalla 1v1",
+        tab_dexke: "Dex", tab_moves: "Movimientos", tab_abilities: "Habilidades", tab_items: "Objetos", tab_natures: "Naturalezas", tab_types: "Tipos", tab_teams: "Equipos", tab_battle: "⚔️ Batalla 1v1",
         loading: "🔄 Cargando datos de PokéAPI...", loading_sub: "Esto puede tomar unos segundos.",
         choosing_poke: "Eligiendo Pokémon para el Equipo...", cancel: "Cancelar",
         search_poke: "Buscar Pokémon (Ej: Ursaluna, Bloodmoon)...", search_move: "Buscar Movimiento...", search_ability: "Buscar Habilidad...", search_item: "Buscar Objeto...", search_nature: "Buscar Naturaleza...",
@@ -166,12 +166,64 @@ let todosPokemon = [], todosMoves = [], todasAbilities = [], todosItems = [], po
 let listaFiltradaPokemon = [], listaFiltradaMoves = [], listaFiltradaAbilities = [], listaFiltradaItems = [];
 let atualModalPokemon = '', atualModalMove = '', atualModalAbility = '', atualModalItem = '';
 
-let isShiny = false, currentPokemonNormalUrl = '', currentPokemonShinyUrl = '';
+// Variáveis Globais de Visualização e Áudio
+let isShiny = false, is3D = false;
+let currentPokemonNormalUrl = '', currentPokemonShinyUrl = '';
+let currentPokemon3DNormalUrl = '', currentPokemon3DShinyUrl = '';
+let currentCryUrl = '';
+
 const moveCache = {}, abilityCache = {}, itemCache = {}, cacheRelacoesTipos = {};
 let timesSalvos = [[], [], [], [], [], []];
 try { const mem = localStorage.getItem('dexke_times'); if(mem) timesSalvos = JSON.parse(mem); } catch (e) { localStorage.removeItem('dexke_times'); }
 
 let timeAtualIndex = 0, modoSelecaoTimeSlot = null;
+
+// --- FUNÇÕES DE ÁUDIO E 3D ---
+function tocarGrito() {
+    if (currentCryUrl) {
+        const audio = new Audio(currentCryUrl);
+        audio.volume = 0.4;
+        audio.play().catch(e => console.log("Erro ao tocar áudio", e));
+    }
+}
+
+function toggle3D() {
+    if (!currentPokemon3DNormalUrl) return;
+    is3D = !is3D;
+    const btn3D = document.getElementById('model3d-toggle');
+    if (btn3D) {
+        btn3D.style.background = is3D ? 'var(--primary)' : '#333';
+        btn3D.style.boxShadow = is3D ? '0 0 8px var(--primary)' : 'none';
+    }
+    atualizarImagemModal();
+}
+
+function toggleShiny() {
+    isShiny = !isShiny;
+    const shinyEl = document.getElementById('shiny-toggle');
+    if(shinyEl) shinyEl.style.color = isShiny ? '#f1c40f' : '#ccc';
+    atualizarImagemModal();
+}
+
+function atualizarImagemModal() {
+    const imgEl = document.getElementById('detail-img');
+    if(!imgEl) return;
+
+    // Resetar para auto para evitar que os sprites 3D/GIFs sejam esticados
+    imgEl.style.width = 'auto';
+    imgEl.style.height = 'auto';
+    imgEl.style.objectFit = 'contain';
+
+    if (is3D && currentPokemon3DNormalUrl) {
+        imgEl.src = isShiny ? (currentPokemon3DShinyUrl || currentPokemon3DNormalUrl) : currentPokemon3DNormalUrl;
+        imgEl.style.maxWidth = '100px';
+        imgEl.style.maxHeight = '100px';
+    } else {
+        imgEl.src = isShiny ? currentPokemonShinyUrl : currentPokemonNormalUrl;
+        imgEl.style.maxWidth = '140px';
+        imgEl.style.maxHeight = '140px';
+    }
+}
 
 // --- 2. CONTROLE DE SIDEBAR E SCROLL DO CABEÇALHO ---
 function toggleSidebar() {
@@ -335,7 +387,6 @@ function animarTransicaoCarta(touchElId, direcao, startOffsetX = 0) {
     if (!modalContent) return;
     const modalParent = modalContent.parentElement;
 
-    // Limpa clones e classes residuais caso o utilizador deslize rapidamente
     modalParent.querySelectorAll('.modal-card-clone').forEach(c => c.remove());
     modalContent.classList.remove('card-reveal-under', 'card-enter-left');
     modalContent.style.transform = '';
@@ -344,7 +395,6 @@ function animarTransicaoCarta(touchElId, direcao, startOffsetX = 0) {
     const rect = modalContent.getBoundingClientRect();
     const clone = modalContent.cloneNode(true);
 
-    // Remove IDs do clone para não interferir nas atualizações do DOM real
     clone.removeAttribute('id');
     clone.querySelectorAll('[id]').forEach(el => el.removeAttribute('id'));
     clone.classList.add('modal-card-clone');
@@ -361,19 +411,15 @@ function animarTransicaoCarta(touchElId, direcao, startOffsetX = 0) {
     clone.scrollTop = modalContent.scrollTop;
 
     if (direcao === 1) {
-        // AVANÇAR (Direita -> Esquerda): A carta atual (clone) sai da frente e revela a próxima por baixo
         clone.style.zIndex = '260';
         modalContent.style.zIndex = '210';
         clone.style.setProperty('--drag-x', `${startOffsetX}px`);
         clone.style.setProperty('--drag-rot', `${(startOffsetX * 0.04).toFixed(2)}deg`);
-
         clone.classList.add('card-exit-left');
         modalContent.classList.add('card-reveal-under');
     } else {
-        // VOLTAR (Esquerda -> Direita): A carta anterior entra pela esquerda sobrepondo a atual (clone)
         clone.style.zIndex = '210';
         modalContent.style.zIndex = '260';
-
         clone.classList.add('card-stay-under');
         modalContent.classList.add('card-enter-left');
     }
@@ -449,11 +495,9 @@ function configurarSwipeModais() {
 
             if (isDraggingCard) {
                 currentDx = dx;
-                // Se arrastar para a esquerda (avançar), a carta acompanha o dedo para sair da frente
                 if (dx < 0) {
                     el.style.transform = `translateX(${dx}px) rotate(${(dx * 0.04).toFixed(2)}deg)`;
                 } else {
-                    // Se arrastar para a direita (voltar), recua levemente preparando a entrada da carta anterior
                     el.style.transform = `scale(${Math.max(0.93, 1 - dx / 1200)})`;
                 }
             }
@@ -483,7 +527,6 @@ async function abrirDetalhes(idOuNome) {
     document.getElementById('pokemon-modal').classList.remove('hidden');
     document.getElementById('detail-moves-list').innerHTML = ''; 
 
-    // Pré-carrega visualmente na hora para que a carta de baixo já mostre o Pokémon correto durante a animação
     const cachedPoke = todosPokemon.find(pk => pk.name === idOuNome || pk.id == idOuNome);
     if (cachedPoke) {
         atualModalPokemon = cachedPoke.name;
@@ -499,10 +542,39 @@ async function abrirDetalhes(idOuNome) {
     pokemonAtualParaMoves = p.moves;
 
     isShiny = false;
+    is3D = false;
+
+    // Sprites Oficiais e 3D/Showdown Nativos
     currentPokemonNormalUrl = p.sprites.other['official-artwork'].front_default || p.sprites.front_default;
     currentPokemonShinyUrl = p.sprites.other['official-artwork'].front_shiny || p.sprites.front_shiny || currentPokemonNormalUrl;
+    currentPokemon3DNormalUrl = (p.sprites.other && p.sprites.other.showdown && p.sprites.other.showdown.front_default) ? p.sprites.other.showdown.front_default : '';
+    currentPokemon3DShinyUrl = (p.sprites.other && p.sprites.other.showdown && p.sprites.other.showdown.front_shiny) ? p.sprites.other.showdown.front_shiny : '';
+
+    // Configuração do botão 3D
+    const btn3D = document.getElementById('model3d-toggle');
+    if (btn3D) {
+        btn3D.style.background = '#333';
+        btn3D.style.boxShadow = 'none';
+        if (currentPokemon3DNormalUrl) {
+            btn3D.style.opacity = '1'; btn3D.style.cursor = 'pointer';
+        } else {
+            btn3D.style.opacity = '0.3'; btn3D.style.cursor = 'not-allowed';
+        }
+    }
+
+    // Configuração do Áudio (Cries)
+    currentCryUrl = p.cries && p.cries.latest ? p.cries.latest : (p.cries && p.cries.legacy ? p.cries.legacy : '');
+    const cryBtn = document.getElementById('cry-btn');
+    if (cryBtn) {
+        if (currentCryUrl) {
+            cryBtn.style.filter = 'none'; cryBtn.style.opacity = '1'; cryBtn.style.cursor = 'pointer';
+        } else {
+            cryBtn.style.filter = 'grayscale(100%)'; cryBtn.style.opacity = '0.4'; cryBtn.style.cursor = 'not-allowed';
+        }
+    }
+
     document.getElementById('shiny-toggle').style.color = '#ccc';
-    document.getElementById('detail-img').src = currentPokemonNormalUrl;
+    atualizarImagemModal();
     
     document.getElementById('detail-name').textContent = escapeHTML(p.name).replace(/-/g, ' ');
     document.getElementById('detail-id').textContent = '#' + spc.id.toString().padStart(3, '0');
@@ -545,12 +617,6 @@ async function abrirDetalhes(idOuNome) {
 
     calcularDano(p.types);
     buscarEvolucoes(p.species.url);
-}
-
-function toggleShiny() {
-    isShiny = !isShiny;
-    document.getElementById('detail-img').src = isShiny ? currentPokemonShinyUrl : currentPokemonNormalUrl;
-    document.getElementById('shiny-toggle').style.color = isShiny ? '#f1c40f' : '#ccc';
 }
 
 function getIconeClasse(classe) { return classe === 'physical' ? '⚔️ FIS' : (classe === 'special' ? '🔮 ESP' : '🛡 STA'); }
@@ -741,9 +807,58 @@ async function buscarEvolucoes(url) {
     } catch (e) { container.innerHTML = t('js_no_evo'); }
 }
 
-// --- 9. TEAM BUILDER E TABELAS DE TIPOS ---
+// --- 9. TEAM BUILDER, TABELAS DE TIPOS E SHOWDOWN IO ---
 function mudarTimeSelecionado() { timeAtualIndex = parseInt(document.getElementById('team-selector').value); renderizarTime(); }
 function removerDoTime(indexLocal) { timesSalvos[timeAtualIndex][indexLocal] = null; localStorage.setItem('dexke_times', JSON.stringify(timesSalvos)); renderizarTime(); }
+
+function abrirImportarShowdown() {
+    document.getElementById('showdown-textarea').value = '';
+    document.getElementById('showdown-io-container').classList.remove('hidden');
+}
+
+function exportarShowdown() {
+    const time = timesSalvos[timeAtualIndex].filter(p => p !== null);
+    if (time.length === 0) return alert("O time atual está vazio!");
+    
+    const texto = time.map(p => {
+        let nomeMaiusculo = p.name.charAt(0).toUpperCase() + p.name.slice(1);
+        return `${nomeMaiusculo} @ Leftovers\nAbility: Unknown\nEVs: 252 HP / 252 Atk / 4 Spe\nHardy Nature\n- Tackle\n`;
+    }).join('\n');
+    
+    document.getElementById('showdown-textarea').value = texto;
+    document.getElementById('showdown-io-container').classList.remove('hidden');
+}
+
+async function processarImportacaoShowdown() {
+    const texto = document.getElementById('showdown-textarea').value;
+    const blocos = texto.split(/\n\n+/); 
+    let novoTime = [];
+    
+    for (let bloco of blocos) {
+        if (!bloco.trim()) continue;
+        let primeiraLinha = bloco.split('\n')[0].trim();
+        let nomeBruto = primeiraLinha.split('@')[0].trim();
+        
+        if (nomeBruto.includes('(') && nomeBruto.includes(')')) {
+            const match = nomeBruto.match(/\((.*?)\)/);
+            if (match) nomeBruto = match[1];
+        }
+        
+        nomeBruto = nomeBruto.toLowerCase().replace(/ /g, '-').replace(/[^a-z0-9-]/g, '');
+        let pEncontrado = todosPokemon.find(pk => pk.name === nomeBruto || pk.name.startsWith(nomeBruto));
+        
+        if (pEncontrado) {
+            novoTime.push({ id: pEncontrado.id, name: pEncontrado.name, types: pEncontrado.types });
+        }
+        if (novoTime.length >= 6) break;
+    }
+    
+    while(novoTime.length < 6) novoTime.push(null);
+    timesSalvos[timeAtualIndex] = novoTime;
+    localStorage.setItem('dexke_times', JSON.stringify(timesSalvos));
+    document.getElementById('showdown-io-container').classList.add('hidden');
+    renderizarTime(); 
+}
 
 async function renderizarTime() {
     const time = timesSalvos[timeAtualIndex]; while(time.length < 6) time.push(null);
@@ -815,7 +930,7 @@ async function calcularMultiplicadorExato(tipoAtacante, tiposDefensor) {
     return mult;
 }
 
-// --- 10. SIMULADOR DE BATALHA 1v1 (SHOWDOWN LITE) ---
+// --- 10. SIMULADOR DE BATALHA 1v1 E MOTOR DE STATUS/CLIMA ---
 const dadosBatalhaCache = { p1: null, p2: null };
 let estadoBatalha = null;
 
@@ -935,8 +1050,8 @@ async function montarCombatente(lado) {
 
     return {
         name: p.name.replace(/-/g, ' ').toUpperCase(),
-        spriteFront: p.sprites.front_default || p.sprites.other['official-artwork'].front_default,
-        spriteBack: p.sprites.back_default || p.sprites.front_default,
+        spriteFront: (p.sprites.other && p.sprites.other.showdown && p.sprites.other.showdown.front_default) ? p.sprites.other.showdown.front_default : (p.sprites.front_default || p.sprites.other['official-artwork'].front_default),
+        spriteBack: (p.sprites.other && p.sprites.other.showdown && p.sprites.other.showdown.back_default) ? p.sprites.other.showdown.back_default : (p.sprites.back_default || p.sprites.front_default),
         types: p.types.map(t => t.type.name),
         ability: document.getElementById(`${lado}-ability`).value,
         item: item,
@@ -944,14 +1059,16 @@ async function montarCombatente(lado) {
         maxHp: stats['hp'],
         hp: stats['hp'],
         stats: stats,
-        moves: movesEscolhidos
+        moves: movesEscolhidos,
+        status: null,
+        statusTurnos: 0
     };
 }
 
 async function iniciarBatalha1v1() {
     const p1 = await montarCombatente('p1');
     const p2 = await montarCombatente('p2');
-    estadoBatalha = { p1, p2, turno: 1, encerrada: false };
+    estadoBatalha = { p1, p2, turno: 1, encerrada: false, clima: 'none', turnosClima: 0 };
 
     const arena = document.getElementById('battle-arena');
     arena.classList.remove('hidden');
@@ -982,7 +1099,38 @@ function atualizarUIBatalha() {
         bar.style.width = pct + '%';
         bar.style.backgroundColor = pct > 50 ? '#2ecc71' : (pct > 20 ? '#f1c40f' : '#e74c3c');
         document.getElementById(`arena-${lado}-hp-text`).textContent = `${c.hp} / ${c.maxHp} (${pct}%)`;
+        
+        const stEl = document.getElementById(`arena-${lado}-status`);
+        if (c.status) {
+            stEl.style.display = 'inline-block';
+            stEl.textContent = c.status.toUpperCase();
+            const coresStatus = {brn:'#e74c3c', par:'#f1c40f', psn:'#9b59b6', slp:'#bdc3c7', frz:'#3498db'};
+            stEl.style.backgroundColor = coresStatus[c.status] || '#555';
+        } else {
+            stEl.style.display = 'none';
+        }
     });
+
+    const wEl = document.getElementById('arena-weather');
+    if (estadoBatalha.clima !== 'none') {
+        const nomesClima = {rain: '🌧️ Chovendo', sun: '☀️ Sol Intenso', sand: '🌪️ Tempestade de Areia', snow: '❄️ Nevando'};
+        wEl.textContent = nomesClima[estadoBatalha.clima] || '';
+    } else {
+        wEl.textContent = '';
+    }
+}
+
+function podeAtacar(c) {
+    if (c.status === 'par' && Math.random() < 0.25) { adicionarLogBatalha(`⚡ ${c.name} está paralisado e não consegue se mover!`); return false; }
+    if (c.status === 'slp') {
+        if (c.statusTurnos <= 0) { c.status = null; adicionarLogBatalha(`😴 ${c.name} acordou!`); return true; }
+        c.statusTurnos--; adicionarLogBatalha(`💤 ${c.name} está dormindo profundamente...`); return false;
+    }
+    if (c.status === 'frz') {
+        if (Math.random() < 0.2) { c.status = null; adicionarLogBatalha(`🧊 ${c.name} se descongelou!`); return true; }
+        adicionarLogBatalha(`❄️ ${c.name} está congelado!`); return false;
+    }
+    return true;
 }
 
 function adicionarLogBatalha(msg) {
@@ -992,6 +1140,10 @@ function adicionarLogBatalha(msg) {
 }
 
 async function calcularDanoAtaque(atacante, defensor, move) {
+    if (move.name.includes('sunny')) { estadoBatalha.clima = 'sun'; estadoBatalha.turnosClima = 5; return adicionarLogBatalha(`☀️ A luz do Sol ficou intensa!`); }
+    if (move.name.includes('rain')) { estadoBatalha.clima = 'rain'; estadoBatalha.turnosClima = 5; return adicionarLogBatalha(`🌧️ Começou a chover!`); }
+    if (move.name.includes('sandstorm')) { estadoBatalha.clima = 'sand'; estadoBatalha.turnosClima = 5; return adicionarLogBatalha(`🌪️ Uma tempestade de areia começou!`); }
+
     if (move.damage_class.name === 'status' || !move.power) {
         if (move.name.includes('recover') || move.name.includes('rest') || move.name.includes('roost') || move.name.includes('synthesis')) {
             const cura = Math.floor(atacante.maxHp * 0.5);
@@ -1011,8 +1163,17 @@ async function calcularDanoAtaque(atacante, defensor, move) {
 
     if (isPhys && atacante.item === 'choice-band') atk = Math.floor(atk * 1.5);
     if (!isPhys && atacante.item === 'choice-specs') atk = Math.floor(atk * 1.5);
+    if (atacante.status === 'brn' && isPhys) atk = Math.floor(atk * 0.5);
 
     let baseDmg = Math.floor(Math.floor((42 * move.power * (atk / def)) / 50) + 2);
+
+    if (estadoBatalha.clima === 'sun') {
+        if (move.type.name === 'fire') baseDmg = Math.floor(baseDmg * 1.5);
+        if (move.type.name === 'water') baseDmg = Math.floor(baseDmg * 0.5);
+    } else if (estadoBatalha.clima === 'rain') {
+        if (move.type.name === 'water') baseDmg = Math.floor(baseDmg * 1.5);
+        if (move.type.name === 'fire') baseDmg = Math.floor(baseDmg * 0.5);
+    }
 
     if (atacante.types.includes(move.type.name)) baseDmg = Math.floor(baseDmg * 1.5);
 
@@ -1046,20 +1207,41 @@ async function calcularDanoAtaque(atacante, defensor, move) {
         atacante.hp = Math.max(0, atacante.hp - rh);
         adicionarLogBatalha(`🪖 ${atacante.name} sofreu ${rh} de dano no Rocky Helmet de ${defensor.name}!`);
     }
+
+    if (defensor.hp > 0 && move.meta && move.meta.ailment && move.meta.ailment.name !== 'none' && !defensor.status) {
+        let chance = move.meta.ailment_chance || 100;
+        if (Math.random() * 100 <= chance) {
+            let ail = move.meta.ailment.name;
+            if (ail === 'burn' && !defensor.types.includes('fire')) { defensor.status = 'brn'; adicionarLogBatalha(`🔥 ${defensor.name} foi queimado!`); }
+            else if (ail === 'paralysis' && !defensor.types.includes('electric')) { defensor.status = 'par'; adicionarLogBatalha(`⚡ ${defensor.name} foi paralisado!`); }
+            else if (ail === 'poison' && !defensor.types.includes('poison') && !defensor.types.includes('steel')) { defensor.status = 'psn'; adicionarLogBatalha(`☠️ ${defensor.name} foi envenenado!`); }
+            else if (ail === 'freeze' && !defensor.types.includes('ice')) { defensor.status = 'frz'; adicionarLogBatalha(`🧊 ${defensor.name} foi congelado!`); }
+            else if (ail === 'sleep') { defensor.status = 'slp'; defensor.statusTurnos = Math.floor(Math.random()*3)+1; adicionarLogBatalha(`💤 ${defensor.name} adormeceu!`); }
+        }
+    }
 }
 
-async function aplicarFimDeTurno(combatente) {
-    if (combatente.hp <= 0) return;
-    if (combatente.item === 'leftovers' && combatente.hp < combatente.maxHp) {
-        const heal = Math.max(1, Math.floor(combatente.maxHp / 16));
-        combatente.hp = Math.min(combatente.maxHp, combatente.hp + heal);
-        adicionarLogBatalha(`🍎 Leftovers restaurou ${heal} HP de ${combatente.name}.`);
+async function aplicarFimDeTurnoEClima(c) {
+    if (c.hp <= 0) return;
+    
+    if (c.status === 'brn') { c.hp = Math.max(0, c.hp - Math.floor(c.maxHp / 16)); adicionarLogBatalha(`🔥 ${c.name} sofreu dano da queimadura.`); }
+    if (c.status === 'psn') { c.hp = Math.max(0, c.hp - Math.floor(c.maxHp / 8)); adicionarLogBatalha(`☠️ ${c.name} sofreu dano do veneno.`); }
+    
+    if (estadoBatalha.clima === 'sand' && !c.types.includes('rock') && !c.types.includes('ground') && !c.types.includes('steel')) {
+        c.hp = Math.max(0, c.hp - Math.floor(c.maxHp / 16)); adicionarLogBatalha(`🌪️ ${c.name} foi atingido pela areia.`);
     }
-    if (combatente.item === 'sitrus-berry' && !combatente.itemUsado && combatente.hp <= combatente.maxHp / 2) {
-        const heal = Math.floor(combatente.maxHp * 0.25);
-        combatente.hp = Math.min(combatente.maxHp, combatente.hp + heal);
-        combatente.itemUsado = true;
-        adicionarLogBatalha(`🍒 Sitrus Berry restaurou ${heal} HP de ${combatente.name}!`);
+
+    if (c.item === 'leftovers' && c.hp < c.maxHp) {
+        const heal = Math.max(1, Math.floor(c.maxHp / 16));
+        c.hp = Math.min(c.maxHp, c.hp + heal);
+        adicionarLogBatalha(`🍎 Leftovers restaurou ${heal} HP de ${c.name}.`);
+    }
+    
+    if (c.item === 'sitrus-berry' && !c.itemUsado && c.hp <= c.maxHp / 2) {
+        const heal = Math.floor(c.maxHp * 0.25);
+        c.hp = Math.min(c.maxHp, c.hp + heal);
+        c.itemUsado = true;
+        adicionarLogBatalha(`🍒 Sitrus Berry restaurou ${heal} HP de ${c.name}!`);
     }
 }
 
@@ -1079,20 +1261,29 @@ async function executarTurnoBatalha(moveIdxJogador) {
 
     adicionarLogBatalha(`<hr style="border-color:#333; margin:6px 0;"><strong>--- Turno ${estadoBatalha.turno} ---</strong>`);
 
+    let speedP1 = p1.status === 'par' ? p1.stats.speed / 2 : p1.stats.speed;
+    let speedP2 = p2.status === 'par' ? p2.stats.speed / 2 : p2.stats.speed;
+
     const p1Primeiro = (moveP1.priority || 0) > (melhorMoveP2.priority || 0) || 
-                       ((moveP1.priority || 0) === (melhorMoveP2.priority || 0) && p1.stats.speed >= p2.stats.speed);
+                       ((moveP1.priority || 0) === (melhorMoveP2.priority || 0) && speedP1 >= speedP2);
 
     const ordem = p1Primeiro ? [[p1, p2, moveP1], [p2, p1, melhorMoveP2]] : [[p2, p1, melhorMoveP2], [p1, p2, moveP1]];
 
     for (let [atq, def, mv] of ordem) {
-        if (atq.hp > 0 && def.hp > 0) {
-            await calcularDanoAtaque(atq, def, mv);
+        if (atq.hp > 0 && def.hp > 0 && !estadoBatalha.encerrada) {
+            if (podeAtacar(atq)) await calcularDanoAtaque(atq, def, mv);
             atualizarUIBatalha();
         }
     }
 
-    await aplicarFimDeTurno(p1);
-    await aplicarFimDeTurno(p2);
+    if (p1.hp > 0) await aplicarFimDeTurnoEClima(p1);
+    if (p2.hp > 0) await aplicarFimDeTurnoEClima(p2);
+    
+    if (estadoBatalha.clima !== 'none') {
+        estadoBatalha.turnosClima--;
+        if (estadoBatalha.turnosClima <= 0) { adicionarLogBatalha(`🌤️ O clima voltou ao normal.`); estadoBatalha.clima = 'none'; }
+    }
+
     atualizarUIBatalha();
 
     if (p1.hp <= 0 || p2.hp <= 0) {

@@ -14,7 +14,7 @@ body { background-color: var(--bg-dark); margin: 0; padding: 0; overflow-x: hidd
 /* ANIMAÇÃO GLOBAL DE CLIQUE EM TUDO QUE É PRESSIONÁVEL */
 button:active, .list-item:active, .ability-box-btn:active, .evo-item:active, 
 .team-slot:active, .move-row:active, .mini-poke-card:active, .hamburger-btn:active, 
-#shiny-toggle:active, .form-btn:active {
+#shiny-toggle:active, #cry-btn:active, .form-btn:active {
     transform: scale(0.94) !important;
     transition: transform 0.08s ease-in-out !important;
 }
@@ -176,20 +176,12 @@ button:active, .list-item:active, .ability-box-btn:active, .evo-item:active,
 }
 
 /* Avançar (Direita para Esquerda): Tira a carta da frente e revela a de baixo */
-.card-exit-left {
-    animation: cardExitLeftAnim 0.36s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-}
-.card-reveal-under {
-    animation: cardRevealUnderAnim 0.36s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-}
+.card-exit-left { animation: cardExitLeftAnim 0.36s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+.card-reveal-under { animation: cardRevealUnderAnim 0.36s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
 
 /* Voltar (Esquerda para Direita): Nova carta vem da esquerda sobrepondo a atual */
-.card-enter-left {
-    animation: cardEnterLeftAnim 0.36s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-}
-.card-stay-under {
-    animation: cardStayUnderAnim 0.36s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-}
+.card-enter-left { animation: cardEnterLeftAnim 0.36s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+.card-stay-under { animation: cardStayUnderAnim 0.36s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
 
 @keyframes cardExitLeftAnim {
     0% { transform: translateX(var(--drag-x, 0px)) rotate(var(--drag-rot, 0deg)); opacity: 1; }
@@ -286,8 +278,9 @@ button:active, .list-item:active, .ability-box-btn:active, .evo-item:active,
 .mini-poke-card:hover { border-color: var(--primary); background: #fff8f6; }
 .mini-poke-card img { width: 48px; height: 48px; }
 
-#shiny-toggle { font-size: 22px; cursor: pointer; color: #ccc; transition: 0.2s; user-select: none; text-shadow: 1px 1px 2px rgba(0,0,0,0.2); }
 #shiny-toggle:hover { transform: scale(1.2); }
+#cry-btn:hover { transform: scale(1.2); }
+
 .form-toggles { display: flex; gap: 6px; align-items: center; flex-wrap: wrap;}
 .form-btn { font-size: 12px; font-weight: bold; border-radius: 4px; cursor: pointer; padding: 3px 8px; box-shadow: 1px 1px 3px rgba(0,0,0,0.3); transition: 0.2s; }
 .form-base { background: #eee; color: #333; border: 1px solid #ccc;}

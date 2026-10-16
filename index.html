@@ -38,7 +38,7 @@
     <meta name="twitter:image" content="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/323.png">
 
     <!-- 6. Segurança (CSP) -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://*; img-src 'self' data: https://*; style-src 'self' 'unsafe-inline' https://*; font-src 'self' https://* data:; script-src 'self' 'unsafe-inline';">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://*; img-src 'self' data: https://*; media-src 'self' https://*; style-src 'self' 'unsafe-inline' https://*; font-src 'self' https://* data:; script-src 'self' 'unsafe-inline';">
 
     <!-- Ícone da Aba do Navegador (Favicon) -->
     <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png">
@@ -70,7 +70,7 @@
     </aside>
 
     <div class="app-container">
-        <!-- Cabeçalho Inteligente (Smart Sticky Header) -->
+        <!-- Cabeçalho Inteligente -->
         <header id="main-header" class="header">
             <div class="header-left">
                 <button class="hamburger-btn" onclick="toggleSidebar()" title="Menu">☰</button>
@@ -166,15 +166,30 @@
             </div>
         </div>
 
-        <!-- ABA TIMES -->
+        <!-- ABA TIMES (Com Import/Export Showdown) -->
         <div id="aba-teams" class="aba-content hidden">
-            <div class="search-container">
-                <select id="team-selector" onchange="mudarTimeSelecionado()">
+            <div class="search-container" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                <select id="team-selector" onchange="mudarTimeSelecionado()" style="padding: 8px; border-radius: 5px;">
                     <option value="0" data-i18n="team_1">Time 1</option><option value="1" data-i18n="team_2">Time 2</option>
                     <option value="2" data-i18n="team_3">Time 3</option><option value="3" data-i18n="team_4">Time 4</option>
                     <option value="4" data-i18n="team_5">Time 5</option><option value="5" data-i18n="team_6">Time 6</option>
                 </select>
+                <div style="display: flex; gap: 5px;">
+                    <button class="btn-small" onclick="abrirImportarShowdown()" style="background:#2ecc71;">📥 Importar</button>
+                    <button class="btn-small" onclick="exportarShowdown()" style="background:#3498db;">📤 Exportar</button>
+                </div>
             </div>
+            
+            <!-- Área de Texto para o formato Showdown -->
+            <div id="showdown-io-container" class="hidden info-section" style="margin: 10px 15px; padding: 10px; background: #fff; border: 2px solid #ccc;">
+                <h3 style="font-size: 14px; margin-bottom: 5px;">Formato Showdown</h3>
+                <textarea id="showdown-textarea" style="width: 100%; height: 120px; font-family: monospace; font-size: 12px; padding: 8px; resize: none;" placeholder="Cole aqui seu time no formato Pokémon Showdown..."></textarea>
+                <div style="display: flex; gap: 10px; margin-top: 5px;">
+                    <button class="btn-small" onclick="processarImportacaoShowdown()" style="background: var(--primary); width: 100%;">Confirmar Importação</button>
+                    <button class="btn-small" onclick="document.getElementById('showdown-io-container').classList.add('hidden')" style="background: #777;">Fechar</button>
+                </div>
+            </div>
+
             <div class="team-builder-container">
                 <div id="team-slots" class="team-slots-grid"></div>
                 <div class="info-section" style="margin-top: 15px;">
@@ -251,14 +266,17 @@
                     <button class="btn-dark" style="background: var(--primary); font-size: 16px; padding: 15px;" onclick="iniciarBatalha1v1()" data-i18n="start_battle">⚔️ Iniciar Batalha 1v1!</button>
                 </div>
 
-                <!-- Arena de Batalha -->
+                <!-- Arena de Batalha (Com Clima e Status) -->
                 <div id="battle-arena" class="info-section hidden" style="margin: 15px;">
                     <div class="arena-field">
+                        <!-- Indicador de Clima -->
+                        <div id="arena-weather" style="text-align: center; font-weight: bold; color: #fff; text-shadow: 1px 1px 3px #000; font-size: 14px; height: 20px;"></div>
+                        
                         <!-- Lado CPU -->
                         <div class="combatant cpu-side">
                             <div class="hp-box">
                                 <div style="display:flex; justify-content:space-between; font-weight:bold;">
-                                    <span id="arena-p2-name">CPU</span>
+                                    <div><span id="arena-p2-name">CPU</span> <span id="arena-p2-status" style="font-size:10px; padding:2px 4px; border-radius:4px; margin-left:5px; color:#fff; display:none;"></span></div>
                                     <span>Lv. 100</span>
                                 </div>
                                 <div class="hp-bar-bg"><div id="arena-p2-hp-bar" class="hp-bar-fill"></div></div>
@@ -272,7 +290,7 @@
                             <img id="arena-p1-img" src="" alt="Player Sprite">
                             <div class="hp-box">
                                 <div style="display:flex; justify-content:space-between; font-weight:bold;">
-                                    <span id="arena-p1-name">Player</span>
+                                    <div><span id="arena-p1-name">Player</span> <span id="arena-p1-status" style="font-size:10px; padding:2px 4px; border-radius:4px; margin-left:5px; color:#fff; display:none;"></span></div>
                                     <span>Lv. 100</span>
                                 </div>
                                 <div class="hp-bar-bg"><div id="arena-p1-hp-bar" class="hp-bar-fill"></div></div>
@@ -308,11 +326,13 @@
             <button class="modal-nav-arrow right" onclick="navegarModal('pokemon', 1, this)">&#10095;</button>
             <span class="close-btn" onclick="fecharModal('pokemon-modal')">&times;</span>
             
-            <!-- A estrela Shiny continua fixa no canto esquerdo -->
-            <span id="shiny-toggle" onclick="toggleShiny()" title="Shiny Toggle" style="position: absolute; top: 15px; left: 20px; z-index: 10;">⭐</span>
-            
+            <!-- Botões Fixos de Ação (Shiny, Áudio e Modelo 3D Animado) -->
+            <span id="shiny-toggle" onclick="toggleShiny()" title="Shiny Toggle" style="position: absolute; top: 15px; left: 20px; z-index: 10; cursor:pointer;">⭐</span>
+            <span id="cry-btn" onclick="tocarGrito()" title="Tocar Grito" style="position: absolute; top: 15px; left: 55px; z-index: 10; cursor:pointer; font-size: 22px; transition: 0.2s;">🔊</span>
+            <span id="model3d-toggle" onclick="toggle3D()" title="Alternar Modelo 3D / Animado" style="position: absolute; top: 17px; left: 95px; z-index: 10; cursor:pointer; font-size: 12px; font-weight: bold; background: #333; color: white; padding: 2px 7px; border-radius: 5px; transition: 0.2s; user-select: none;">3D</span>
+
             <div class="modal-header" style="margin-top: 30px;">
-                <!-- Os botões de forma no fluxo normal -->
+                <!-- Botões de forma centralizados e no fluxo normal para acomodar Pokémons com muitas variações (Ex: Pikachu) -->
                 <div id="form-toggles" class="form-toggles" style="justify-content: center; margin-bottom: 15px;"></div>
                 
                 <img id="detail-img" src="" alt="Pokemon">
