@@ -10,18 +10,18 @@ Muito mais do que uma simples Dex, o Dexke oferece um construtor de equipas robu
 
 ## ✨ Funcionalidades
 
-*   **Dex Completa:** Lista com mais de 1000 Pokémon, suportando filtros por nome, ID e por jogos/regiões (incluindo *Legends: Arceus*, *Legends: Z-A* e Remakes).
-*   **Detalhes Aprofundados:** Status base calculados, linha evolutiva completa, peso, altura e habilidades.
-*   **Calculadora de Danos:** Visualização rápida de multiplicadores de fraqueza, resistência e imunidade (4x, 2x, 0.5x, 0.25x e 0x).
-*   **Moves e Habilidades:**
+*   **Pokédex Completa:** Lista com mais de 1000 Pokémon, suportando filtros por nome, ID e por jogos/regiões (incluindo *Legends: Arceus*, *Legends: Z-A* e Remakes).
+*   **Detalhes Aprofundados:** Status base calculados, linha evolutiva completa, peso, altura, e suporte para visualizar **Modelos 3D** e ouvir o **Áudio (Cries)** oficiais.
+*   **Simulador de Batalha 1v1:** Uma arena integrada no navegador com mecânicas competitivas reais (Cálculo de dano, Status Conditions, Clima, IVs/EVs, Naturezas e efeitos de itens como *Life Orb* ou *Focus Sash*).
+*   **Moves, Habilidades, Itens e Naturezas:**
     *   Separação inteligente de ataques aprendidos por Nível (Level-up) e por Máquina (TM/HM).
     *   Identificação visual da categoria do ataque (⚔️ Físico, 🔮 Especial, 🛡️ Status).
-    *   Abas globais para pesquisa detalhada de qualquer Ataque ou Habilidade da franquia, com as respetivas descrições no ecrã.
+    *   Abas globais para pesquisa detalhada de Ataques, Habilidades e Itens da franquia, com tabelas dinâmicas de Naturezas.
 *   **Team Builder Avançado (Com LocalStorage):**
-    *   Crie e gira até 6 equipas diferentes.
-    *   Salvamento automático no navegador para não perderes as tuas equipas.
+    *   Crie e gira até 6 equipas diferentes com salvamento automático.
+    *   **Importação/Exportação Showdown:** Cole os seus times no formato de texto do *Pokémon Showdown* para os importar automaticamente.
     *   **Matriz de Fraquezas:** Uma tabela dinâmica que cruza os tipos da tua equipa contra todos os tipos atacantes, permitindo identificar rapidamente buracos defensivos.
-*   **Emulador Nativo (WebAssembly):** Joga as tuas ROMs de GBA e GBC diretamente no navegador através de uma janela flutuante, sem perderes o acesso à Dex ou ao Team Builder.
+*   **Emulador Nativo (WebAssembly):** Joga as tuas ROMs de GBA e GBC (ex: Emerald, FireRed, Crystal) diretamente no navegador através de uma janela flutuante, sem perderes o acesso à Dex ou ao Team Builder.
 
 ---
 
