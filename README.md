@@ -1,76 +1,62 @@
-Dexke
+# Dexke
 
-📙 Dexke - Pokédex & Team Builder Avançado
+📙 **Dexke - Pokédex & Team Builder Avançado**
 
-O Dexke é uma aplicação web responsiva (Mobile e Desktop) desenvolvida com Vanilla JavaScript, HTML5 e CSS3. Muito mais do que uma simples Pokédex, o Dexke oferece um construtor de times robusto, análise de fraquezas cruzadas, e detalhes minuciosos sobre habilidades e ataques de todas as gerações.
+O Dexke é uma aplicação web responsiva (Mobile e Desktop) idealizada, arquitetada e desenvolvida por **Matheus Duarte**. Durante o processo de criação, estruturação e otimização do código, o projeto contou com o auxílio da inteligência artificial **Gemini**
 
-✨ Funcionalidades
+Muito mais do que uma simples Dex, o Dexke oferece um construtor de equipas robusto, análise de fraquezas cruzadas, emulador integrado e detalhes minuciosos sobre habilidades e ataques de todas as gerações.
 
-Pokédex Completa: Lista com mais de 1000 Pokémon, suportando filtros por nome, ID e por jogos/regiões (incluindo Legends: Arceus, Legends: Z-A e Remakes).
+---
 
-Detalhes Aprofundados: Status base calculados, linha evolutiva completa, peso, altura e habilidades.
+## ✨ Funcionalidades
 
-Calculadora de Danos: Visualização rápida de multiplicadores de fraqueza, resistência e imunidade (4x, 2x, 0.5x, 0.25x e 0x).
+*   **Dex Completa:** Lista com mais de 1000 Pokémon, suportando filtros por nome, ID e por jogos/regiões (incluindo *Legends: Arceus*, *Legends: Z-A* e Remakes).
+*   **Detalhes Aprofundados:** Status base calculados, linha evolutiva completa, peso, altura e habilidades.
+*   **Calculadora de Danos:** Visualização rápida de multiplicadores de fraqueza, resistência e imunidade (4x, 2x, 0.5x, 0.25x e 0x).
+*   **Moves e Habilidades:**
+    *   Separação inteligente de ataques aprendidos por Nível (Level-up) e por Máquina (TM/HM).
+    *   Identificação visual da categoria do ataque (⚔️ Físico, 🔮 Especial, 🛡️ Status).
+    *   Abas globais para pesquisa detalhada de qualquer Ataque ou Habilidade da franquia, com as respetivas descrições no ecrã.
+*   **Team Builder Avançado (Com LocalStorage):**
+    *   Crie e gira até 6 equipas diferentes.
+    *   Salvamento automático no navegador para não perderes as tuas equipas.
+    *   **Matriz de Fraquezas:** Uma tabela dinâmica que cruza os tipos da tua equipa contra todos os tipos atacantes, permitindo identificar rapidamente buracos defensivos.
+*   **Emulador Nativo (WebAssembly):** Joga as tuas ROMs de GBA e GBC diretamente no navegador através de uma janela flutuante, sem perderes o acesso à Dex ou ao Team Builder.
 
-Moves e Habilidades:
+---
 
-Separação inteligente de ataques aprendidos por Nível (Level-up) e por Máquina (TM/HM).
+## 🔗 Powered by PokéAPI
 
-Identificação visual da categoria do ataque (⚔️ Físico, 🔮 Especial, 🛡️ Status).
+Todo o banco de dados deste projeto é fornecido graciosamente pela **PokéAPI**, uma API RESTful de consumo gratuito incrivelmente detalhada sobre a franquia Pokémon.
 
-Abas globais para pesquisa detalhada de qualquer Ataque ou Habilidade da franquia, com suas descrições em tela.
+Um agradecimento especial aos mantenedores do projeto open-source
+**Repositório Oficial:** https://github.com/PokeAPI/pokeapi
 
-Team Builder Avançado (Com LocalStorage):
+O Dexke faz uso massivo e eficiente dos seguintes *endpoints*:
+*   `/pokemon` e `/pokemon-species`: Para listagem e dados vitais.
+*   `/evolution-chain`: Para mapear dinamicamente as árvores de evolução.
+*   `/type`: Para calcular as matrizes de dano complexas.
+*   `/move` e `/ability`: Para extrair descrições e mecânicas específicas.
 
-Crie e gerencie até 6 times diferentes.
+Para otimizar as milhares de requisições possíveis, o Dexke implementa um sistema de **Cache Local em JavaScript**, garantindo que o servidor da PokéAPI não seja sobrecarregado ao consultar informações repetidas.
 
-Salvamento automático no navegador para você não perder suas equipes.
+---
 
-Matriz de Fraquezas: Uma tabela dinâmica que cruza os tipos do seu time contra todos os tipos atacantes, permitindo que você identifique rapidamente buracos defensivos na sua equipe.
+## 🛠️ Tecnologias Utilizadas
 
-🚀 Como Executar o Projeto
+*   **HTML5:** Estruturação semântica e acessível.
+*   **CSS3:** Estilização com Flexbox/Grid, variáveis de ambiente para o tema escuro, UI responsiva inspirada em aplicações mobile e design limpo.
+*   **Vanilla JavaScript (ES6+):** Lógica assíncrona (`async/await`, `fetch`), manipulação agressiva do DOM, sistema de *Drag & Drop*, e persistência de dados utilizando a API do `localStorage`.
+*   **WebAssembly (WASM):** Integração com o *EmulatorJS* para processamento nativo de jogos.
 
-Como o projeto foi construído puramente com tecnologias web nativas, não há necessidade de instalar dependências complexas (como Node.js ou NPM).
+---
 
-Faça o download ou clone este repositório.
+## ⚖️ Direitos Autorais e Aviso Legal
 
-Certifique-se de que os três arquivos estão na mesma pasta (index.html, style.css e app.js).
+Pokémon e todos os nomes e imagens relacionados são marcas registadas e propriedades exclusivas da Nintendo, Game Freak e The Pokémon Company.
 
-Abra o arquivo index.html diretamente no seu navegador, ou utilize a extensão Live Server no VS Code para uma melhor experiência de desenvolvimento.
+O **Dexke** é um projeto não oficial, sem fins lucrativos, criado exclusivamente para fins educacionais, de estudo e para a comunidade de fãs. Este projeto não possui nenhuma afiliação, patrocínio ou aprovação oficial da Nintendo, Game Freak ou The Pokémon Company.
 
-Requisito: Uma conexão ativa com a internet para buscar os dados em tempo real da API.
+<br>
 
-🔗 Powered by PokéAPI
-
-Todo o banco de dados deste projeto é fornecido graciosamente pela PokéAPI, uma API RESTful de consumo gratuito incrivelmente detalhada sobre a franquia Pokémon.
-
-Gostaria de deixar um agradecimento especial aos mantenedores do projeto open-source:
-Repositório Oficial: https://github.com/PokeAPI/pokeapi
-
-O Dexke faz uso massivo e eficiente dos seguintes endpoints fornecidos por eles:
-
-/pokemon e /pokemon-species: Para listagem e dados vitais.
-
-/evolution-chain: Para mapear dinamicamente as árvores de evolução.
-
-/type: Para calcular as matrizes de dano complexas.
-
-/move e /ability: Para extrair descrições e mecânicas específicas.
-
-Para otimizar as milhares de requisições possíveis, o Dexke implementa um sistema de Cache Local em JavaScript, garantindo que o servidor da PokéAPI não seja sobrecarregado ao consultar informações repetidas (como detalhes de Moves comuns entre vários Pokémon da mesma equipe).
-
-🛠️ Tecnologias Utilizadas
-
-HTML5: Estruturação semântica e acessível.
-
-CSS3: Estilização com Flexbox/Grid, variáveis de ambiente para o tema, UI responsiva inspirada em aplicativos mobile, e design limpo.
-
-Vanilla JavaScript (ES6+): Lógica assíncrona (async/await, fetch), manipulação agressiva do DOM, lógica matemática para matriz de tipos, e persistência de dados utilizando a API do localStorage.
-
-⚖️ Direitos Autorais e Aviso Legal
-
-Pokémon e todos os nomes e imagens relacionados são marcas registradas e propriedades exclusivas da Nintendo, Game Freak e The Pokémon Company.
-
-O Dexke é um projeto não oficial, sem fins lucrativos, criado exclusivamente para fins educacionais, de estudo e para a comunidade de fãs. Este projeto não possui nenhuma afiliação, patrocínio ou aprovação oficial da Nintendo, Game Freak ou The Pokémon Company.
-
-Feito com dedicação para a comunidade de treinadores Pokémon.
+*Feito com dedicação por Matheus Duarte para a comunidade de treinadores Pokémon.*
