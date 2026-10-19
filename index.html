@@ -66,7 +66,7 @@
             <button class="nav-btn" onclick="mudarAba(event, 'typechart')" data-i18n="tab_types">Tipos</button>
             <button class="nav-btn" onclick="mudarAba(event, 'teams')" data-i18n="tab_teams">Times</button>
             <button class="nav-btn battle-tab-btn" onclick="mudarAba(event, 'battle')" data-i18n="tab_battle">⚔️ Batalha 1v1</button>
-            <button class="nav-btn" onclick="mudarAba(event, 'gba')" data-i18n="tab_gba">🎮 Emulador GBA</button>
+            <button class="nav-btn" onclick="mudarAba(event, 'gba')" data-i18n="tab_gba">🎮 Emulador GBA / GBC</button>
         </nav>
     </aside>
 
@@ -312,20 +312,30 @@
         <!-- ABA EMULADOR GBA (o usuário fornece a própria ROM) -->
         <div id="aba-gba" class="aba-content hidden">
             <div class="info-section" style="margin: 15px;">
-                <h3 data-i18n="gba_title">Emulador GBA</h3>
-                <p data-i18n="gba_desc">Selecione o arquivo .gba (ou .zip) do seu jogo. A ROM é lida apenas no seu navegador e não é enviada para nenhum servidor.</p>
-                <div id="gba-picker"><input type="file" id="gba-rom-input" accept=".gba,.zip,.7z" onchange="iniciarGBA(this)" style="margin: 12px 0;"></div>
+                <h3 data-i18n="gba_title">Emulador GBA / GBC</h3>
+                <p data-i18n="gba_desc">Selecione o arquivo do seu jogo (.gba, .gbc, .gb ou .zip). A ROM é lida apenas no seu navegador e não é enviada para nenhum servidor.</p>
+                <div id="gba-picker">
+                    <label for="gba-console" data-i18n="gba_console" style="font-size:12px;">Console (só importa para arquivos .zip):</label>
+                    <select id="gba-console" style="display:block; margin: 4px 0 8px; padding: 6px;">
+                        <option value="auto">Automático (pela extensão)</option>
+                        <option value="gba">Game Boy Advance</option>
+                        <option value="gb">Game Boy / Game Boy Color</option>
+                    </select>
+                    <input type="file" id="gba-rom-input" accept=".gba,.gbc,.gb,.zip,.7z" onchange="iniciarGBA(this)" style="margin: 4px 0 12px;">
+                </div>
                 <button id="gba-reset" class="btn-small hidden" onclick="gbaTrocarRom()" data-i18n="gba_reset">Trocar ROM</button>
+                <button id="gba-close" class="btn-small hidden" onclick="gbaFechar()" data-i18n="gba_close">Fechar emulador</button>
                 <p class="gba-note" data-i18n="gba_note">O Dexke não inclui nem distribui ROMs. Use apenas jogos que você possui legalmente. A ROM fica salva só neste navegador e abre sozinha nas próximas vezes. Use "Trocar ROM" para mudar de jogo.</p>
                 <div id="gba-slot">
                     <div id="gba-wrapper" class="gba-wrapper hidden">
                         <div id="gba-bar" class="gba-bar">
-                            <span>🎮 GBA</span>
+                            <span>🎮 Jogo</span>
                             <span>
                                 <button onclick="gbaTamanho(-80)" title="Diminuir">&#8722;</button>
                                 <button onclick="gbaTamanho(80)" title="Aumentar">+</button>
                                 <button onclick="gbaMinimizar()" title="Minimizar / Restaurar">&#9601;</button>
                                 <button onclick="mudarAba(null, 'gba')" title="Voltar para a aba do jogo">&#10530;</button>
+                                <button onclick="gbaFechar()" title="Fechar emulador">&#10005;</button>
                             </span>
                         </div>
                         <div class="gba-game-box"><div id="gba-game"></div></div>

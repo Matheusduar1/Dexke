@@ -2,7 +2,7 @@
 const dicionario = {
     pt_BR: {
         tab_dexke: "Dex", tab_moves: "Moves", tab_abilities: "Habilidades", tab_items: "Itens", tab_natures: "Naturezas", tab_types: "Tipos", tab_teams: "Times", tab_battle: "⚔️ Batalha 1v1",
-        tab_gba: "🎮 Emulador GBA", gba_title: "Emulador GBA", gba_desc: "Selecione o arquivo .gba (ou .zip) do seu jogo. A ROM é lida apenas no seu navegador e não é enviada para nenhum servidor.", gba_note: "O Dexke não inclui nem distribui ROMs. Use apenas jogos que você possui legalmente. A ROM fica salva só neste navegador e abre sozinha nas próximas vezes. Use \"Trocar ROM\" para mudar de jogo.", gba_reset: "Trocar ROM",
+        tab_gba: "🎮 Emulador GBA / GBC", gba_title: "Emulador GBA / GBC", gba_desc: "Selecione o arquivo do seu jogo (.gba, .gbc, .gb ou .zip). A ROM é lida apenas no seu navegador e não é enviada para nenhum servidor.", gba_note: "O Dexke não inclui nem distribui ROMs. Use apenas jogos que você possui legalmente. A ROM fica salva só neste navegador e abre sozinha nas próximas vezes. Use \"Trocar ROM\" para mudar de jogo.", gba_reset: "Trocar ROM", gba_close: "Fechar emulador", gba_close_confirm: "Fechar o emulador? Salve o jogo dentro do próprio jogo antes: o progresso não salvo será perdido.", gba_console: "Console (só importa para arquivos .zip):",
         loading: "🔄 Carregando dados da PokéAPI...", loading_sub: "Isso pode levar alguns segundos na primeira vez.",
         choosing_poke: "Escolhendo Pokémon para o Time...", cancel: "Cancelar",
         search_poke: "Buscar Pokémon (Ex: Ursaluna, Bloodmoon)...", search_move: "Buscar Move...", search_ability: "Buscar Habilidade...", search_item: "Buscar Item...", search_nature: "Buscar Natureza...",
@@ -29,7 +29,7 @@ const dicionario = {
     },
     en_US: {
         tab_dexke: "Dex", tab_moves: "Moves", tab_abilities: "Abilities", tab_items: "Items", tab_natures: "Natures", tab_types: "Type Chart", tab_teams: "Teams", tab_battle: "⚔️ 1v1 Battle",
-        tab_gba: "🎮 GBA Emulator", gba_title: "GBA Emulator", gba_desc: "Select the .gba (or .zip) file of your game. The ROM is read only in your browser and is never uploaded to any server.", gba_note: "Dexke does not include or distribute ROMs. Only use games you legally own. The ROM is saved only in this browser and opens automatically next time. Use \"Change ROM\" to switch games.", gba_reset: "Change ROM",
+        tab_gba: "🎮 GBA / GBC Emulator", gba_title: "GBA / GBC Emulator", gba_desc: "Select your game file (.gba, .gbc, .gb or .zip). The ROM is read only in your browser and is never uploaded to any server.", gba_note: "Dexke does not include or distribute ROMs. Only use games you legally own. The ROM is saved only in this browser and opens automatically next time. Use \"Change ROM\" to switch games.", gba_reset: "Change ROM", gba_close: "Close emulator", gba_close_confirm: "Close the emulator? Save inside the game first: unsaved progress will be lost.", gba_console: "Console (only matters for .zip files):",
         loading: "🔄 Loading PokéAPI data...", loading_sub: "This may take a few seconds the first time.",
         choosing_poke: "Choosing Pokémon for the Team...", cancel: "Cancel",
         search_poke: "Search Pokémon (e.g. Ursaluna, Bloodmoon)...", search_move: "Search Move...", search_ability: "Search Ability...", search_item: "Search Item...", search_nature: "Search Nature...",
@@ -56,7 +56,7 @@ const dicionario = {
     },
     es_ES: {
         tab_dexke: "Dex", tab_moves: "Movimientos", tab_abilities: "Habilidades", tab_items: "Objetos", tab_natures: "Naturalezas", tab_types: "Tipos", tab_teams: "Equipos", tab_battle: "⚔️ Batalla 1v1",
-        tab_gba: "🎮 Emulador GBA", gba_title: "Emulador GBA", gba_desc: "Selecciona el archivo .gba (o .zip) de tu juego. La ROM se lee solo en tu navegador y no se envía a ningún servidor.", gba_note: "Dexke no incluye ni distribuye ROMs. Usa solo juegos que poseas legalmente. La ROM se guarda solo en este navegador y se abre sola la próxima vez. Usa \"Cambiar ROM\" para cambiar de juego.", gba_reset: "Cambiar ROM",
+        tab_gba: "🎮 Emulador GBA / GBC", gba_title: "Emulador GBA / GBC", gba_desc: "Selecciona el archivo de tu juego (.gba, .gbc, .gb o .zip). La ROM se lee solo en tu navegador y no se envía a ningún servidor.", gba_note: "Dexke no incluye ni distribuye ROMs. Usa solo juegos que poseas legalmente. La ROM se guarda solo en este navegador y se abre sola la próxima vez. Usa \"Cambiar ROM\" para cambiar de juego.", gba_reset: "Cambiar ROM", gba_close: "Cerrar emulador", gba_close_confirm: "¿Cerrar el emulador? Guarda dentro del juego antes: el progreso no guardado se perderá.", gba_console: "Consola (solo importa para archivos .zip):",
         loading: "🔄 Cargando datos de PokéAPI...", loading_sub: "Esto puede tomar unos segundos.",
         choosing_poke: "Eligiendo Pokémon para el Equipo...", cancel: "Cancelar",
         search_poke: "Buscar Pokémon (Ej: Ursaluna, Bloodmoon)...", search_move: "Buscar Movimiento...", search_ability: "Buscar Habilidad...", search_item: "Buscar Objeto...", search_nature: "Buscar Naturaleza...",
@@ -1310,11 +1310,11 @@ function gbaDB() {
         req.onerror = () => reject(req.error);
     });
 }
-async function gbaSalvarRom(nome, blob) {
+async function gbaSalvarRom(nome, blob, core) {
     const db = await gbaDB();
     return new Promise((resolve, reject) => {
         const tx = db.transaction('roms', 'readwrite');
-        tx.objectStore('roms').put({ nome, blob }, 'rom');
+        tx.objectStore('roms').put({ nome, blob, core }, 'rom');
         tx.oncomplete = resolve; tx.onerror = () => reject(tx.error);
     });
 }
@@ -1335,15 +1335,18 @@ async function gbaApagarRom() {
     });
 }
 
-function gbaRodar(blob, nome) {
+function gbaRodar(blob, nome, core) {
     if (gbaIniciado) return;
+    core = core || 'gba';
     gbaIniciado = true;
     document.getElementById('gba-picker').classList.add('hidden');
     document.getElementById('gba-reset').classList.remove('hidden');
+    document.getElementById('gba-close').classList.remove('hidden');
     document.getElementById('gba-wrapper').classList.remove('hidden');
 
     window.EJS_player = '#gba-game';
-    window.EJS_core = 'gba';
+    window.EJS_core = core;
+    document.getElementById('gba-wrapper').classList.toggle('gba-core-gb', core === 'gb');
     window.EJS_gameUrl = URL.createObjectURL(blob);
     window.EJS_gameName = nome.replace(/\.[^.]+$/, '');
     window.EJS_pathtodata = 'https://cdn.emulatorjs.org/stable/data/';
@@ -1356,15 +1359,25 @@ function gbaRodar(blob, nome) {
     document.body.appendChild(s);
 }
 
+// Descobre o núcleo do emulador: .gba -> gba | .gb/.gbc -> gb (Game Boy e Color)
+function gbaDetectarCore(nome) {
+    const ext = (nome.split('.').pop() || '').toLowerCase();
+    if (ext === 'gba') return 'gba';
+    if (ext === 'gb' || ext === 'gbc') return 'gb';
+    const manual = document.getElementById('gba-console').value;
+    return manual === 'auto' ? 'gba' : manual;
+}
+
 // Primeira vez: usuário escolhe o arquivo -> salva no navegador e inicia
 async function iniciarGBA(input) {
     const arquivo = input.files && input.files[0];
     if (!arquivo) return;
+    const core = gbaDetectarCore(arquivo.name);
     try {
-        await gbaSalvarRom(arquivo.name, arquivo);
+        await gbaSalvarRom(arquivo.name, arquivo, core);
         if (navigator.storage && navigator.storage.persist) navigator.storage.persist();
     } catch (e) { console.warn('Não foi possível salvar a ROM neste navegador', e); }
-    gbaRodar(arquivo, arquivo.name);
+    gbaRodar(arquivo, arquivo.name, core);
 }
 
 // Ao abrir a aba: se já existe ROM salva, inicia sozinho
@@ -1372,7 +1385,7 @@ async function gbaAoAbrirAba() {
     if (gbaIniciado) return;
     try {
         const salvo = await gbaCarregarRom();
-        if (salvo && salvo.blob) gbaRodar(salvo.blob, salvo.nome || 'game');
+        if (salvo && salvo.blob) gbaRodar(salvo.blob, salvo.nome || 'game', salvo.core);
     } catch (e) { console.warn('Erro ao ler ROM salva', e); }
 }
 
@@ -1388,6 +1401,7 @@ function gbaDock(modo) {
     if (modo === 'float') {
         if (w.parentElement !== document.body) document.body.appendChild(w);
         w.classList.add('gba-floating');
+        gbaRestaurarPosicao();
     } else {
         w.classList.remove('gba-floating', 'gba-collapsed');
         const slot = document.getElementById('gba-slot');
@@ -1400,7 +1414,7 @@ function gbaMinimizar() { document.getElementById('gba-wrapper').classList.toggl
 // Tamanho da janelinha flutuante (salvo no navegador)
 function gbaAplicarTamanho(w) {
     document.documentElement.style.setProperty('--gba-w', w + 'px');
-    setTimeout(() => window.dispatchEvent(new Event('resize')), 50);
+    setTimeout(() => { gbaRestaurarPosicao(); window.dispatchEvent(new Event('resize')); }, 50);
 }
 function gbaTamanho(delta) {
     let w = 420;
@@ -1411,4 +1425,68 @@ function gbaTamanho(delta) {
 }
 try { const wSalvo = parseInt(localStorage.getItem('dexke_gba_w')); if (wSalvo) document.documentElement.style.setProperty('--gba-w', wSalvo + 'px'); } catch (e) {}
 
-iniciarApp();
+// Fecha o emulador de vez (recarrega a página e volta para a aba em que você estava)
+function gbaFechar() {
+    if (!confirm(t('gba_close_confirm'))) return;
+    try {
+        const ativa = document.querySelector('.aba-content.active');
+        const id = ativa ? ativa.id.replace('aba-', '') : '';
+        if (id && id !== 'gba') sessionStorage.setItem('dexke_aba_restaurar', id);
+    } catch (e) {}
+    location.reload();
+}
+
+// Arrastar a janelinha pela barra superior (mouse e toque)
+let gbaPos = null;
+try { gbaPos = JSON.parse(localStorage.getItem('dexke_gba_pos')); } catch (e) {}
+
+function gbaPosicionar(x, y) {
+    const w = document.getElementById('gba-wrapper');
+    const r = w.getBoundingClientRect();
+    x = Math.max(0, Math.min(x, window.innerWidth - r.width));
+    y = Math.max(0, Math.min(y, window.innerHeight - r.height));
+    w.style.left = x + 'px'; w.style.top = y + 'px';
+    w.style.right = 'auto'; w.style.bottom = 'auto';
+    return { x, y };
+}
+function gbaRestaurarPosicao() {
+    const w = document.getElementById('gba-wrapper');
+    if (!w.classList.contains('gba-floating')) return;
+    if (gbaPos && typeof gbaPos.x === 'number') gbaPosicionar(gbaPos.x, gbaPos.y);
+    else if (w.style.left) gbaPosicionar(parseFloat(w.style.left), parseFloat(w.style.top));
+}
+(function gbaArrastar() {
+    const w = document.getElementById('gba-wrapper');
+    const bar = document.getElementById('gba-bar');
+    let arrasto = null;
+    bar.addEventListener('pointerdown', e => {
+        if (!w.classList.contains('gba-floating') || e.target.closest('button')) return;
+        const r = w.getBoundingClientRect();
+        arrasto = { dx: e.clientX - r.left, dy: e.clientY - r.top };
+        bar.setPointerCapture(e.pointerId);
+        e.preventDefault();
+    });
+    bar.addEventListener('pointermove', e => {
+        if (arrasto) gbaPos = gbaPosicionar(e.clientX - arrasto.dx, e.clientY - arrasto.dy);
+    });
+    const soltar = () => {
+        if (!arrasto) return;
+        arrasto = null;
+        try { localStorage.setItem('dexke_gba_pos', JSON.stringify(gbaPos)); } catch (e) {}
+    };
+    bar.addEventListener('pointerup', soltar);
+    bar.addEventListener('pointercancel', soltar);
+    window.addEventListener('resize', gbaRestaurarPosicao);
+})();
+
+iniciarApp().finally(() => {
+    // Depois de fechar o emulador, volta para a aba em que você estava
+    try {
+        const aba = sessionStorage.getItem('dexke_aba_restaurar');
+        if (aba) {
+            sessionStorage.removeItem('dexke_aba_restaurar');
+            const btn = document.querySelector('.nav-btn[onclick*="\'' + aba + '\'"]');
+            if (btn) btn.click();
+        }
+    } catch (e) {}
+});
