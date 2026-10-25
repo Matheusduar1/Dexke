@@ -11,6 +11,7 @@ Muito mais do que uma simples Dex, o Dexke oferece um construtor de equipas robu
 ## ✨ Funcionalidades
 
 *   **Pokédex Completa:** Lista com mais de 1000 Pokémon, suportando filtros por nome, ID e por jogos/regiões (incluindo *Legends: Arceus*, *Legends: Z-A* e Remakes).
+*   **Minha Dex (Palpite e Criação de Tipos):** Uma brincadeira interativa onde você escolhe uma região ou a Dex Completa e define 1 ou 2 tipos para cada Pokémon que aparece na tela em ordem de Pokédex. No final, confira o catálogo completo da sua Dex personalizada, compare suas escolhas com os tipos oficiais da franquia e recomece quando quiser!
 *   **Detalhes Aprofundados:** Status base calculados, linha evolutiva completa, peso, altura, e suporte para visualizar **Modelos 3D** e ouvir o **Áudio (Cries)** oficiais.
 *   **Simulador de Batalha 1v1:** Uma arena integrada no navegador com mecânicas competitivas reais (Cálculo de dano, Status Conditions, Clima, IVs/EVs, Naturezas e efeitos de itens como *Life Orb* ou *Focus Sash*).
 *   **Moves, Habilidades, Itens e Naturezas:**
