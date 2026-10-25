@@ -1,7 +1,7 @@
 // --- 1. SISTEMA DE IDIOMAS (i18n) E TRADUÇÃO DINÂMICA ---
 const dicionario = {
     pt_BR: {
-        tab_dexke: "Dex", tab_moves: "Moves", tab_abilities: "Habilidades", tab_items: "Itens", tab_natures: "Naturezas", tab_types: "Tipos", tab_teams: "Times", tab_battle: "⚔️ Batalha 1v1",
+        tab_dexke: "Dex", tab_minhadex: "Minha Dex", tab_moves: "Moves", tab_abilities: "Habilidades", tab_items: "Itens", tab_natures: "Naturezas", tab_types: "Tipos", tab_teams: "Times", tab_battle: "⚔️ Batalha 1v1",
         tab_gba: "🎮 Emulador GBA / GBC", gba_title: "Emulador GBA / GBC", gba_desc: "Selecione o arquivo do seu jogo (.gba, .gbc, .gb ou .zip). A ROM é lida apenas no seu navegador e não é enviada para nenhum servidor.", gba_note: "O Dexke não inclui nem distribui ROMs. Use apenas jogos que você possui legalmente. A ROM fica salva só neste navegador e abre sozinha nas próximas vezes. Use \"Trocar ROM\" para mudar de jogo.", gba_reset: "Trocar ROM", gba_close: "Fechar emulador", gba_close_confirm: "Fechar o emulador? Salve o jogo dentro do próprio jogo antes: o progresso não salvo será perdido.", gba_console: "Console (só importa para arquivos .zip):",
         loading: "🔄 Carregando dados da PokéAPI...", loading_sub: "Isso pode levar alguns segundos na primeira vez.",
         choosing_poke: "Escolhendo Pokémon para o Time...", cancel: "Cancelar",
@@ -25,10 +25,47 @@ const dicionario = {
         js_atk_def: "Atq \\ Def", js_def_atk: "DEFESA ➔<br><br>ATAQUE ⬇",
         js_chart_desc: "Leia a linha do <strong style='color:var(--primary)'>ATAQUE</strong> na esquerda e cruze com a coluna da <strong style='color:var(--primary)'>DEFESA</strong> no topo.",
         js_no_desc: "Sem descrição disponível.", js_translating: "Traduzindo...",
-        evo_lvl: "Nível", evo_trade: "Troca", evo_item: "Item:", evo_happy: "Felicidade", evo_special: "Forma Especial"
+        evo_lvl: "Nível", evo_trade: "Troca", evo_item: "Item:", evo_happy: "Felicidade", evo_special: "Forma Especial",
+        minhadex_intro_title: "Bem-vindo à Minha Dex!",
+        minhadex_intro_desc: "Nesta brincadeira, você é o mestre dos tipos! Olhe para a aparência de cada Pokémon e defina 1 ou 2 tipos que você acha que ele tem ou que combinariam muito melhor com ele.",
+        minhadex_how_to_play: "📋 Resumo de Como Brincar:",
+        minhadex_step1: "<strong>1. Escolha a Região:</strong> Escolha entre a Dex Completa ou uma região específica (Kanto, Johto, Hoenn, etc.).",
+        minhadex_step2: "<strong>2. Veja os Pokémon em Ordem:</strong> Cada Pokémon aparecerá em ordem de número de Pokédex com sua arte oficial.",
+        minhadex_step3: "<strong>3. Defina 1 ou 2 Tipos:</strong> Clique nos botões de tipos para definir o que você acha que ele é. Você pode desmarcar a qualquer momento clicando de novo.",
+        minhadex_step4: "<strong>4. Catálogo Final:</strong> No fim (ou quando quiser finalizar), veja a lista completa com todas as suas escolhas e descubra se bateu com os tipos oficiais!",
+        minhadex_region_label: "Selecione a Região ou Dex Completa:",
+        minhadex_start_btn: "🚀 Começar Brincadeira!",
+        minhadex_finish_btn: "🏁 Finalizar e Ver Resultados",
+        minhadex_restart_confirm: "Tem certeza que deseja reiniciar? As escolhas desta rodada serão perdidas.",
+        minhadex_progress_label: "Progresso:",
+        minhadex_selected_types_label: "Tipos Escolhidos:",
+        minhadex_none_selected: "Nenhum tipo selecionado (escolha 1 ou 2 abaixo)",
+        minhadex_select_hint: "Selecione 1 ou 2 tipos para este Pokémon:",
+        minhadex_click_to_remove: "Clique para remover este tipo",
+        minhadex_prev_btn: "⬅ Anterior",
+        minhadex_next_btn: "Confirmar e Próximo ➔",
+        minhadex_skip_btn: "Pular ⏭️",
+        minhadex_results_title: "🎉 Sua Pokédex Personalizada!",
+        minhadex_results_desc: "Confira abaixo todos os Pokémon e os tipos que você definiu para cada um:",
+        minhadex_stat_total: "Pokémon Definidos",
+        minhadex_stat_matches: "Coincidiram com Oficiais",
+        minhadex_stat_top_type: "Seu Tipo Favorito",
+        minhadex_restart_game_btn: "Recomeçar Brincadeira",
+        minhadex_copy_summary_btn: "📋 Copiar Resumo",
+        minhadex_summary_copied: "✅ Resumo copiado para a área de transferência!",
+        minhadex_search_ph: "Buscar Pokémon na sua Dex...",
+        minhadex_filter_type_all: "Todos os Tipos Escolhidos",
+        minhadex_your_types_label: "Seus tipos:",
+        minhadex_official_types_label: "Oficiais:",
+        minhadex_keep_official_btn: "Manter Originais",
+        minhadex_keep_official_hint: "Copiar os tipos oficiais para sua seleção",
+        minhadex_click_to_add_type: "Clique para selecionar este tipo",
+        minhadex_match_exact: "🎯 Exato!",
+        minhadex_match_partial: "✨ 1 em comum",
+        minhadex_match_diff: "🎨 Versão Única"
     },
     en_US: {
-        tab_dexke: "Dex", tab_moves: "Moves", tab_abilities: "Abilities", tab_items: "Items", tab_natures: "Natures", tab_types: "Type Chart", tab_teams: "Teams", tab_battle: "⚔️ 1v1 Battle",
+        tab_dexke: "Dex", tab_minhadex: "My Dex", tab_moves: "Moves", tab_abilities: "Abilities", tab_items: "Items", tab_natures: "Natures", tab_types: "Type Chart", tab_teams: "Teams", tab_battle: "⚔️ 1v1 Battle",
         tab_gba: "🎮 GBA / GBC Emulator", gba_title: "GBA / GBC Emulator", gba_desc: "Select your game file (.gba, .gbc, .gb or .zip). The ROM is read only in your browser and is never uploaded to any server.", gba_note: "Dexke does not include or distribute ROMs. Only use games you legally own. The ROM is saved only in this browser and opens automatically next time. Use \"Change ROM\" to switch games.", gba_reset: "Change ROM", gba_close: "Close emulator", gba_close_confirm: "Close the emulator? Save inside the game first: unsaved progress will be lost.", gba_console: "Console (only matters for .zip files):",
         loading: "🔄 Loading PokéAPI data...", loading_sub: "This may take a few seconds the first time.",
         choosing_poke: "Choosing Pokémon for the Team...", cancel: "Cancel",
@@ -52,10 +89,47 @@ const dicionario = {
         js_atk_def: "Atk \\ Def", js_def_atk: "DEFENSE ➔<br><br>ATTACK ⬇",
         js_chart_desc: "Read the <strong style='color:var(--primary)'>ATTACK</strong> row on the left and cross with the <strong style='color:var(--primary)'>DEFENSE</strong> column on top.",
         js_no_desc: "No description available.", js_translating: "Translating...",
-        evo_lvl: "Level", evo_trade: "Trade", evo_item: "Item:", evo_happy: "Happiness", evo_special: "Special Form"
+        evo_lvl: "Level", evo_trade: "Trade", evo_item: "Item:", evo_happy: "Happiness", evo_special: "Special Form",
+        minhadex_intro_title: "Welcome to My Dex!",
+        minhadex_intro_desc: "In this fun quiz game, you decide the types! Look at each Pokémon and choose 1 or 2 types you think it has or should have.",
+        minhadex_how_to_play: "📋 How to Play:",
+        minhadex_step1: "<strong>1. Choose Region:</strong> Pick the Full Dex or a specific region (Kanto, Johto, Hoenn, etc.).",
+        minhadex_step2: "<strong>2. See Pokémon in Order:</strong> Each Pokémon appears in Pokédex order with official artwork.",
+        minhadex_step3: "<strong>3. Pick 1 or 2 Types:</strong> Tap the type badges to set what you think it is. Tap again to deselect.",
+        minhadex_step4: "<strong>4. Final Catalog:</strong> At the end (or anytime you finish), see your custom Pokédex with all your choices and compare with official types!",
+        minhadex_region_label: "Select Region or Full Dex:",
+        minhadex_start_btn: "🚀 Start Game!",
+        minhadex_finish_btn: "🏁 Finish & View Results",
+        minhadex_restart_confirm: "Are you sure you want to restart? Current progress will be lost.",
+        minhadex_progress_label: "Progress:",
+        minhadex_selected_types_label: "Chosen Types:",
+        minhadex_none_selected: "No type selected (pick 1 or 2 below)",
+        minhadex_select_hint: "Select 1 or 2 types for this Pokémon:",
+        minhadex_click_to_remove: "Click to remove this type",
+        minhadex_prev_btn: "⬅ Previous",
+        minhadex_next_btn: "Confirm & Next ➔",
+        minhadex_skip_btn: "Skip ⏭️",
+        minhadex_results_title: "🎉 Your Custom Pokédex!",
+        minhadex_results_desc: "Here are all the Pokémon you categorized in your My Dex with the types you picked:",
+        minhadex_stat_total: "Defined Pokémon",
+        minhadex_stat_matches: "Matched Official Types",
+        minhadex_stat_top_type: "Your Favorite Type",
+        minhadex_restart_game_btn: "Play Again",
+        minhadex_copy_summary_btn: "📋 Copy Summary",
+        minhadex_summary_copied: "✅ Summary copied to clipboard!",
+        minhadex_search_ph: "Search Pokémon in your Dex...",
+        minhadex_filter_type_all: "All Chosen Types",
+        minhadex_your_types_label: "Your types:",
+        minhadex_official_types_label: "Official:",
+        minhadex_keep_official_btn: "Keep Official",
+        minhadex_keep_official_hint: "Copy official types to your selection",
+        minhadex_click_to_add_type: "Click to select this type",
+        minhadex_match_exact: "🎯 Exact!",
+        minhadex_match_partial: "✨ 1 Match",
+        minhadex_match_diff: "🎨 Unique Version"
     },
     es_ES: {
-        tab_dexke: "Dex", tab_moves: "Movimientos", tab_abilities: "Habilidades", tab_items: "Objetos", tab_natures: "Naturalezas", tab_types: "Tipos", tab_teams: "Equipos", tab_battle: "⚔️ Batalla 1v1",
+        tab_dexke: "Dex", tab_minhadex: "Mi Dex", tab_moves: "Movimientos", tab_abilities: "Habilidades", tab_items: "Objetos", tab_natures: "Naturalezas", tab_types: "Tipos", tab_teams: "Equipos", tab_battle: "⚔️ Batalla 1v1",
         tab_gba: "🎮 Emulador GBA / GBC", gba_title: "Emulador GBA / GBC", gba_desc: "Selecciona el archivo de tu juego (.gba, .gbc, .gb o .zip). La ROM se lee solo en tu navegador y no se envía a ningún servidor.", gba_note: "Dexke no incluye ni distribuye ROMs. Usa solo juegos que poseas legalmente. La ROM se guarda solo en este navegador y se abre sola la próxima vez. Usa \"Cambiar ROM\" para cambiar de juego.", gba_reset: "Cambiar ROM", gba_close: "Cerrar emulador", gba_close_confirm: "¿Cerrar el emulador? Guarda dentro del juego antes: el progreso no guardado se perderá.", gba_console: "Consola (solo importa para archivos .zip):",
         loading: "🔄 Cargando datos de PokéAPI...", loading_sub: "Esto puede tomar unos segundos.",
         choosing_poke: "Eligiendo Pokémon para el Equipo...", cancel: "Cancelar",
@@ -79,7 +153,44 @@ const dicionario = {
         js_atk_def: "Atq \\ Def", js_def_atk: "DEFENSA ➔<br><br>ATAQUE ⬇",
         js_chart_desc: "Lee la fila de <strong style='color:var(--primary)'>ATAQUE</strong> a la izquierda y cruza con la columna de <strong style='color:var(--primary)'>DEFENSA</strong> arriba.",
         js_no_desc: "Sin descripción disponible.", js_translating: "Traduciendo...",
-        evo_lvl: "Nivel", evo_trade: "Intercambio", evo_item: "Objeto:", evo_happy: "Felicidad", evo_special: "Forma Especial"
+        evo_lvl: "Nivel", evo_trade: "Intercambio", evo_item: "Objeto:", evo_happy: "Felicidad", evo_special: "Forma Especial",
+        minhadex_intro_title: "¡Bienvenido a Mi Dex!",
+        minhadex_intro_desc: "¡En este juego eres el maestro de los tipos! Mira a cada Pokémon y asigna 1 o 2 tipos que creas que tiene o debería tener.",
+        minhadex_how_to_play: "📋 Resumen de Cómo Jugar:",
+        minhadex_step1: "<strong>1. Elige la Región:</strong> Selecciona la Dex Completa o una región específica (Kanto, Johto, Hoenn, etc.).",
+        minhadex_step2: "<strong>2. Pokémon en Orden:</strong> Cada Pokémon aparecerá en orden de Pokédex con su arte oficial.",
+        minhadex_step3: "<strong>3. Elige 1 o 2 Tipos:</strong> Toca los botones de tipos para definir lo que crees que es. Toca de nuevo para desmarcar.",
+        minhadex_step4: "<strong>4. Catálogo Final:</strong> Al terminar (o cuando decidas finalizar), mira tu Pokédex personalizada y compara con los tipos oficiales.",
+        minhadex_region_label: "Selecciona la Región o Dex Completa:",
+        minhadex_start_btn: "🚀 ¡Empezar Juego!",
+        minhadex_finish_btn: "🏁 Finalizar y Ver Resultados",
+        minhadex_restart_confirm: "¿Seguro que quieres reiniciar? Se perderá el progreso de esta partida.",
+        minhadex_progress_label: "Progreso:",
+        minhadex_selected_types_label: "Tipos Elegidos:",
+        minhadex_none_selected: "Ningún tipo seleccionado (elige 1 o 2 abajo)",
+        minhadex_select_hint: "Elige 1 o 2 tipos para este Pokémon:",
+        minhadex_click_to_remove: "Haz clic para quitar este tipo",
+        minhadex_prev_btn: "⬅ Anterior",
+        minhadex_next_btn: "Confirmar y Siguiente ➔",
+        minhadex_skip_btn: "Saltar ⏭️",
+        minhadex_results_title: "🎉 ¡Tu Pokédex Personalizada!",
+        minhadex_results_desc: "Aquí están todos los Pokémon que catalogaste en tu Mi Dex con los tipos que elegiste:",
+        minhadex_stat_total: "Pokémon Definidos",
+        minhadex_stat_matches: "Coincidieron con Oficiales",
+        minhadex_stat_top_type: "Tu Tipo Favorito",
+        minhadex_restart_game_btn: "Volver a Jugar",
+        minhadex_copy_summary_btn: "📋 Copiar Resumen",
+        minhadex_summary_copied: "✅ ¡Resumen copiado al portapapeles!",
+        minhadex_search_ph: "Buscar Pokémon en tu Dex...",
+        minhadex_filter_type_all: "Todos los Tipos Elegidos",
+        minhadex_your_types_label: "Tus tipos:",
+        minhadex_official_types_label: "Oficiales:",
+        minhadex_keep_official_btn: "Mantener Originales",
+        minhadex_keep_official_hint: "Copiar los tipos oficiales a tu selección",
+        minhadex_click_to_add_type: "Haz clic para seleccionar este tipo",
+        minhadex_match_exact: "🎯 ¡Exacto!",
+        minhadex_match_partial: "✨ 1 en común",
+        minhadex_match_diff: "🎨 Versión Única"
     }
 };
 
@@ -93,6 +204,9 @@ function mudarIdioma(lang) {
     document.getElementById('desc-chart-global').innerHTML = t('js_chart_desc');
     renderizarTime();
     renderizarNatures();
+    if(document.getElementById('aba-minhadex') && document.getElementById('aba-minhadex').classList.contains('active')) {
+        renderizarTelaMinhaDex();
+    }
     if(document.getElementById('aba-typechart').classList.contains('active')) {
         document.getElementById('global-type-chart').innerHTML = ''; gerarTabelaDeTiposGlobal();
     }
@@ -287,6 +401,7 @@ async function iniciarApp() {
         filtrarItemsGlobal();
         renderizarNatures();
         renderizarTime();
+        inicializarMinhaDex();
         inicializarSimulador1v1();
         configurarSwipeModais();
     } catch (e) {
@@ -301,6 +416,7 @@ function mudarAba(event, abaId) {
     abaAlvo.classList.remove('hidden'); abaAlvo.classList.add('active');
     if(event && event.target) event.target.classList.add('active');
     if(abaId === 'typechart') { document.getElementById('global-type-chart').innerHTML = ''; gerarTabelaDeTiposGlobal(); }
+    if(abaId === 'minhadex') { renderizarTelaMinhaDex(); }
     
     if(abaId === 'gba') { gbaDock('inline'); gbaAoAbrirAba(); } else gbaDock('float');
     document.getElementById('sidebar').classList.remove('open');
@@ -1299,7 +1415,623 @@ async function executarTurnoBatalha(moveIdxJogador) {
     }
 }
 
-// --- 11. EMULADOR GBA (EmulatorJS) - ROM salva no navegador do próprio usuário ---
+
+// --- 11. MINHA DEX (Criação e Palpite de Tipos) ---
+const nomesTipos = {
+    pt_BR: { normal: 'Normal', fire: 'Fogo', water: 'Água', grass: 'Planta', electric: 'Elétrico', ice: 'Gelo', fighting: 'Lutador', poison: 'Venenoso', ground: 'Terrestre', flying: 'Voador', psychic: 'Psíquico', bug: 'Inseto', rock: 'Pedra', ghost: 'Fantasma', dragon: 'Dragão', dark: 'Sombrio', steel: 'Aço', fairy: 'Fada' },
+    en_US: { normal: 'Normal', fire: 'Fire', water: 'Water', grass: 'Grass', electric: 'Electric', ice: 'Ice', fighting: 'Fighting', poison: 'Poison', ground: 'Ground', flying: 'Flying', psychic: 'Psychic', bug: 'Bug', rock: 'Rock', ghost: 'Ghost', dragon: 'Dragon', dark: 'Dark', steel: 'Steel', fairy: 'Fairy' },
+    es_ES: { normal: 'Normal', fire: 'Fuego', water: 'Agua', grass: 'Planta', electric: 'Eléctrico', ice: 'Hielo', fighting: 'Lucha', poison: 'Veneno', ground: 'Tierra', flying: 'Volador', psychic: 'Psíquico', bug: 'Bicho', rock: 'Roca', ghost: 'Fantasma', dragon: 'Dragón', dark: 'Siniestro', steel: 'Acero', fairy: 'Hada' }
+};
+
+function getTipoNome(tipo) {
+    if (nomesTipos[idiomaAtual] && nomesTipos[idiomaAtual][tipo]) return nomesTipos[idiomaAtual][tipo];
+    if (nomesTipos.pt_BR[tipo]) return nomesTipos.pt_BR[tipo];
+    return tipo;
+}
+
+const regioesMinhaDex = [
+    { id: 'all', nome: { pt_BR: 'Dex Completa (#001 - #1025)', en_US: 'National Dex (#001 - #1025)', es_ES: 'Dex Completa (#001 - #1025)' }, min: 1, max: 1025 },
+    { id: 'kanto', nome: { pt_BR: 'Kanto - Gen 1 (#001 - #151)', en_US: 'Kanto - Gen 1 (#001 - #151)', es_ES: 'Kanto - Gen 1 (#001 - #151)' }, min: 1, max: 151 },
+    { id: 'johto', nome: { pt_BR: 'Johto - Gen 2 (#152 - #251)', en_US: 'Johto - Gen 2 (#152 - #251)', es_ES: 'Johto - Gen 2 (#152 - #251)' }, min: 152, max: 251 },
+    { id: 'hoenn', nome: { pt_BR: 'Hoenn - Gen 3 (#252 - #386)', en_US: 'Hoenn - Gen 3 (#252 - #386)', es_ES: 'Hoenn - Gen 3 (#252 - #386)' }, min: 252, max: 386 },
+    { id: 'sinnoh', nome: { pt_BR: 'Sinnoh - Gen 4 (#387 - #493)', en_US: 'Sinnoh - Gen 4 (#387 - #493)', es_ES: 'Sinnoh - Gen 4 (#387 - #493)' }, min: 387, max: 493 },
+    { id: 'unova', nome: { pt_BR: 'Unova - Gen 5 (#494 - #649)', en_US: 'Unova - Gen 5 (#494 - #649)', es_ES: 'Unova - Gen 5 (#494 - #649)' }, min: 494, max: 649 },
+    { id: 'kalos', nome: { pt_BR: 'Kalos - Gen 6 (#650 - #721)', en_US: 'Kalos - Gen 6 (#650 - #721)', es_ES: 'Kalos - Gen 6 (#650 - #721)' }, min: 650, max: 721 },
+    { id: 'alola', nome: { pt_BR: 'Alola - Gen 7 (#722 - #809)', en_US: 'Alola - Gen 7 (#722 - #809)', es_ES: 'Alola - Gen 7 (#722 - #809)' }, min: 722, max: 809 },
+    { id: 'galar', nome: { pt_BR: 'Galar - Gen 8 (#810 - #898)', en_US: 'Galar - Gen 8 (#810 - #898)', es_ES: 'Galar - Gen 8 (#810 - #898)' }, min: 810, max: 898 },
+    { id: 'paldea', nome: { pt_BR: 'Paldea & Hisui - Gen 9 (#899 - #1025)', en_US: 'Paldea & Hisui - Gen 9 (#899 - #1025)', es_ES: 'Paldea & Hisui - Gen 9 (#899 - #1025)' }, min: 899, max: 1025 }
+];
+
+let minhaDexEstado = {
+    fase: 'intro', // 'intro', 'jogando', 'resultado'
+    regiao: 'kanto',
+    lista: [],
+    indiceAtual: 0,
+    respostas: {}, // { [id]: [tipos...] }
+    tiposTemp: [], // tipos selecionados para o pokemon atual
+    filtroBusca: '',
+    filtroTipo: 'all'
+};
+
+function salvarEstadoMinhaDex() {
+    try {
+        localStorage.setItem('dexke_minhadex', JSON.stringify({
+            fase: minhaDexEstado.fase,
+            regiao: minhaDexEstado.regiao,
+            indiceAtual: minhaDexEstado.indiceAtual,
+            respostas: minhaDexEstado.respostas
+        }));
+    } catch(e) {}
+}
+
+function carregarEstadoMinhaDex() {
+    try {
+        const salvo = localStorage.getItem('dexke_minhadex');
+        if (salvo) {
+            const dados = JSON.parse(salvo);
+            if (dados && dados.fase) {
+                minhaDexEstado.fase = dados.fase;
+                minhaDexEstado.regiao = dados.regiao || 'kanto';
+                minhaDexEstado.indiceAtual = typeof dados.indiceAtual === 'number' ? dados.indiceAtual : 0;
+                minhaDexEstado.respostas = dados.respostas || {};
+            }
+        }
+    } catch(e) {}
+}
+
+function inicializarMinhaDex() {
+    carregarEstadoMinhaDex();
+    prepararListaMinhaDex();
+    renderizarTelaMinhaDex();
+}
+
+function prepararListaMinhaDex() {
+    const regCfg = regioesMinhaDex.find(r => r.id === minhaDexEstado.regiao) || regioesMinhaDex[1];
+    minhaDexEstado.lista = todosPokemon.filter(p => p.id >= regCfg.min && p.id <= regCfg.max).sort((a, b) => a.id - b.id);
+    if (minhaDexEstado.indiceAtual >= minhaDexEstado.lista.length) {
+        minhaDexEstado.indiceAtual = 0;
+    }
+    const currPoke = minhaDexEstado.lista[minhaDexEstado.indiceAtual];
+    if (currPoke && minhaDexEstado.respostas[currPoke.id]) {
+        minhaDexEstado.tiposTemp = [...minhaDexEstado.respostas[currPoke.id]];
+    } else {
+        minhaDexEstado.tiposTemp = [];
+    }
+}
+
+function renderizarTelaMinhaDex() {
+    const container = document.getElementById('minhadex-container');
+    if (!container) return;
+
+    if (!todosPokemon || todosPokemon.length === 0) {
+        container.innerHTML = `
+            <div class="minhadex-intro-card" style="text-align:center; padding: 40px 20px;">
+                <p style="font-size: 18px; font-weight: bold; color: var(--primary);">${t('loading')}</p>
+                <p style="font-size: 13px; color: #666; margin-top: 8px;">${t('loading_sub')}</p>
+            </div>
+        `;
+        return;
+    }
+
+    if (minhaDexEstado.lista.length === 0) {
+        prepararListaMinhaDex();
+    }
+
+    if (minhaDexEstado.fase === 'intro') {
+        renderizarIntroMinhaDex(container);
+    } else if (minhaDexEstado.fase === 'jogando') {
+        renderizarJogoMinhaDex(container);
+    } else if (minhaDexEstado.fase === 'resultado') {
+        renderizarResultadosMinhaDex(container);
+    }
+}
+
+function renderizarIntroMinhaDex(container) {
+    const optionsHtml = regioesMinhaDex.map(r => {
+        const label = r.nome[idiomaAtual] || r.nome.pt_BR;
+        const selected = r.id === minhaDexEstado.regiao ? 'selected' : '';
+        return `<option value="${r.id}" ${selected}>${label}</option>`;
+    }).join('');
+
+    container.innerHTML = `
+        <div class="minhadex-intro-card">
+            <h2>🎨 ${t('minhadex_intro_title')}</h2>
+            <p class="minhadex-intro-desc">${t('minhadex_intro_desc')}</p>
+
+            <div class="minhadex-steps-box">
+                <h3>${t('minhadex_how_to_play')}</h3>
+                <ul class="minhadex-steps-list">
+                    <li>${t('minhadex_step1')}</li>
+                    <li>${t('minhadex_step2')}</li>
+                    <li>${t('minhadex_step3')}</li>
+                    <li>${t('minhadex_step4')}</li>
+                </ul>
+            </div>
+
+            <div class="minhadex-form-group">
+                <label for="minhadex-regiao-select">${t('minhadex_region_label')}</label>
+                <select id="minhadex-regiao-select" class="minhadex-region-select" onchange="selecionarRegiaoMinhaDex(this.value)">
+                    ${optionsHtml}
+                </select>
+            </div>
+
+            <button class="minhadex-btn-primary" onclick="iniciarBrincadeiraMinhaDex()">
+                ${t('minhadex_start_btn')}
+            </button>
+        </div>
+    `;
+}
+
+function selecionarRegiaoMinhaDex(regiaoId) {
+    minhaDexEstado.regiao = regiaoId;
+    prepararListaMinhaDex();
+}
+
+function iniciarBrincadeiraMinhaDex() {
+    const sel = document.getElementById('minhadex-regiao-select');
+    if (sel) minhaDexEstado.regiao = sel.value;
+    prepararListaMinhaDex();
+    minhaDexEstado.indiceAtual = 0;
+    minhaDexEstado.respostas = {};
+    minhaDexEstado.tiposTemp = [];
+    minhaDexEstado.fase = 'jogando';
+    salvarEstadoMinhaDex();
+    renderizarTelaMinhaDex();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function renderizarJogoMinhaDex(container) {
+    const total = minhaDexEstado.lista.length;
+    if (total === 0) {
+        prepararListaMinhaDex();
+    }
+    const poke = minhaDexEstado.lista[minhaDexEstado.indiceAtual];
+    if (!poke) {
+        finalizarMinhaDex();
+        return;
+    }
+
+    const regCfg = regioesMinhaDex.find(r => r.id === minhaDexEstado.regiao) || regioesMinhaDex[1];
+    const regNome = regCfg.nome[idiomaAtual] || regCfg.nome.pt_BR;
+    const progressoNum = minhaDexEstado.indiceAtual + 1;
+    const pct = Math.round((progressoNum / total) * 100);
+
+    let previewTiposHtml = '';
+    if (minhaDexEstado.tiposTemp.length === 0) {
+        previewTiposHtml = `<span style="font-size: 13px; color: #888;">${t('minhadex_none_selected')}</span>`;
+    } else {
+        previewTiposHtml = minhaDexEstado.tiposTemp.map(tipo => {
+            const cor = coresTipos[tipo] || '#666';
+            const nome = getTipoNome(tipo);
+            return `
+                <span class="minhadex-type-pill" style="background-color: ${cor};" onclick="removerTipoMinhaDex('${tipo}')" title="${t('minhadex_click_to_remove')}">
+                    ${nome}
+                    <span class="remove-icon">&times;</span>
+                </span>
+            `;
+        }).join('');
+    }
+
+    const tiposDisponiveis = Object.keys(coresTipos);
+    const tiposGridHtml = tiposDisponiveis.map(tipo => {
+        const cor = coresTipos[tipo];
+        const nome = getTipoNome(tipo);
+        const isSelected = minhaDexEstado.tiposTemp.includes(tipo);
+        const classSel = isSelected ? 'selected' : '';
+        return `
+            <button class="minhadex-type-btn ${classSel}" style="background-color: ${cor};" onclick="alternarTipoMinhaDex('${tipo}')">
+                ${nome}
+            </button>
+        `;
+    }).join('');
+
+    const isFirst = minhaDexEstado.indiceAtual === 0;
+    const canAdvance = minhaDexEstado.tiposTemp.length > 0;
+    const isLast = minhaDexEstado.indiceAtual === total - 1;
+    const nextBtnText = isLast ? t('minhadex_finish_btn') : t('minhadex_next_btn');
+
+    const pokeArtworkUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${poke.id}.png`;
+    const pokeSpriteFallback = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${poke.id}.png`;
+
+    const oficiaisBadgesHtml = (poke.types && poke.types.length > 0)
+        ? poke.types.map(tipo => {
+            const cor = coresTipos[tipo] || '#777';
+            const nome = getTipoNome(tipo);
+            return `<span class="list-type-badge" style="background-color: ${cor}; font-size: 11px; padding: 4px 8px; cursor: pointer;" onclick="alternarTipoMinhaDex('${tipo}')" title="${t('minhadex_click_to_add_type')}">${nome}</span>`;
+        }).join('')
+        : `<span style="font-size: 11px; color: #888;">-</span>`;
+
+    container.innerHTML = `
+        <div class="minhadex-game-header">
+            <div class="minhadex-top-bar">
+                <span class="minhadex-badge-region">📍 ${regNome}</span>
+                <div class="minhadex-header-actions">
+                    <button class="btn-small" style="background: #27ae60;" onclick="finalizarMinhaDex()">
+                        ${t('minhadex_finish_btn')}
+                    </button>
+                    <button class="btn-small" style="background: #718096;" onclick="solicitarRecomecarMinhaDex()">
+                        🔄 ${t('minhadex_restart_game_btn')}
+                    </button>
+                </div>
+            </div>
+            <div class="minhadex-progress-info">
+                <span>${t('minhadex_progress_label')} <strong>${progressoNum} / ${total}</strong></span>
+                <span>${pct}%</span>
+            </div>
+            <div class="minhadex-progress-bar-bg">
+                <div class="minhadex-progress-bar-fill" style="width: ${pct}%;"></div>
+            </div>
+        </div>
+
+        <div class="minhadex-poke-card">
+            <span class="minhadex-poke-num">#${poke.id.toString().padStart(3, '0')}</span>
+            <h2 class="minhadex-poke-title">${poke.name.replace(/-/g, ' ')}</h2>
+            
+            <div class="minhadex-art-box">
+                <img class="minhadex-art-img" src="${pokeArtworkUrl}" onerror="this.onerror=null; this.src='${pokeSpriteFallback}'" alt="${poke.name}">
+            </div>
+
+            <div class="minhadex-official-types-container">
+                <span class="minhadex-official-label">${t('minhadex_official_types_label')}</span>
+                <div class="minhadex-official-badges">
+                    ${oficiaisBadgesHtml}
+                </div>
+                <button type="button" class="minhadex-btn-keep-official" onclick="manterTiposOriginaisMinhaDex()" title="${t('minhadex_keep_official_hint')}">
+                    ⚡ ${t('minhadex_keep_official_btn')}
+                </button>
+            </div>
+
+            <div class="minhadex-types-label">
+                ${t('minhadex_selected_types_label')}
+            </div>
+            <div class="minhadex-selected-preview">
+                ${previewTiposHtml}
+            </div>
+
+            <div class="minhadex-types-label">
+                ${t('minhadex_select_hint')}
+            </div>
+            <div class="minhadex-types-grid">
+                ${tiposGridHtml}
+            </div>
+
+            <div class="minhadex-actions-bar">
+                <button class="minhadex-btn-nav minhadex-btn-prev" onclick="voltarMinhaDex()" ${isFirst ? 'disabled' : ''}>
+                    ${t('minhadex_prev_btn')}
+                </button>
+                <button class="minhadex-btn-nav minhadex-btn-skip" onclick="pularMinhaDex()">
+                    ${t('minhadex_skip_btn')}
+                </button>
+                <button class="minhadex-btn-nav minhadex-btn-next" onclick="avancarMinhaDex()" ${canAdvance ? '' : 'disabled'}>
+                    ${nextBtnText}
+                </button>
+            </div>
+        </div>
+    `;
+}
+
+function manterTiposOriginaisMinhaDex() {
+    const poke = minhaDexEstado.lista[minhaDexEstado.indiceAtual];
+    if (poke && poke.types && poke.types.length > 0) {
+        minhaDexEstado.tiposTemp = [...poke.types];
+        renderizarJogoMinhaDex(document.getElementById('minhadex-container'));
+    }
+}
+
+function alternarTipoMinhaDex(tipo) {
+    const idx = minhaDexEstado.tiposTemp.indexOf(tipo);
+    if (idx !== -1) {
+        minhaDexEstado.tiposTemp.splice(idx, 1);
+    } else {
+        if (minhaDexEstado.tiposTemp.length < 2) {
+            minhaDexEstado.tiposTemp.push(tipo);
+        } else {
+            // Substitui o segundo tipo caso já tenha 2
+            minhaDexEstado.tiposTemp[1] = tipo;
+        }
+    }
+    renderizarJogoMinhaDex(document.getElementById('minhadex-container'));
+}
+
+function removerTipoMinhaDex(tipo) {
+    const idx = minhaDexEstado.tiposTemp.indexOf(tipo);
+    if (idx !== -1) {
+        minhaDexEstado.tiposTemp.splice(idx, 1);
+        renderizarJogoMinhaDex(document.getElementById('minhadex-container'));
+    }
+}
+
+function avancarMinhaDex() {
+    if (minhaDexEstado.tiposTemp.length === 0) return;
+    const poke = minhaDexEstado.lista[minhaDexEstado.indiceAtual];
+    if (poke) {
+        minhaDexEstado.respostas[poke.id] = [...minhaDexEstado.tiposTemp];
+        salvarEstadoMinhaDex();
+    }
+    if (minhaDexEstado.indiceAtual < minhaDexEstado.lista.length - 1) {
+        minhaDexEstado.indiceAtual++;
+        const nextPoke = minhaDexEstado.lista[minhaDexEstado.indiceAtual];
+        if (nextPoke && minhaDexEstado.respostas[nextPoke.id]) {
+            minhaDexEstado.tiposTemp = [...minhaDexEstado.respostas[nextPoke.id]];
+        } else {
+            minhaDexEstado.tiposTemp = [];
+        }
+        renderizarJogoMinhaDex(document.getElementById('minhadex-container'));
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+        finalizarMinhaDex();
+    }
+}
+
+function voltarMinhaDex() {
+    if (minhaDexEstado.indiceAtual > 0) {
+        const pokeAtual = minhaDexEstado.lista[minhaDexEstado.indiceAtual];
+        if (pokeAtual && minhaDexEstado.tiposTemp.length > 0) {
+            minhaDexEstado.respostas[pokeAtual.id] = [...minhaDexEstado.tiposTemp];
+            salvarEstadoMinhaDex();
+        }
+        minhaDexEstado.indiceAtual--;
+        const prevPoke = minhaDexEstado.lista[minhaDexEstado.indiceAtual];
+        if (prevPoke && minhaDexEstado.respostas[prevPoke.id]) {
+            minhaDexEstado.tiposTemp = [...minhaDexEstado.respostas[prevPoke.id]];
+        } else {
+            minhaDexEstado.tiposTemp = [];
+        }
+        renderizarJogoMinhaDex(document.getElementById('minhadex-container'));
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+}
+
+function pularMinhaDex() {
+    if (minhaDexEstado.indiceAtual < minhaDexEstado.lista.length - 1) {
+        minhaDexEstado.indiceAtual++;
+        const nextPoke = minhaDexEstado.lista[minhaDexEstado.indiceAtual];
+        if (nextPoke && minhaDexEstado.respostas[nextPoke.id]) {
+            minhaDexEstado.tiposTemp = [...minhaDexEstado.respostas[nextPoke.id]];
+        } else {
+            minhaDexEstado.tiposTemp = [];
+        }
+        renderizarJogoMinhaDex(document.getElementById('minhadex-container'));
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+        finalizarMinhaDex();
+    }
+}
+
+function finalizarMinhaDex() {
+    const pokeAtual = minhaDexEstado.lista[minhaDexEstado.indiceAtual];
+    if (pokeAtual && minhaDexEstado.tiposTemp.length > 0) {
+        minhaDexEstado.respostas[pokeAtual.id] = [...minhaDexEstado.tiposTemp];
+    }
+    minhaDexEstado.fase = 'resultado';
+    minhaDexEstado.filtroBusca = '';
+    minhaDexEstado.filtroTipo = 'all';
+    salvarEstadoMinhaDex();
+    renderizarTelaMinhaDex();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function solicitarRecomecarMinhaDex() {
+    if (confirm(t('minhadex_restart_confirm'))) {
+        recomecarMinhaDex();
+    }
+}
+
+function recomecarMinhaDex() {
+    minhaDexEstado.fase = 'intro';
+    minhaDexEstado.indiceAtual = 0;
+    minhaDexEstado.respostas = {};
+    minhaDexEstado.tiposTemp = [];
+    salvarEstadoMinhaDex();
+    renderizarTelaMinhaDex();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function avaliarCompatibilidadeTipos(escolhidos, oficiais) {
+    if (!escolhidos || escolhidos.length === 0) return 'diff';
+    if (!oficiais || oficiais.length === 0) return 'diff';
+
+    const setEscolhidos = new Set(escolhidos);
+    const setOficiais = new Set(oficiais);
+
+    if (setEscolhidos.size === setOficiais.size) {
+        let exact = true;
+        for (let t of setEscolhidos) {
+            if (!setOficiais.has(t)) {
+                exact = false;
+                break;
+            }
+        }
+        if (exact) return 'exact';
+    }
+
+    for (let t of setEscolhidos) {
+        if (setOficiais.has(t)) return 'partial';
+    }
+
+    return 'diff';
+}
+
+function renderizarResultadosMinhaDex(container) {
+    const todosRespIds = Object.keys(minhaDexEstado.respostas).map(Number);
+    const pokemonsClassificados = minhaDexEstado.lista.filter(p => todosRespIds.includes(p.id));
+
+    let contExact = 0;
+    let contPartial = 0;
+    const contagemTipos = {};
+
+    pokemonsClassificados.forEach(p => {
+        const escolhidos = minhaDexEstado.respostas[p.id] || [];
+        escolhidos.forEach(t => {
+            contagemTipos[t] = (contagemTipos[t] || 0) + 1;
+        });
+        const compat = avaliarCompatibilidadeTipos(escolhidos, p.types);
+        if (compat === 'exact') contExact++;
+        else if (compat === 'partial') contPartial++;
+    });
+
+    let tipoMaisEscolhido = '-';
+    let maxVezes = 0;
+    for (let t in contagemTipos) {
+        if (contagemTipos[t] > maxVezes) {
+            maxVezes = contagemTipos[t];
+            tipoMaisEscolhido = `${getTipoNome(t)} (${maxVezes}x)`;
+        }
+    }
+
+    const totalDefinidos = pokemonsClassificados.length;
+    const totalAcertos = contExact + contPartial;
+    const pctAcertos = totalDefinidos > 0 ? Math.round((totalAcertos / totalDefinidos) * 100) : 0;
+
+    const termo = escapeHTML(minhaDexEstado.filtroBusca.toLowerCase().trim());
+    const tipoFiltro = minhaDexEstado.filtroTipo;
+
+    const filtrados = pokemonsClassificados.filter(p => {
+        const atendeNome = p.name.includes(termo) || p.id.toString() === termo;
+        const escolhidos = minhaDexEstado.respostas[p.id] || [];
+        const atendeTipo = (tipoFiltro === 'all' || escolhidos.includes(tipoFiltro));
+        return atendeNome && atendeTipo;
+    });
+
+    const cardsHtml = filtrados.map(p => {
+        const escolhidos = minhaDexEstado.respostas[p.id] || [];
+        const compat = avaliarCompatibilidadeTipos(escolhidos, p.types);
+        
+        let tagHtml = '';
+        let cardClass = '';
+        if (compat === 'exact') {
+            cardClass = 'match-exact';
+            tagHtml = `<span class="minhadex-result-match-tag tag-exact">${t('minhadex_match_exact')}</span>`;
+        } else if (compat === 'partial') {
+            cardClass = 'match-partial';
+            tagHtml = `<span class="minhadex-result-match-tag tag-partial">${t('minhadex_match_partial')}</span>`;
+        } else {
+            cardClass = 'match-diff';
+            tagHtml = `<span class="minhadex-result-match-tag tag-diff">${t('minhadex_match_diff')}</span>`;
+        }
+
+        const seusTiposBadges = escolhidos.map(t => `<span class="list-type-badge" style="background-color: ${coresTipos[t]};">${getTipoNome(t)}</span>`).join('');
+        const oficiaisBadges = p.types.map(t => `<span class="list-type-badge" style="background-color: ${coresTipos[t]}; opacity: 0.85;">${getTipoNome(t)}</span>`).join('');
+
+        return `
+            <div class="minhadex-result-card ${cardClass}" onclick="abrirDetalhes('${p.name}')" style="cursor: pointer;">
+                <div class="minhadex-result-img-box">
+                    <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${p.id}.png" loading="lazy" onerror="this.src='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png'">
+                </div>
+                <div class="minhadex-result-info">
+                    <div class="minhadex-result-name-row">
+                        <span class="minhadex-result-name">${p.name.replace(/-/g, ' ')}</span>
+                        <span class="minhadex-result-id">#${p.id.toString().padStart(3, '0')}</span>
+                    </div>
+                    <div class="minhadex-types-row">
+                        <strong>${t('minhadex_your_types_label')}</strong>
+                        ${seusTiposBadges}
+                    </div>
+                    <div class="minhadex-types-row">
+                        <span>${t('minhadex_official_types_label')}</span>
+                        ${oficiaisBadges}
+                        ${tagHtml}
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    const tiposOptionsHtml = Object.keys(coresTipos).map(t => {
+        const sel = t === minhaDexEstado.filtroTipo ? 'selected' : '';
+        return `<option value="${t}" ${sel}>${getTipoNome(t)}</option>`;
+    }).join('');
+
+    container.innerHTML = `
+        <div class="minhadex-results-header">
+            <h2>${t('minhadex_results_title')}</h2>
+            <p style="color: #666; font-size: 14px;">${t('minhadex_results_desc')}</p>
+
+            <div class="minhadex-results-stats-grid">
+                <div class="minhadex-stat-card">
+                    <div class="minhadex-stat-val">${totalDefinidos}</div>
+                    <div class="minhadex-stat-lbl">${t('minhadex_stat_total')}</div>
+                </div>
+                <div class="minhadex-stat-card">
+                    <div class="minhadex-stat-val">${totalAcertos} (${pctAcertos}%)</div>
+                    <div class="minhadex-stat-lbl">${t('minhadex_stat_matches')}</div>
+                </div>
+                <div class="minhadex-stat-card">
+                    <div class="minhadex-stat-val" style="font-size: 17px;">${tipoMaisEscolhido}</div>
+                    <div class="minhadex-stat-lbl">${t('minhadex_stat_top_type')}</div>
+                </div>
+            </div>
+
+            <div class="minhadex-results-actions">
+                <button class="btn-dark" style="background: var(--primary); padding: 10px 18px; width: auto;" onclick="recomecarMinhaDex()">
+                    ${t('minhadex_restart_game_btn')}
+                </button>
+                <button class="btn-dark" style="background: #34495e; padding: 10px 18px; width: auto;" onclick="copiarResumoMinhaDex()">
+                    ${t('minhadex_copy_summary_btn')}
+                </button>
+            </div>
+        </div>
+
+        <div class="minhadex-filter-bar">
+            <input type="text" placeholder="${t('minhadex_search_ph')}" value="${escapeHTML(minhaDexEstado.filtroBusca)}" onkeyup="filtrarResultadosMinhaDexTexto(this.value)">
+            <select onchange="filtrarResultadosMinhaDexTipo(this.value)">
+                <option value="all">${t('minhadex_filter_type_all')}</option>
+                ${tiposOptionsHtml}
+            </select>
+        </div>
+
+        <div class="minhadex-results-grid">
+            ${cardsHtml || `<p style="padding: 20px; color: #777; grid-column: 1/-1; text-align: center;">Nenhum Pokémon encontrado com este filtro.</p>`}
+        </div>
+    `;
+}
+
+function filtrarResultadosMinhaDexTexto(val) {
+    minhaDexEstado.filtroBusca = val;
+    renderizarResultadosMinhaDex(document.getElementById('minhadex-container'));
+}
+
+function filtrarResultadosMinhaDexTipo(val) {
+    minhaDexEstado.filtroTipo = val;
+    renderizarResultadosMinhaDex(document.getElementById('minhadex-container'));
+}
+
+function copiarResumoMinhaDex() {
+    const todosRespIds = Object.keys(minhaDexEstado.respostas).map(Number);
+    const pokemonsClassificados = minhaDexEstado.lista.filter(p => todosRespIds.includes(p.id));
+    let texto = `🎮 Minha Dex - Dexke (${pokemonsClassificados.length} Pokémon definidos)\n\n`;
+    pokemonsClassificados.forEach(p => {
+        const escolhidos = (minhaDexEstado.respostas[p.id] || []).map(t => getTipoNome(t)).join('/');
+        const oficiais = p.types.map(t => getTipoNome(t)).join('/');
+        texto += `#${p.id.toString().padStart(3, '0')} ${p.name}: [${escolhidos}] (Oficial: ${oficiais})\n`;
+    });
+    navigator.clipboard.writeText(texto).then(() => {
+        alert(t('minhadex_summary_copied'));
+    }).catch(() => {
+        alert("Erro ao copiar resumo.");
+    });
+}
+
+window.addEventListener('keydown', (e) => {
+    if (minhaDexEstado.fase !== 'jogando') return;
+    const abaMinhaDex = document.getElementById('aba-minhadex');
+    if (!abaMinhaDex || !abaMinhaDex.classList.contains('active')) return;
+    if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT')) return;
+
+    if (e.key === 'ArrowRight' || e.key === 'Enter') {
+        if (minhaDexEstado.tiposTemp.length > 0) {
+            e.preventDefault();
+            avancarMinhaDex();
+        }
+    } else if (e.key === 'ArrowLeft') {
+        if (minhaDexEstado.indiceAtual > 0) {
+            e.preventDefault();
+            voltarMinhaDex();
+        }
+    }
+});
+
+// --- 12. EMULADOR GBA (EmulatorJS) - ROM salva no navegador do próprio usuário ---
 let gbaIniciado = false;
 
 function gbaDB() {

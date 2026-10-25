@@ -59,6 +59,7 @@
         </div>
         <nav class="sidebar-nav">
             <button class="nav-btn active" onclick="mudarAba(event, 'dexke')" data-i18n="tab_dexke">Dex</button>
+            <button class="nav-btn" onclick="mudarAba(event, 'minhadex')" data-i18n="tab_minhadex">Minha Dex</button>
             <button class="nav-btn" onclick="mudarAba(event, 'moves')" data-i18n="tab_moves">Moves</button>
             <button class="nav-btn" onclick="mudarAba(event, 'abilities')" data-i18n="tab_abilities">Habilidades</button>
             <button class="nav-btn" onclick="mudarAba(event, 'items')" data-i18n="tab_items">Itens</button>
@@ -129,6 +130,11 @@
                 </div>
             </div>
             <div id="pokemon-list" class="list-container"></div>
+        </div>
+
+        <!-- ABA MINHA DEX -->
+        <div id="aba-minhadex" class="aba-content hidden">
+            <div id="minhadex-container" class="minhadex-wrapper"></div>
         </div>
 
         <!-- ABA MOVES -->
