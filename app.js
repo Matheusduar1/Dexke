@@ -324,21 +324,26 @@ function toggleShiny() {
 
 function atualizarImagemModal() {
     const imgEl = document.getElementById('detail-img');
-    if(!imgEl) return;
+    if (!imgEl) return;
 
-    // Resetar para auto para evitar que os sprites 3D/GIFs sejam esticados
-    imgEl.style.width = 'auto';
-    imgEl.style.height = 'auto';
     imgEl.style.objectFit = 'contain';
 
     if (is3D && currentPokemon3DNormalUrl) {
         imgEl.src = isShiny ? (currentPokemon3DShinyUrl || currentPokemon3DNormalUrl) : currentPokemon3DNormalUrl;
-        imgEl.style.maxWidth = '100px';
-        imgEl.style.maxHeight = '100px';
+        imgEl.style.width = '110px';
+        imgEl.style.height = '110px';
+        imgEl.style.maxWidth = '110px';
+        imgEl.style.maxHeight = '110px';
+        imgEl.style.transform = 'none';
+        imgEl.style.margin = '0 auto 10px auto';
     } else {
         imgEl.src = isShiny ? currentPokemonShinyUrl : currentPokemonNormalUrl;
+        imgEl.style.width = '140px';
+        imgEl.style.height = '140px';
         imgEl.style.maxWidth = '140px';
         imgEl.style.maxHeight = '140px';
+        imgEl.style.transform = 'none';
+        imgEl.style.margin = '0 auto';
     }
 }
 
@@ -367,7 +372,7 @@ async function iniciarApp() {
             fetch('https://pokeapi.co/api/v2/pokemon?limit=1350'),
             fetch('https://pokeapi.co/api/v2/move?limit=1000'),
             fetch('https://pokeapi.co/api/v2/ability?limit=370'),
-            fetch('https://pokeapi.co/api/v2/item?limit=450')
+            fetch('https://pokeapi.co/api/v2/item?limit=3000')
         ]);
 
         const mapTipos = {};
@@ -417,6 +422,10 @@ function mudarAba(event, abaId) {
     if(event && event.target) event.target.classList.add('active');
     if(abaId === 'typechart') { document.getElementById('global-type-chart').innerHTML = ''; gerarTabelaDeTiposGlobal(); }
     if(abaId === 'minhadex') { renderizarTelaMinhaDex(); }
+    if(abaId === 'items') { filtrarItemsGlobal(); }
+    if(abaId === 'moves') { filtrarMovesGlobal(); }
+    if(abaId === 'abilities') { filtrarAbilitiesGlobal(); }
+    if(abaId === 'natures') { renderizarNatures(); }
     
     if(abaId === 'gba') { gbaDock('inline'); gbaAoAbrirAba(); } else gbaDock('float');
     document.getElementById('sidebar').classList.remove('open');
@@ -467,14 +476,73 @@ function filtrarAbilitiesGlobal() {
     document.getElementById('abilities-list').innerHTML = listaFiltradaAbilities.map(a => `<div class="list-item" onclick="abrirDetalheAbility('${a.name}')"><span class="list-name">${a.name.replace(/-/g, ' ')}</span></div>`).join('');
 }
 
-function filtrarItemsGlobal() {
-    const termo = escapeHTML(document.getElementById('searchItemInput').value.toLowerCase().trim().replace(/ /g, '-'));
-    listaFiltradaItems = todosItems.filter(i => i.name.includes(termo)).slice(0, 100);
-    document.getElementById('items-list').innerHTML = listaFiltradaItems.map(i => `
+let itensRenderizadosQtd = 120;
+let observerItems = null;
+
+function filtrarItemsGlobal(resetScroll = true) {
+    const searchEl = document.getElementById('searchItemInput');
+    const termo = searchEl ? escapeHTML(searchEl.value.toLowerCase().trim().replace(/ /g, '-')) : '';
+    const container = document.getElementById('items-list');
+    if (!container) return;
+
+    if (!todosItems || todosItems.length === 0) {
+        container.innerHTML = `<div style="padding:20px; text-align:center; color:#777;"><i>${t('loading')}</i></div>`;
+        return;
+    }
+
+    if (resetScroll) {
+        itensRenderizadosQtd = termo ? 250 : 120;
+    }
+
+    listaFiltradaItems = todosItems.filter(i => !termo || i.name.includes(termo));
+    const itensExibidos = listaFiltradaItems.slice(0, itensRenderizadosQtd);
+
+    if (itensExibidos.length === 0) {
+        container.innerHTML = `<div style="padding:20px; text-align:center; color:#777;"><i>${t('js_no_desc')}</i></div>`;
+        return;
+    }
+
+    let html = itensExibidos.map(i => `
         <div class="list-item" onclick="abrirDetalheItem('${i.name}')">
             <div class="list-img-box" style="width:40px; height:40px;"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/${i.name}.png" loading="lazy" onerror="this.style.display='none'"></div>
             <span class="list-name">${i.name.replace(/-/g, ' ')}</span>
         </div>`).join('');
+
+    if (itensRenderizadosQtd < listaFiltradaItems.length) {
+        html += `
+            <div id="items-carregar-mais-box" style="width:100%; text-align:center; padding:15px 0;">
+                <button type="button" class="btn-dark" onclick="carregarMaisItems()" style="padding:8px 20px; font-size:13px; cursor:pointer;">
+                    Carregar Mais Itens (${itensExibidos.length} de ${listaFiltradaItems.length})
+                </button>
+            </div>
+        `;
+    }
+
+    container.innerHTML = html;
+    configurarAutoLoadItems();
+}
+
+function carregarMaisItems() {
+    itensRenderizadosQtd += 120;
+    filtrarItemsGlobal(false);
+}
+
+function configurarAutoLoadItems() {
+    const sentinel = document.getElementById('items-carregar-mais-box');
+    if (!sentinel) return;
+
+    if (observerItems) {
+        observerItems.disconnect();
+    }
+
+    if ('IntersectionObserver' in window) {
+        observerItems = new IntersectionObserver((entries) => {
+            if (entries[0].isIntersecting) {
+                carregarMaisItems();
+            }
+        }, { rootMargin: '250px' });
+        observerItems.observe(sentinel);
+    }
 }
 
 function renderizarNatures() {
@@ -645,7 +713,9 @@ function configurarSwipeModais() {
 // --- 6. MODAL DO POKÉMON, EVOLUÇÕES E FORMAS ESPECIAIS ---
 async function abrirDetalhes(idOuNome) {
     document.getElementById('pokemon-modal').classList.remove('hidden');
-    document.getElementById('detail-moves-list').innerHTML = ''; 
+    document.getElementById('detail-moves-list').innerHTML = '';
+    const locBox = document.getElementById('detail-locations');
+    if (locBox) locBox.innerHTML = `<i>${t('location_loading')}</i>`; 
 
     const cachedPoke = todosPokemon.find(pk => pk.name === idOuNome || pk.id == idOuNome);
     if (cachedPoke) {
@@ -737,6 +807,8 @@ async function abrirDetalhes(idOuNome) {
 
     calcularDano(p.types);
     buscarEvolucoes(p.species.url);
+    const spcId = (spc && spc.id) ? spc.id : (p.species && p.species.url ? p.species.url.split('/')[6] : p.id);
+    carregarLocaisDoPokemon(p.id, spcId);
 }
 
 function getIconeClasse(classe) { return classe === 'physical' ? '⚔️ FIS' : (classe === 'special' ? '🔮 ESP' : '🛡 STA'); }
@@ -831,12 +903,33 @@ async function abrirDetalheItem(nome) {
     document.getElementById('it-name').textContent = nome.replace(/-/g, ' ');
     document.getElementById('it-img').src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/${nome}.png`;
     document.getElementById('it-desc').innerHTML = `<i>${t('js_translating')}</i>`;
+    const catEl = document.getElementById('it-category');
+    if (catEl) catEl.innerHTML = '';
 
-    if(!itemCache[nome]) itemCache[nome] = await (await fetch(`https://pokeapi.co/api/v2/item/${nome}`)).json();
+    if (!itemCache[nome]) itemCache[nome] = await (await fetch(`https://pokeapi.co/api/v2/item/${nome}`)).json();
     const itData = itemCache[nome];
-    const engEntry = itData.flavor_text_entries.find(e => e.language.name === 'en');
-    let textoBase = engEntry ? engEntry.text.replace(/\n|\f/g, ' ') : t('js_no_desc');
-    document.getElementById('it-desc').textContent = await traduzirTextoDinamico(textoBase);
+
+    if (catEl && itData.category) {
+        const catNome = formatarCategoriaItem(itData.category.name);
+        catEl.innerHTML = `<span class="item-cat-badge">${escapeHTML(catNome)}</span>`;
+    }
+
+    let descFinal = '';
+    if (idiomaAtual === 'es_ES') {
+        const esFlv = itData.flavor_text_entries ? itData.flavor_text_entries.find(e => e.language.name === 'es') : null;
+        if (esFlv) descFinal = esFlv.text.replace(/[\n\f]/g, ' ');
+    }
+    if (!descFinal) {
+        const engFlv = itData.flavor_text_entries ? itData.flavor_text_entries.find(e => e.language.name === 'en') : null;
+        const engEff = itData.effect_entries ? itData.effect_entries.find(e => e.language.name === 'en') : null;
+        let textoIngles = (engEff && engEff.short_effect) ? engEff.short_effect : (engFlv ? engFlv.text.replace(/[\n\f]/g, ' ') : '');
+        if (textoIngles) {
+            descFinal = (idiomaAtual === 'en_US') ? textoIngles : await traduzirTextoDinamico(textoIngles);
+        } else {
+            descFinal = t('js_no_desc');
+        }
+    }
+    document.getElementById('it-desc').textContent = descFinal;
 }
 
 function fecharModal(modalId) { document.getElementById(modalId).classList.add('hidden'); }
@@ -876,6 +969,407 @@ function parseEvolutionMethod(details, speciesName) {
     if (trigger === 'trade') return d.held_item ? `${t('evo_trade')} (${d.held_item.name.replace(/-/g, ' ')})` : t('evo_trade');
     if (trigger === 'use-item' && d.item) return `${t('evo_item')} ${escapeHTML(d.item.name).replace(/-/g, ' ')}`;
     return trigger.replace(/-/g, ' ');
+}
+
+
+// --- MAPAS DE FORMAS ESPECIAIS, ITENS DE EVOLUÇÃO E OBTENÇÃO ---
+const formasEspeciaisItens = {
+    'zacian-crowned': { item: 'Rusted Sword', pt: 'Item: Rusted Sword (Espada Enferrujada)', en: 'Item: Rusted Sword', es: 'Objeto: Espada Oxidada' },
+    'zamazenta-crowned': { item: 'Rusted Shield', pt: 'Item: Rusted Shield (Escudo Enferrujado)', en: 'Item: Rusted Shield', es: 'Objeto: Escudo Oxidado' },
+    'kyogre-primal': { item: 'Blue Orb', pt: 'Item: Blue Orb (Primal Reversion)', en: 'Item: Blue Orb (Primal Reversion)', es: 'Objeto: Esfera Azul' },
+    'groudon-primal': { item: 'Red Orb', pt: 'Item: Red Orb (Primal Reversion)', en: 'Item: Red Orb (Primal Reversion)', es: 'Objeto: Esfera Roja' },
+    'giratina-origin': { item: 'Griseous Orb / Core', pt: 'Item: Griseous Orb / Griseous Core', en: 'Item: Griseous Orb / Core', es: 'Objeto: Griseosfera' },
+    'dialga-origin': { item: 'Adamant Crystal', pt: 'Item: Adamant Crystal', en: 'Item: Adamant Crystal', es: 'Objeto: Gran Diamansfera' },
+    'palkia-origin': { item: 'Lustrous Globe', pt: 'Item: Lustrous Globe', en: 'Item: Lustrous Globe', es: 'Objeto: Gran Lustresfera' },
+    'calyrex-ice': { item: 'Reins of Unity', pt: 'Item: Reins of Unity (+ Glastrier)', en: 'Item: Reins of Unity (+ Glastrier)', es: 'Objeto: Riendas Unión (+ Glastrier)' },
+    'calyrex-shadow': { item: 'Reins of Unity', pt: 'Item: Reins of Unity (+ Spectrier)', en: 'Item: Reins of Unity (+ Spectrier)', es: 'Objeto: Riendas Unión (+ Spectrier)' },
+    'necrozma-dusk-mane': { item: 'N-Solarizer', pt: 'Item: N-Solarizer (+ Solgaleo)', en: 'Item: N-Solarizer (+ Solgaleo)', es: 'Objeto: Necrosol (+ Solgaleo)' },
+    'necrozma-dawn-wings': { item: 'N-Lunarizer', pt: 'Item: N-Lunarizer (+ Lunala)', en: 'Item: N-Lunarizer (+ Lunala)', es: 'Objeto: Necroluna (+ Lunala)' },
+    'necrozma-ultra': { item: 'Ultranecrozium Z', pt: 'Item: Ultranecrozium Z', en: 'Item: Ultranecrozium Z', es: 'Objeto: Ultranecrostal Z' },
+    'hoopa-unbound': { item: 'Prison Bottle', pt: 'Item: Prison Bottle (Garrafa de Prisão)', en: 'Item: Prison Bottle', es: 'Objeto: Vasija Castigo' },
+    'shaymin-sky': { item: 'Gracidea', pt: 'Item: Gracidea (Flor de Dia)', en: 'Item: Gracidea (Daytime)', es: 'Objeto: Gracídea (De día)' },
+    'keldeo-resolute': { item: 'Move Secret Sword', pt: 'Move: Secret Sword', en: 'Move: Secret Sword', es: 'Mov: Espada Santa' },
+    'meloetta-pirouette': { item: 'Move Relic Song', pt: 'Move: Relic Song (em batalha)', en: 'Move: Relic Song (in battle)', es: 'Mov: Canto Arcaico (en batalla)' },
+    'ogerpon-wellspring-mask': { item: 'Wellspring Mask', pt: 'Item: Wellspring Mask', en: 'Item: Wellspring Mask', es: 'Objeto: Máscara Fuente' },
+    'ogerpon-hearthflame-mask': { item: 'Hearthflame Mask', pt: 'Item: Hearthflame Mask', en: 'Item: Hearthflame Mask', es: 'Objeto: Máscara Horno' },
+    'ogerpon-cornerstone-mask': { item: 'Cornerstone Mask', pt: 'Item: Cornerstone Mask', en: 'Item: Cornerstone Mask', es: 'Objeto: Máscara Cimiento' },
+    'terapagos-terastal': { item: 'Tera Shift', pt: 'Habilidade: Tera Shift', en: 'Ability: Tera Shift', es: 'Habilidad: Teracambio' },
+    'terapagos-stellar': { item: 'Terastal Estelar', pt: 'Teracristalização Estelar', en: 'Stellar Terastallization', es: 'Teracristalización Astral' },
+    'palafin-hero': { item: 'Zero to Hero', pt: 'Habilidade: Zero to Hero (Troca)', en: 'Ability: Zero to Hero', es: 'Habilidad: Cambio Heroico' },
+    'greninja-ash': { item: 'Battle Bond', pt: 'Habilidade: Battle Bond', en: 'Ability: Battle Bond', es: 'Habilidad: Fuerte Afecto' },
+    'zygarde-10': { item: 'Zygarde Cube', pt: 'Item: Zygarde Cube (10%)', en: 'Item: Zygarde Cube (10%)', es: 'Objeto: Arca de Zygarde (10%)' },
+    'zygarde-complete': { item: 'Power Construct', pt: 'Habilidade: Power Construct', en: 'Ability: Power Construct', es: 'Habilidad: Agrupamento' },
+    'darmanitan-zen': { item: 'Zen Mode', pt: 'Habilidade: Zen Mode (<50% HP)', en: 'Ability: Zen Mode (<50% HP)', es: 'Habilidad: Modo Daruma (<50% PS)' },
+    'darmanitan-galar-zen': { item: 'Zen Mode', pt: 'Habilidade: Zen Mode (<50% HP)', en: 'Ability: Zen Mode (<50% HP)', es: 'Habilidad: Modo Daruma (<50% PS)' },
+    'tornadus-therian': { item: 'Reveal Glass', pt: 'Item: Reveal Glass', en: 'Item: Reveal Glass', es: 'Objeto: Espejo Veraz' },
+    'thundurus-therian': { item: 'Reveal Glass', pt: 'Item: Reveal Glass', en: 'Item: Reveal Glass', es: 'Objeto: Espejo Veraz' },
+    'landorus-therian': { item: 'Reveal Glass', pt: 'Item: Reveal Glass', en: 'Item: Reveal Glass', es: 'Objeto: Espejo Veraz' },
+    'enamorus-therian': { item: 'Reveal Glass', pt: 'Item: Reveal Glass', en: 'Item: Reveal Glass', es: 'Objeto: Espejo Veraz' },
+    'kyurem-black': { item: 'DNA Splicers', pt: 'Item: DNA Splicers (+ Zekrom)', en: 'Item: DNA Splicers (+ Zekrom)', es: 'Objeto: Punta ADN (+ Zekrom)' },
+    'kyurem-white': { item: 'DNA Splicers', pt: 'Item: DNA Splicers (+ Reshiram)', en: 'Item: DNA Splicers (+ Reshiram)', es: 'Objeto: Punta ADN (+ Reshiram)' },
+    'rotom-heat': { item: 'Rotom Catalog', pt: 'Catálogo Rotom (Forno)', en: 'Rotom Catalog (Oven)', es: 'Catálogo Rotom (Microondas)' },
+    'rotom-wash': { item: 'Rotom Catalog', pt: 'Catálogo Rotom (Lava-roupa)', en: 'Rotom Catalog (Washing Machine)', es: 'Catálogo Rotom (Lavadora)' },
+    'rotom-frost': { item: 'Rotom Catalog', pt: 'Catálogo Rotom (Geladeira)', en: 'Rotom Catalog (Refrigerator)', es: 'Catálogo Rotom (Nevera)' },
+    'rotom-fan': { item: 'Rotom Catalog', pt: 'Catálogo Rotom (Ventilador)', en: 'Rotom Catalog (Fan)', es: 'Catálogo Rotom (Ventilador)' },
+    'rotom-mow': { item: 'Rotom Catalog', pt: 'Catálogo Rotom (Cortador)', en: 'Rotom Catalog (Lawn Mower)', es: 'Catálogo Rotom (Cortacésped)' },
+    'deoxys-attack': { item: 'Meteorito', pt: 'Meteorito (Ataque)', en: 'Meteorite (Attack)', es: 'Meteorito (Ataque)' },
+    'deoxys-defense': { item: 'Meteorito', pt: 'Meteorito (Defesa)', en: 'Meteorite (Defense)', es: 'Meteorito (Defensa)' },
+    'deoxys-speed': { item: 'Meteorito', pt: 'Meteorito (Velocidade)', en: 'Meteorite (Speed)', es: 'Meteorito (Velocidad)' },
+    'castform-sunny': { item: 'Clima', pt: 'Clima: Sol Intenso (Sunny)', en: 'Weather: Sunny', es: 'Clima: Soleado' },
+    'castform-rainy': { item: 'Clima', pt: 'Clima: Chuva (Rain)', en: 'Weather: Rain', es: 'Clima: Lluvia' },
+    'castform-snowy': { item: 'Clima', pt: 'Clima: Neve / Granizo', en: 'Weather: Snow / Hail', es: 'Clima: Nieve / Granizo' }
+};
+
+function obterMetodoEvolucaoForma(pokeNome) {
+    if (formasEspeciaisItens[pokeNome]) {
+        const itemInfo = formasEspeciaisItens[pokeNome];
+        const langKey = idiomaAtual === 'es_ES' ? 'es' : (idiomaAtual === 'en_US' ? 'en' : 'pt');
+        return itemInfo[langKey] || itemInfo.pt;
+    }
+    if (pokeNome.includes('-mega-x')) return 'Item: Mega Stone X';
+    if (pokeNome.includes('-mega-y')) return 'Item: Mega Stone Y';
+    if (pokeNome.includes('-mega')) return 'Item: Mega Stone';
+    if (pokeNome.includes('-gmax')) return 'Max Soup / Gigantamax';
+    if (pokeNome.includes('bloodmoon')) return 'Kitakami / Lua Carmesim';
+    if (pokeNome.includes('-hisui')) return 'Forma de Hisui';
+    if (pokeNome.includes('-alola')) return 'Forma de Alola';
+    if (pokeNome.includes('-galar')) return 'Forma de Galar';
+    if (pokeNome.includes('-paldea')) return 'Forma de Paldea';
+    return t('evo_special');
+}
+
+const itensEspeciaisObtencao = {
+    'rusted-sword': {
+        pt: "Item Lendário Exclusivo: Encontrado no altar da Floresta Adormecida (Slumbering Weald) em Galar durante a história principal / side quest pós-jogo com Hop em Pokémon Sword. Quando equipado no Zacian, ativa sua habilidade Intrepid Sword e transforma-o na forma Zacian Crowned Sword.",
+        en: "Legendary Key Item: Found at the shrine in the Slumbering Weald in Galar during the main story / post-game side quest with Hop in Pokémon Sword. When held by Zacian, activates Intrepid Sword and transforms it into Zacian Crowned Sword.",
+        es: "Objeto Legendario Exclusivo: Se encuentra en el santuario del Bosque Onírico (Slumbering Weald) en Galar durante la historia principal / misión secundaria post-game con Paul en Pokémon Espada. Al equiparse en Zacian, activa Espada Indómita y lo transforma en Zacian Espada Corona."
+    },
+    'rusted-shield': {
+        pt: "Item Lendário Exclusivo: Encontrado no altar da Floresta Adormecida (Slumbering Weald) em Galar durante a história principal / side quest pós-jogo com Hop em Pokémon Shield. Quando equipado no Zamazenta, ativa sua habilidade Dauntless Shield e transforma-o na forma Zamazenta Crowned Shield.",
+        en: "Legendary Key Item: Found at the shrine in the Slumbering Weald in Galar during the main story / post-game side quest with Hop in Pokémon Shield. When held by Zamazenta, activates Dauntless Shield and transforms it into Zamazenta Crowned Shield.",
+        es: "Objeto Legendario Exclusivo: Se encuentra en el santuario del Bosque Onírico (Slumbering Weald) en Galar durante la historia principal / misión secundaria post-game con Paul en Pokémon Escudo. Al equiparse en Zamazenta, activa Escudo Recio y lo transforma en Zamazenta Escudo Corona."
+    },
+    'adamant-crystal': {
+        pt: "Side Quest Clã Diamante: Recompensa ao vencer Adaman no Lake Valor após zerar Pokémon Legends: Arceus, ou leilão de Porto Marinada em Scarlet/Violet. Transforma Dialga na Forma Origem.",
+        en: "Diamond Clan Side Quest: Reward for defeating Adaman at Lake Valor in Legends: Arceus post-game, or Porto Marinada auction in SV. Transforms Dialga into Origin Forme.",
+        es: "Misión del Clan Diamante: Recompensa al vencer a Adamas en Lago Valor en Leyendas: Arceus, o subasta de Pueblo Marinada en Escarlata/Púrpura. Transforma a Dialga en Forma Origen."
+    },
+    'lustrous-globe': {
+        pt: "Side Quest Clã Pérola: Recompensa ao vencer Irida no Lake Verity após zerar Pokémon Legends: Arceus, ou leilão de Porto Marinada em Scarlet/Violet. Transforma Palkia na Forma Origem.",
+        en: "Pearl Clan Side Quest: Reward for defeating Irida at Lake Verity in Legends: Arceus post-game, or Porto Marinada auction in SV. Transforms Palkia into Origin Forme.",
+        es: "Misión del Clan Perla: Recompensa al vencer a Nákara en Lago Veraz en Leyendas: Arceus, o subasta de Pueblo Marinada en Escarlata/Púrpura. Transforma a Palkia en Forma Origen."
+    },
+    'griseous-core': {
+        pt: "Side Quest Giratina: Obtido na Turnback Cave após capturar Giratina em Legends: Arceus, ou leilão de Porto Marinada em SV. Transforma Giratina na Forma Origem.",
+        en: "Giratina Side Quest: Obtained in Turnback Cave after catching Giratina in Legends: Arceus, or Porto Marinada auction in SV. Transforms Giratina into Origin Forme.",
+        es: "Misión de Giratina: Obtenido en Cueva Retorno tras capturar a Giratina en Leyendas: Arceus, o subasta de Pueblo Marinada en SV. Transforma a Giratina en Forma Origen."
+    },
+    'griseous-orb': {
+        pt: "Encontrado no Distortion World em Pokémon Platinum, Turnback Cave em HGSS/BW, ou leilões especiais. Transforma Giratina na Forma Origem e amplifica golpes Ghost e Dragon.",
+        en: "Found in the Distortion World in Platinum, Turnback Cave, or special auctions. Transforms Giratina into Origin Forme and boosts Ghost/Dragon moves.",
+        es: "Encontrado en el Mundo Distorsión en Platino, Cueva Retorno, o subastas especiales. Transforma a Giratina en Forma Origen y potencia ataques Fantasma/Dragón."
+    },
+    'prison-bottle': {
+        pt: "Side Quest Hoopa: Entregue por um balconista no Poké Mart ao ter Hoopa na equipe em ORAS/USUM, ou leilão em Porto Marinada (SV). Transforma Hoopa em Hoopa Unbound.",
+        en: "Hoopa Side Quest: Given by a clerk at any Poké Mart with Hoopa in party in ORAS/USUM, or Porto Marinada auction in SV. Transforms Hoopa into Hoopa Unbound.",
+        es: "Misión de Hoopa: Entregado en cualquier Tienda Pokémon con Hoopa en el equipo en ROZA/USUM, o subasta en Pueblo Marinada (SV). Transforma a Hoopa en Hoopa Desatado."
+    },
+    'reins-of-unity': {
+        pt: "História Principal de Crown Tundra: Forjado no Crown Shrine com Radiant Petal e Mane Hair, ou leilão em Porto Marinada (SV). Funde Calyrex com Glastrier (Ice Rider) ou Spectrier (Shadow Rider).",
+        en: "Crown Tundra Story: Crafted at the Crown Shrine using Radiant Petal and Mane Hair, or Porto Marinada auction in SV. Merges Calyrex with Glastrier or Spectrier.",
+        es: "Historia de Las Nieves de la Corona: Creado en el Santuario Corona con Pétalo Brillante y Mechón Crin, o subasta en Pueblo Marinada en SV. Fusiona a Calyrex con Glastrier o Spectrier."
+    },
+    'n-solarizer': {
+        pt: "Side Quest Necrozma: Entregue pela cientista Burnet / Faba em Alola, ou leilão em Porto Marinada (SV). Funde Necrozma com Solgaleo para formar Dusk Mane Necrozma.",
+        en: "Necrozma Side Quest: Received from Burnet/Faba in Alola, or Porto Marinada auction in SV. Fuses Necrozma with Solgaleo into Dusk Mane Necrozma.",
+        es: "Misión Necrozma: Recibido de Burnet/Faba en Alola, o subasta en Pueblo Marinada (SV). Fusiona a Necrozma con Solgaleo en Necrozma Melena Crepuscular."
+    },
+    'n-lunarizer': {
+        pt: "Side Quest Necrozma: Entregue pela cientista Burnet / Faba em Alola, ou leilão em Porto Marinada (SV). Funde Necrozma com Lunala para formar Dawn Wings Necrozma.",
+        en: "Necrozma Side Quest: Received from Burnet/Faba in Alola, or Porto Marinada auction in SV. Fuses Necrozma with Lunala into Dawn Wings Necrozma.",
+        es: "Misión Necrozma: Recibido de Burnet/Faba en Alola, o subasta en Pueblo Marinada (SV). Fusiona a Necrozma con Lunala en Necrozma Alas del Alba."
+    },
+    'dna-splicers': {
+        pt: "Encontrado no Giant Chasm em Unova (B2W2) ou leilão em Porto Marinada (SV). Funde Kyurem com Reshiram (White Kyurem) ou Zekrom (Black Kyurem).",
+        en: "Found in Giant Chasm in Unova (B2W2) or Porto Marinada auction in SV. Fuses Kyurem with Reshiram (White Kyurem) or Zekrom (Black Kyurem).",
+        es: "Encontrado en Boquete Gigante en Teselia (B2W2) o subasta en Pueblo Marinada (SV). Fusiona a Kyurem con Reshiram o Zekrom."
+    },
+    'reveal-glass': {
+        pt: "Obtido no Abundant Shrine em Unova levando Landorus, ou leilão de Porto Marinada em SV. Alterna as formas dos gênios (Tornadus, Thundurus, Landorus e Enamorus).",
+        en: "Obtained at Abundant Shrine in Unova with Landorus, or Porto Marinada auction in SV. Switches genies between Incarnate and Therian formes.",
+        es: "Obtenido en Santuario Abundancia en Teselia con Landorus, o subasta en Pueblo Marinada en SV. Cambia las formas de los genios entre Encarnación y Tótem."
+    },
+    'peat-block': {
+        pt: "Escavação Especial: Encontrado cavando tesouros no solo com a montaria Ursaluna no Crimson Mirelands em Pokémon Legends: Arceus. Use em Ursaring durante a noite de Lua Cheia para evoluir para Ursaluna.",
+        en: "Special Digging: Dug up from treasure spots using Ursaluna mount in the Crimson Mirelands in Legends: Arceus. Use on Ursaring during a Full Moon to evolve into Ursaluna.",
+        es: "Excavación Especial: Se encuentra escarbando con la montura Ursaluna en Pantanal Carmesí en Leyendas: Arceus. Úsalo en Ursaring durante la noche de Luna Llena para evolucionar a Ursaluna."
+    },
+    'black-augurite': {
+        pt: "Drop de Pokémon & Missão: Drop raro ao derrotar Graveler selvagens ou recompensa do Pedido 68 em Pokémon Legends: Arceus. Usado em Scyther para evoluí-lo para Kleavor.",
+        en: "Wild Drop & Request: Rare drop from wild Graveler or reward for Request 68 in Legends: Arceus. Used on Scyther to evolve it into Kleavor.",
+        es: "Drop Salvaje y Petición: Drop raro de Graveler salvajes o recompensa de la Petición 68 en Leyendas: Arceus. Úsalo en Scyther para evolucionar a Kleavor."
+    },
+    'auspicious-armor': {
+        pt: "Side Quest de Troca: Entregue por um senhor idoso na cidade de Zapapico (Pokémon Scarlet) em troca de 10 Bronzor Fragments. Usado para evoluir Charcadet para Armarouge.",
+        en: "Trade Side Quest: Given by an elderly man in Zapapico (Pokémon Scarlet) in exchange for 10 Bronzor Fragments. Used to evolve Charcadet into Armarouge.",
+        es: "Misión de Intercambio: Entregado por un anciano en Pueblo Zapapico (Pokémon Escarlata) a cambio de 10 Fragmentos de Bronzor. Se usa para evolucionar a Charcadet en Armarouge."
+    },
+    'malicious-armor': {
+        pt: "Side Quest de Troca: Entregue por uma senhora na cidade de Zapapico (Pokémon Violet) em troca de 10 Sinistea Chips. Usado para evoluir Charcadet para Ceruledge.",
+        en: "Trade Side Quest: Given by an elderly woman in Zapapico (Pokémon Violet) in exchange for 10 Sinistea Chips. Used to evolve Charcadet into Ceruledge.",
+        es: "Misión de Intercambio: Entregado por una anciana en Pueblo Zapapico (Pokémon Púrpura) a cambio de 10 Virutas de Sinistea. Se usa para evolucionar a Charcadet en Ceruledge."
+    },
+    'syrupy-apple': {
+        pt: "Comprado por ₽500 no quiosque autônomo de maçãs no sudeste de Mossui Town em Kitakami (DLC The Teal Mask). Usado para evoluir Applin para Dipplin.",
+        en: "Purchased for ₽500 at the unmanned apple shed southeast of Mossui Town in Kitakami (The Teal Mask DLC). Used to evolve Applin into Dipplin.",
+        es: "Comprado por ₽500 en el puesto autónomo de manzanas al sureste de Pueblo Versui en Noroteo (DLC La Máscara Turquesa). Se usa para evolucionar a Applin en Dipplin."
+    },
+    'masterpiece-teacup': {
+        pt: "Encontrado dentro de uma caverna em Paradise Barrens (Kitakami DLC) ou no Ogre Oustin'. Usado para evoluir Poltchageist (Artisan Form) para Sinistcha (Masterpiece Form).",
+        en: "Found inside a cave in Paradise Barrens (Kitakami DLC) or Ogre Oustin'. Used to evolve Poltchageist (Artisan Form) into Sinistcha (Masterpiece Form).",
+        es: "Encontrado dentro de una cueva en Páramo Baladí (DLC Noroteo) o en Cazaogros. Se usa para evolucionar a Poltchageist (Forma Exquisita) en Sinistcha (Forma Sublime)."
+    },
+    'unremarkable-teacup': {
+        pt: "Encontrado em uma fenda em Wistful Fields (Kitakami DLC) ou no Ogre Oustin'. Usado para evoluir Poltchageist (Counterfeit Form) para Sinistcha (Unremarkable Form).",
+        en: "Found in a cave in Wistful Fields (Kitakami DLC) or Ogre Oustin'. Used to evolve Poltchageist (Counterfeit Form) into Sinistcha (Unremarkable Form).",
+        es: "Encontrado en una gruta en Campos Melancólicos (DLC Noroteo) o en Cazaogros. Se usa para evolucionar a Poltchageist (Forma Arcaica) en Sinistcha (Forma Modesta)."
+    },
+    'metal-alloy': {
+        pt: "Comprado por 300 BP na School Store da Blueberry Academy ou encontrado na Chargestone Cavern (DLC The Indigo Disk). Usado para evoluir Duraludon para Archaludon.",
+        en: "Purchased for 300 BP at Blueberry Academy School Store or found in Chargestone Cavern (The Indigo Disk DLC). Used to evolve Duraludon into Archaludon.",
+        es: "Comprado por 300 PB en la Tienda de la Academia Arándano o en Gruta Electromorfa (DLC El Disco Índigo). Se usa para evolucionar a Duraludon en Archaludon."
+    },
+    'scroll-of-waters': {
+        pt: "Obtido no topo da Torre das Águas na Isle of Armor (Galar DLC) após derrotar o Mestre Mustard com Kubfu. Evolui Kubfu para Urshifu Rapid Strike Style.",
+        en: "Obtained at the top of the Tower of Waters in Isle of Armor (Galar DLC) after clearing trials with Kubfu. Evolves Kubfu into Urshifu Rapid Strike Style.",
+        es: "Obtenido en la cima de la Torre de las Aguas en Isla de la Armadura (DLC Galar) tras superar el reto con Kubfu. Evoluciona a Kubfu en Urshifu Estilo Fluido."
+    },
+    'scroll-of-darkness': {
+        pt: "Obtido no topo da Torre das Trevas na Isle of Armor (Galar DLC) após derrotar o Mestre Mustard com Kubfu. Evolui Kubfu para Urshifu Single Strike Style.",
+        en: "Obtained at the top of the Tower of Darkness in Isle of Armor (Galar DLC) after clearing trials with Kubfu. Evolves Kubfu into Urshifu Single Strike Style.",
+        es: "Obtenido en la cima de la Torre de las Sombras en Isla de la Armadura (DLC Galar) tras superar el reto con Kubfu. Evoluciona a Kubfu en Urshifu Estilo Brusco."
+    },
+    'master-ball': {
+        pt: "Item Raro Exclusivo: Entregue pelo Presidente da Silph Co., Devon Corp, Professor Pokémon ou líder da equipe vilã durante a história principal. Também obtido como 1º prêmio na Loteria de ID e torneio pós-jogo.",
+        en: "Exclusive Rare Item: Given by the President of Silph Co., Devon Corp, Pokémon Professor or story climax. Also available as 1st prize in the ID Lottery or rare tournament reward.",
+        es: "Objeto Raro Exclusivo: Entregado por el Presidente de Silph S.A., Devon S.A., el Profesor Pokémon o en el clímax de la historia. También como 1er premio de la Lotería ID o torneo post-game."
+    },
+    'shiny-charm': {
+        pt: "Recompensa do Diretor de Jogo (Game Freak): Entregue no hotel/edifício da Game Freak após completar 100% de todas as entradas da Pokédex Regional/Nacional. Triplica a chance de encontrar Pokémon Shiny selvagens.",
+        en: "Game Freak Director Reward: Given at the Game Freak building/hotel after completing 100% of the Pokédex. Triples the chance of encountering wild Shiny Pokémon.",
+        es: "Recompensa del Director de Game Freak: Entregado en el hotel/edificio Game Freak tras completar el 100% de la Pokédex. Triplica la probabilidad de encontrar Pokémon Shiny salvajes."
+    },
+    'oval-charm': {
+        pt: "Recompensa de Batalha: Obtido ao derrotar o desenvolvedor Morimoto / equipe Game Freak em batalha após vencer a Liga Pokémon. Aumenta a velocidade de geração de ovos.",
+        en: "Battle Reward: Obtained by defeating Morimoto / Game Freak staff after becoming Champion. Increases egg production speed at Daycare / Picnic.",
+        es: "Recompensa de Combate: Obtenido al derrotar a Morimoto / Game Freak tras coronarse Campeón. Aumenta la velocidad de aparición de Huevos."
+    },
+    'gracidea': {
+        pt: "Presente de Florista: Entregue por uma florista em Floaroma Town (Sinnoh) ao mostrar um Shaymin de evento legítimo. Transforma Shaymin na Sky Forme durante o dia.",
+        en: "Florist Gift: Given by a florist in Floaroma Town (Sinnoh) when showing an event Shaymin. Transforms Shaymin into Sky Forme during the daytime.",
+        es: "Regalo de Florista: Entregado por una florista en Pueblo Aromaflor (Sinnoh) al mostrar un Shaymin de evento. Transforma a Shaymin en Forma Cielo de día."
+    },
+    'red-orb': {
+        pt: "Monte Pírico (Hoenn) ou shopping de Kalos/Alola. Ativa a Primal Reversion de Groudon em batalha transformando-o em Primal Groudon.",
+        en: "Mt. Pyre (Hoenn) or Kalos/Alola mall. Triggers Primal Reversion for Groudon in battle turning it into Primal Groudon.",
+        es: "Monte Pírico (Hoenn) o centro comercial en Kalos/Alola. Activa la Regresión Primigenia de Groudon en combate."
+    },
+    'blue-orb': {
+        pt: "Monte Pírico (Hoenn) ou shopping de Kalos/Alola. Ativa a Primal Reversion de Kyogre em batalha transformando-o em Primal Kyogre.",
+        en: "Mt. Pyre (Hoenn) or Kalos/Alola mall. Triggers Primal Reversion for Kyogre in battle turning it into Primal Kyogre.",
+        es: "Monte Pírico (Hoenn) o centro comercial en Kalos/Alola. Activa la Regresión Primigenia de Kyogre en combate."
+    },
+    'wellspring-mask': {
+        pt: "História Principal de Kitakami (The Teal Mask DLC): Máscara da Água de Ogerpon, encontrada durante as missões das Feras de Kitakami. Transforma Ogerpon na forma Máscara Fonte (Grama/Água).",
+        en: "Kitakami Story (The Teal Mask DLC): Ogerpon's water mask recovered during the Loyal Three quests. Transforms Ogerpon into Wellspring Mask Forme (Grass/Water).",
+        es: "Historia de Noroteo (DLC La Máscara Turquesa): Máscara de agua de Ogerpon recuperada en las misiones. Transforma a Ogerpon en Forma Máscara Fuente (Planta/Agua)."
+    },
+    'hearthflame-mask': {
+        pt: "História Principal de Kitakami (The Teal Mask DLC): Máscara do Fogo de Ogerpon, recuperada durante as missões em Kitakami. Transforma Ogerpon na forma Máscara Fornalha (Grama/Fogo).",
+        en: "Kitakami Story (The Teal Mask DLC): Ogerpon's fire mask recovered during story quests. Transforms Ogerpon into Hearthflame Mask Forme (Grass/Fire).",
+        es: "Historia de Noroteo (DLC La Máscara Turquesa): Máscara de fuego de Ogerpon. Transforma a Ogerpon en Forma Máscara Horno (Planta/Fuego)."
+    },
+    'cornerstone-mask': {
+        pt: "História Principal de Kitakami (The Teal Mask DLC): Máscara da Pedra de Ogerpon. Transforma Ogerpon na forma Máscara Alicerce (Grama/Pedra).",
+        en: "Kitakami Story (The Teal Mask DLC): Ogerpon's rock mask. Transforms Ogerpon into Cornerstone Mask Forme (Grass/Rock).",
+        es: "Historia de Noroteo (DLC La Máscara Turquesa): Máscara de piedra de Ogerpon. Transforma a Ogerpon en Forma Máscara Cimiento (Planta/Roca)."
+    }
+};
+
+function formatarCategoriaItem(cat) {
+    const mapa = {
+        'species-specific': { pt: 'Específico de Espécie', en: 'Species Specific', es: 'Específico de Especie' },
+        'standard-balls': { pt: 'Poké Ball', en: 'Poké Ball', es: 'Poké Ball' },
+        'special-balls': { pt: 'Poké Ball Especial', en: 'Special Ball', es: 'Poké Ball Especial' },
+        'healing': { pt: 'Cura e Recuperação', en: 'Healing', es: 'Curación' },
+        'status-cures': { pt: 'Cura de Status', en: 'Status Cure', es: 'Cura de Estado' },
+        'revival': { pt: 'Reviver Pokémon', en: 'Revival', es: 'Revivir' },
+        'medicine': { pt: 'Medicina', en: 'Medicine', es: 'Medicina' },
+        'vitamins': { pt: 'Vitaminas / EVs', en: 'Vitamins', es: 'Vitaminas' },
+        'stat-boosts': { pt: 'Item de Batalha (Boost)', en: 'Stat Boost', es: 'Mejora de Stats' },
+        'held-items': { pt: 'Item de Segurar (Hold Item)', en: 'Held Item', es: 'Objeto Equipable' },
+        'choice': { pt: 'Item Competitivo Choice', en: 'Choice Item', es: 'Objeto Elegido' },
+        'type-enhancement': { pt: 'Potencializador de Tipo', en: 'Type Enhancer', es: 'Potenciador de Tipo' },
+        'evolution': { pt: 'Item de Evolução', en: 'Evolution Item', es: 'Objeto de Evolución' },
+        'evolution-stones': { pt: 'Pedra de Evolução', en: 'Evolution Stone', es: 'Piedra Evolutiva' },
+        'mega-stones': { pt: 'Mega Stone', en: 'Mega Stone', es: 'Megapiedra' },
+        'z-crystals': { pt: 'Cristal Z', en: 'Z-Crystal', es: 'Cristal Z' },
+        'plates': { pt: 'Placa de Arceus', en: 'Plate', es: 'Tabla' },
+        'memories': { pt: 'Memória de Silvally', en: 'Memory', es: 'Disco' },
+        'all-machines': { pt: 'Máquina Técnica (TM/HM)', en: 'Technical Machine', es: 'Máquina Técnica' },
+        'berries': { pt: 'Baga (Berry)', en: 'Berry', es: 'Baya' },
+        'key-items': { pt: 'Item Chave / Especial', en: 'Key Item', es: 'Objeto Clave' },
+        'plot-advancement': { pt: 'História Principal', en: 'Plot Item', es: 'Objeto de Historia' }
+    };
+    const langKey = idiomaAtual === 'es_ES' ? 'es' : (idiomaAtual === 'en_US' ? 'en' : 'pt');
+    return (mapa[cat] && mapa[cat][langKey]) ? mapa[cat][langKey] : cat.replace(/-/g, ' ').toUpperCase();
+}
+
+function obterTextoObtencaoItem(nome, itData) {
+    if (itensEspeciaisObtencao[nome]) {
+        const langKey = idiomaAtual === 'es_ES' ? 'es' : (idiomaAtual === 'en_US' ? 'en' : 'pt');
+        return `<strong>${escapeHTML(itensEspeciaisObtencao[nome][langKey] || itensEspeciaisObtencao[nome].pt)}</strong>`;
+    }
+    if (itData.held_by_pokemon && itData.held_by_pokemon.length > 0) {
+        const pokes = itData.held_by_pokemon.map(h => escapeHTML(h.pokemon.name).replace(/-/g, ' ')).slice(0, 8).join(', ');
+        return `${t('item_held_wild')} <strong>${pokes}</strong>.`;
+    }
+    const cat = itData.category ? itData.category.name : '';
+    if (['standard-balls', 'special-balls', 'healing', 'medicine', 'status-cures', 'revival', 'vitamins'].includes(cat)) {
+        return `<strong>${t('item_buy_mart')}</strong>`;
+    }
+    if (['held-items', 'choice', 'stat-boosts', 'type-enhancement'].includes(cat)) {
+        return `<strong>${t('item_buy_bp')}</strong>`;
+    }
+    if (['evolution', 'evolution-stones'].includes(cat)) {
+        return `<strong>${t('item_explore')}</strong>`;
+    }
+    if (['berries'].includes(cat)) {
+        return `<strong>${t('item_berry')}</strong>`;
+    }
+    if (['all-machines'].includes(cat)) {
+        return `<strong>${t('item_tm')}</strong>`;
+    }
+    return `<strong>${t('item_explore')}</strong>`;
+}
+
+// --- LOCALIZAÇÃO (ONDE ENCONTRAR O POKÉMON) ---
+let cacheLocaisPokemon = {};
+
+function formatarNomeJogo(nome) {
+    const mapaJogos = {
+        'red': 'Red', 'blue': 'Blue', 'yellow': 'Yellow',
+        'gold': 'Gold', 'silver': 'Silver', 'crystal': 'Crystal',
+        'ruby': 'Ruby', 'sapphire': 'Sapphire', 'emerald': 'Emerald',
+        'firered': 'FireRed', 'leafgreen': 'LeafGreen',
+        'diamond': 'Diamond', 'pearl': 'Pearl', 'platinum': 'Platinum',
+        'heartgold': 'HeartGold', 'soulsilver': 'SoulSilver',
+        'black': 'Black', 'white': 'White', 'black-2': 'Black 2', 'white-2': 'White 2',
+        'x': 'Pokémon X', 'y': 'Pokémon Y',
+        'omega-ruby': 'Omega Ruby', 'alpha-sapphire': 'Alpha Sapphire',
+        'sun': 'Sun', 'moon': 'Moon', 'ultra-sun': 'Ultra Sun', 'ultra-moon': 'Ultra Moon',
+        'lets-go-pikachu': "Let's Go Pikachu", 'lets-go-eevee': "Let's Go Eevee",
+        'sword': 'Sword', 'shield': 'Shield',
+        'the-isle-of-armor-sword': 'Isle of Armor (Sw)', 'the-isle-of-armor-shield': 'Isle of Armor (Sh)',
+        'the-crown-tundra-sword': 'Crown Tundra (Sw)', 'the-crown-tundra-shield': 'Crown Tundra (Sh)',
+        'brilliant-diamond': 'Brilliant Diamond', 'shining-pearl': 'Shining Pearl',
+        'legends-arceus': 'Legends: Arceus',
+        'scarlet': 'Scarlet', 'violet': 'Violet',
+        'the-teal-mask': 'The Teal Mask', 'the-indigo-disk': 'The Indigo Disk'
+    };
+    return mapaJogos[nome] || nome.replace(/-/g, ' ').toUpperCase();
+}
+
+function getCorJogo(nome) {
+    const mapaCores = {
+        'red': '#c0392b', 'blue': '#2980b9', 'yellow': '#d68910',
+        'gold': '#b7950b', 'silver': '#7f8c8d', 'crystal': '#16a085',
+        'ruby': '#b03a2e', 'sapphire': '#1f618d', 'emerald': '#1e8449',
+        'firered': '#c0392b', 'leafgreen': '#27ae60',
+        'diamond': '#2874a6', 'pearl': '#af7ac5', 'platinum': '#5d6d7e',
+        'heartgold': '#b7950b', 'soulsilver': '#7f8c8d',
+        'black': '#2c3e50', 'white': '#7f8c8d', 'black-2': '#17202a', 'white-2': '#85929e',
+        'x': '#2980b9', 'y': '#c0392b',
+        'omega-ruby': '#922b21', 'alpha-sapphire': '#1b4f72',
+        'sun': '#d35400', 'moon': '#6c3483', 'ultra-sun': '#ba4a00', 'ultra-moon': '#5b2c6f',
+        'lets-go-pikachu': '#d4ac0d', 'lets-go-eevee': '#996633',
+        'sword': '#0984e3', 'shield': '#d63031',
+        'the-isle-of-armor-sword': '#0984e3', 'the-isle-of-armor-shield': '#d63031',
+        'the-crown-tundra-sword': '#0984e3', 'the-crown-tundra-shield': '#d63031',
+        'brilliant-diamond': '#2980b9', 'shining-pearl': '#af7ac5',
+        'legends-arceus': '#2c3e50',
+        'scarlet': '#c0392b', 'violet': '#6c5ce7',
+        'the-teal-mask': '#00b894', 'the-indigo-disk': '#0984e3'
+    };
+    return mapaCores[nome] || 'var(--primary)';
+}
+
+async function carregarLocaisDoPokemon(id, speciesId) {
+    const container = document.getElementById('detail-locations');
+    if (!container) return;
+    container.innerHTML = `<i>${t('location_loading')}</i>`;
+    
+    try {
+        if (!cacheLocaisPokemon[id]) {
+            const ctrl = new AbortController();
+            const tm = setTimeout(() => ctrl.abort(), 3500);
+            let res = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}/encounters`, { signal: ctrl.signal });
+            clearTimeout(tm);
+            let data = await res.json();
+            // Se for variedade e não tiver encontros próprios, busca da espécie base
+            if ((!data || data.length === 0) && speciesId && speciesId != id) {
+                const ctrlBase = new AbortController();
+                const tmBase = setTimeout(() => ctrlBase.abort(), 3500);
+                const resBase = await fetch(`https://pokeapi.co/api/v2/pokemon/${speciesId}/encounters`, { signal: ctrlBase.signal });
+                clearTimeout(tmBase);
+                data = await resBase.json();
+            }
+            cacheLocaisPokemon[id] = data;
+        }
+        const data = cacheLocaisPokemon[id];
+        if (!data || data.length === 0) {
+            container.innerHTML = `<div class="location-empty">${t('location_none')}</div>`;
+            return;
+        }
+
+        const porJogo = {};
+        data.forEach(item => {
+            const areaLimpa = item.location_area.name
+                .replace(/-area$/i, '')
+                .replace(/-/g, ' ')
+                .split(' ')
+                .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+                .join(' ');
+            
+            item.version_details.forEach(vd => {
+                const vNome = vd.version.name;
+                if (!porJogo[vNome]) porJogo[vNome] = new Set();
+                porJogo[vNome].add(areaLimpa);
+            });
+        });
+
+        const jogosNomes = Object.keys(porJogo);
+        if (jogosNomes.length === 0) {
+            container.innerHTML = `<div class="location-empty">${t('location_none')}</div>`;
+            return;
+        }
+
+        let html = '';
+        for (let j of jogosNomes) {
+            const locaisArray = Array.from(porJogo[j]);
+            const badgeCor = getCorJogo(j);
+            const nomeJogoFormatado = formatarNomeJogo(j);
+            html += `
+                <div class="location-row">
+                    <span class="location-game-badge" style="background-color: ${badgeCor};">${nomeJogoFormatado}</span>
+                    <span class="location-area-list">${locaisArray.join(', ')}</span>
+                </div>
+            `;
+        }
+        container.innerHTML = html;
+    } catch (e) {
+        container.innerHTML = `<div class="location-empty">${t('location_none')}</div>`;
+    }
 }
 
 async function buscarEvolucoes(url) {
