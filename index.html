@@ -420,6 +420,10 @@
                     <h3 data-i18n="evo_chain">Linha Evolutiva & Formas</h3>
                     <div id="detail-evolutions" class="evo-chain">Carregando...</div>
                 </section>
+                <section class="info-section" id="location-container">
+                    <h3 data-i18n="locations_title">Localização (Onde Encontrar)</h3>
+                    <div id="detail-locations" class="locations-box">Carregando...</div>
+                </section>
                 <section class="info-section">
                     <h3 data-i18n="available_moves">Moves Disponíveis</h3>
                     <button type="button" class="btn-dark" onclick="carregarMovesDoPokemon()" data-i18n="load_moves">Carregar Lista de Moves</button>
@@ -477,7 +481,11 @@
             <section class="info-section" style="margin-top: 20px; text-align:center;">
                 <img id="it-img" src="" alt="Item" style="width:64px; height:64px; image-rendering: pixelated;">
                 <h3 id="it-name" style="font-size: 20px; text-transform: uppercase;">Nome do Item</h3>
-                <p style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #ddd; text-align:left;" id="it-desc"></p>
+                <div id="it-category" style="margin: 8px 0;"></div>
+                <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #ddd; text-align:left;">
+                    <h4 style="margin: 0 0 6px 0; font-size: 14px; color: var(--primary);" data-i18n="item_desc_title">Descrição do Efeito:</h4>
+                    <p id="it-desc" style="margin: 0; font-size: 14px; line-height: 1.4;"></p>
+                </div>
             </section>
         </article>
     </div>
