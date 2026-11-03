@@ -21,6 +21,7 @@ const dicionario = {
         start_battle: "⚔️ Iniciar Batalha 1v1!",
         js_load_moves: "<i>Carregando dados precisos...</i>", js_lvl_moves: "Aprende por Nível", js_tm_moves: "Aprende por Máquina", js_egg_moves: "Aprende por Reprodução (Ovo)", js_tutor_moves: "Aprende por Tutor", js_other_moves: "Outros Métodos / Especiais", js_no_moves: "Nenhum golpe encontrado.",
         team_picker_title: "Adicionar Pokémon ao Time", team_choosing_slot: "Escolhendo para o Slot", team_full: "O time já possui 6 Pokémon! Remova um para adicionar outro.", search_poke_team: "Buscar Pokémon para o time (Ex: Ursaluna, Bloodmoon)...",
+        team_total_col: "Total do Time", team_weak_singular: "Fraqueza", team_weak_plural: "Fraquezas", team_resistant: "Resistente", team_balanced: "Equilibrado", team_neutral: "Neutro", team_resist_short: "Resist.", team_immune_short: "Imune",
         js_calc: "Calculando...", js_normal_dmg: "<p>Recebe dano normal de tudo.</p>", js_no_evo: "Linha evolutiva indisponível.",
         js_add_poke: "<p style='color:#777; font-size: 14px;'>Adicione Pokémon para ver a análise cruzada.</p>", js_gen_table: "<i>Gerando tabela de análise...</i>",
         js_atk_def: "Atq \\ Def", js_def_atk: "DEFESA ➔<br><br>ATAQUE ⬇",
@@ -86,6 +87,7 @@ const dicionario = {
         start_battle: "⚔️ Start 1v1 Battle!",
         js_load_moves: "<i>Loading precise data...</i>", js_lvl_moves: "Learned by Level Up", js_tm_moves: "Learned by TM/HM", js_egg_moves: "Learned by Breeding (Egg)", js_tutor_moves: "Learned by Move Tutor", js_other_moves: "Other Methods / Special", js_no_moves: "No moves found.",
         team_picker_title: "Add Pokémon to Team", team_choosing_slot: "Choosing for Slot", team_full: "The team already has 6 Pokémon! Remove one to add another.", search_poke_team: "Search Pokémon for team (e.g. Ursaluna, Bloodmoon)...",
+        team_total_col: "Team Total", team_weak_singular: "Weakness", team_weak_plural: "Weaknesses", team_resistant: "Resistant", team_balanced: "Balanced", team_neutral: "Neutral", team_resist_short: "Resist.", team_immune_short: "Immune",
         js_calc: "Calculating...", js_normal_dmg: "<p>Takes normal damage from everything.</p>", js_no_evo: "Evolution chain unavailable.",
         js_add_poke: "<p style='color:#777; font-size: 14px;'>Add Pokémon to see the cross analysis.</p>", js_gen_table: "<i>Generating analysis table...</i>",
         js_atk_def: "Atk \\ Def", js_def_atk: "DEFENSE ➔<br><br>ATTACK ⬇",
@@ -151,6 +153,7 @@ const dicionario = {
         start_battle: "⚔️ ¡Iniciar Batalla 1v1!",
         js_load_moves: "<i>Cargando datos precisos...</i>", js_lvl_moves: "Aprende por Nivel", js_tm_moves: "Aprende por Máquina (MT/MO)", js_egg_moves: "Aprende por Huevo (Mov. Huevo)", js_tutor_moves: "Aprende por Tutor", js_other_moves: "Otros Métodos / Especiales", js_no_moves: "No se encontraron movimientos.",
         team_picker_title: "Añadir Pokémon al Equipo", team_choosing_slot: "Eligiendo para el Espacio", team_full: "¡El equipo ya tiene 6 Pokémon! Elimina uno para añadir otro.", search_poke_team: "Buscar Pokémon para el equipo (Ej: Ursaluna, Bloodmoon)...",
+        team_total_col: "Total Equipo", team_weak_singular: "Debilidad", team_weak_plural: "Debilidades", team_resistant: "Resistente", team_balanced: "Equilibrado", team_neutral: "Neutro", team_resist_short: "Resist.", team_immune_short: "Inmune",
         js_calc: "Calculando...", js_normal_dmg: "<p>Recibe daño normal de todo.</p>", js_no_evo: "Cadena evolutiva no disponible.",
         js_add_poke: "<p style='color:#777; font-size: 14px;'>Añade Pokémon para ver el análisis.</p>", js_gen_table: "<i>Generando tabla de análisis...</i>",
         js_atk_def: "Atq \\ Def", js_def_atk: "DEFENSA ➔<br><br>ATAQUE ⬇",
@@ -1677,15 +1680,70 @@ async function gerarTabelaFraquezas(timeValido) {
     container.innerHTML = t('js_gen_table');
     
     let tabela = `<table class="type-table"><tr><th style="background:#444">${t('js_atk_def')}</th>`;
-    timeValido.forEach(p => tabela += `<th>${escapeHTML(p.name).substring(0,4)}.</th>`); tabela += '</tr>';
+    timeValido.forEach(p => tabela += `<th>${escapeHTML(p.name).substring(0,4)}.</th>`);
+    tabela += `<th style="background:#222; color:white; min-width:115px;">${t('team_total_col')}</th>`;
+    tabela += '</tr>';
 
     for (let tipoAtq of Object.keys(coresTipos)) {
         tabela += `<tr><td style="background-color:${coresTipos[tipoAtq]}; color:white; font-weight:bold; text-transform:uppercase;">${tipoAtq.substring(0,3)}</td>`;
+        
+        let qtdFracos = 0;
+        let qtdResist = 0;
+        let qtdImune = 0;
+
         for (let p of timeValido) {
             let mult = await calcularMultiplicadorExato(tipoAtq, p.types);
+            if (mult > 1) qtdFracos++;
+            else if (mult === 0) qtdImune++;
+            else if (mult < 1) qtdResist++;
+
             const estilo = getCorEficacia(mult);
             tabela += `<td style="background-color:${estilo.bg}; color:${estilo.text}; font-weight: bold;">${formatarMultiplicador(mult)}x</td>`;
         }
+
+        const saldoDefensivo = qtdFracos - (qtdResist + qtdImune);
+        let bgTotal = '#f7f7f7';
+        let textoTotal = '#333';
+        let tituloStatus = '';
+
+        if (saldoDefensivo > 0) {
+            if (saldoDefensivo >= 3) {
+                bgTotal = '#c0392b';
+                textoTotal = 'white';
+                tituloStatus = `🚨 +${saldoDefensivo} ${t('team_weak_plural')}`;
+            } else {
+                bgTotal = '#F08030';
+                textoTotal = 'white';
+                tituloStatus = `⚠️ +${saldoDefensivo} ${saldoDefensivo > 1 ? t('team_weak_plural') : t('team_weak_singular')}`;
+            }
+        } else if (saldoDefensivo < 0) {
+            bgTotal = '#27ae60';
+            textoTotal = 'white';
+            tituloStatus = `🛡️ ${t('team_resistant')}`;
+        } else {
+            if (qtdFracos > 0) {
+                bgTotal = '#f1c40f';
+                textoTotal = '#333';
+                tituloStatus = `⚖️ ${t('team_balanced')}`;
+            } else {
+                bgTotal = '#f0f0f0';
+                textoTotal = '#666';
+                tituloStatus = `➖ ${t('team_neutral')}`;
+            }
+        }
+
+        let partes = [];
+        if (qtdFracos > 0) partes.push(`${qtdFracos} ${qtdFracos > 1 ? t('team_weak_plural') : t('team_weak_singular')}`);
+        if (qtdResist > 0) partes.push(`${qtdResist} ${t('team_resist_short')}`);
+        if (qtdImune > 0) partes.push(`${qtdImune} ${t('team_immune_short')}`);
+        if (partes.length === 0) partes.push(`0 ${t('team_weak_plural')}`);
+        const detalheTexto = partes.join(' / ');
+
+        tabela += `<td style="background-color:${bgTotal}; color:${textoTotal}; font-weight:bold; padding:4px 6px;">
+            <div style="font-size:11px; line-height:1.2;">${tituloStatus}</div>
+            <div style="font-size:10px; opacity:0.9; margin-top:2px; font-weight:normal;">${detalheTexto}</div>
+        </td>`;
+
         tabela += '</tr>';
     }
     container.innerHTML = tabela + '</table>';
