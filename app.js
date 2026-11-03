@@ -19,7 +19,8 @@ const dicionario = {
         your_pokemon: "Seu Pokémon (Lv. 100)", cpu_pokemon: "Pokémon da Máquina (Lv. 100)", random_cpu: "🎲 Aleatório",
         item_label: "Item:", nature_label: "Natureza:", ivs_label: "IVs (0 - 31) & Stats Finais:", moves_label: "Moves (Escolha 4):",
         start_battle: "⚔️ Iniciar Batalha 1v1!",
-        js_load_moves: "<i>Carregando dados precisos...</i>", js_lvl_moves: "Aprende por Nível", js_tm_moves: "Aprende por Máquina", js_no_moves: "Nenhum golpe encontrado.",
+        js_load_moves: "<i>Carregando dados precisos...</i>", js_lvl_moves: "Aprende por Nível", js_tm_moves: "Aprende por Máquina", js_egg_moves: "Aprende por Reprodução (Ovo)", js_tutor_moves: "Aprende por Tutor", js_other_moves: "Outros Métodos / Especiais", js_no_moves: "Nenhum golpe encontrado.",
+        team_picker_title: "Adicionar Pokémon ao Time", team_choosing_slot: "Escolhendo para o Slot", team_full: "O time já possui 6 Pokémon! Remova um para adicionar outro.", search_poke_team: "Buscar Pokémon para o time (Ex: Ursaluna, Bloodmoon)...",
         js_calc: "Calculando...", js_normal_dmg: "<p>Recebe dano normal de tudo.</p>", js_no_evo: "Linha evolutiva indisponível.",
         js_add_poke: "<p style='color:#777; font-size: 14px;'>Adicione Pokémon para ver a análise cruzada.</p>", js_gen_table: "<i>Gerando tabela de análise...</i>",
         js_atk_def: "Atq \\ Def", js_def_atk: "DEFESA ➔<br><br>ATAQUE ⬇",
@@ -83,7 +84,8 @@ const dicionario = {
         your_pokemon: "Your Pokémon (Lv. 100)", cpu_pokemon: "CPU Pokémon (Lv. 100)", random_cpu: "🎲 Random",
         item_label: "Item:", nature_label: "Nature:", ivs_label: "IVs (0 - 31) & Final Stats:", moves_label: "Moves (Pick 4):",
         start_battle: "⚔️ Start 1v1 Battle!",
-        js_load_moves: "<i>Loading precise data...</i>", js_lvl_moves: "Learned by Level Up", js_tm_moves: "Learned by TM/HM", js_no_moves: "No moves found.",
+        js_load_moves: "<i>Loading precise data...</i>", js_lvl_moves: "Learned by Level Up", js_tm_moves: "Learned by TM/HM", js_egg_moves: "Learned by Breeding (Egg)", js_tutor_moves: "Learned by Move Tutor", js_other_moves: "Other Methods / Special", js_no_moves: "No moves found.",
+        team_picker_title: "Add Pokémon to Team", team_choosing_slot: "Choosing for Slot", team_full: "The team already has 6 Pokémon! Remove one to add another.", search_poke_team: "Search Pokémon for team (e.g. Ursaluna, Bloodmoon)...",
         js_calc: "Calculating...", js_normal_dmg: "<p>Takes normal damage from everything.</p>", js_no_evo: "Evolution chain unavailable.",
         js_add_poke: "<p style='color:#777; font-size: 14px;'>Add Pokémon to see the cross analysis.</p>", js_gen_table: "<i>Generating analysis table...</i>",
         js_atk_def: "Atk \\ Def", js_def_atk: "DEFENSE ➔<br><br>ATTACK ⬇",
@@ -147,7 +149,8 @@ const dicionario = {
         your_pokemon: "Tu Pokémon (Nv. 100)", cpu_pokemon: "Pokémon de la CPU (Nv. 100)", random_cpu: "🎲 Aleatorio",
         item_label: "Objeto:", nature_label: "Naturaleza:", ivs_label: "IVs (0 - 31) y Stats Finales:", moves_label: "Movimientos (Elige 4):",
         start_battle: "⚔️ ¡Iniciar Batalla 1v1!",
-        js_load_moves: "<i>Cargando datos precisos...</i>", js_lvl_moves: "Aprende por Nivel", js_tm_moves: "Aprende por Máquina (MT/MO)", js_no_moves: "No se encontraron movimientos.",
+        js_load_moves: "<i>Cargando datos precisos...</i>", js_lvl_moves: "Aprende por Nivel", js_tm_moves: "Aprende por Máquina (MT/MO)", js_egg_moves: "Aprende por Huevo (Mov. Huevo)", js_tutor_moves: "Aprende por Tutor", js_other_moves: "Otros Métodos / Especiales", js_no_moves: "No se encontraron movimientos.",
+        team_picker_title: "Añadir Pokémon al Equipo", team_choosing_slot: "Eligiendo para el Espacio", team_full: "¡El equipo ya tiene 6 Pokémon! Elimina uno para añadir otro.", search_poke_team: "Buscar Pokémon para el equipo (Ej: Ursaluna, Bloodmoon)...",
         js_calc: "Calculando...", js_normal_dmg: "<p>Recibe daño normal de todo.</p>", js_no_evo: "Cadena evolutiva no disponible.",
         js_add_poke: "<p style='color:#777; font-size: 14px;'>Añade Pokémon para ver el análisis.</p>", js_gen_table: "<i>Generando tabla de análisis...</i>",
         js_atk_def: "Atq \\ Def", js_def_atk: "DEFENSA ➔<br><br>ATAQUE ⬇",
@@ -203,6 +206,7 @@ function mudarIdioma(lang) {
     document.querySelectorAll('[data-i18n-ph]').forEach(el => { el.placeholder = dicionario[lang][el.getAttribute('data-i18n-ph')]; });
     document.getElementById('desc-chart-global').innerHTML = t('js_chart_desc');
     renderizarTime();
+    filtrarListaTime();
     renderizarNatures();
     if(document.getElementById('aba-minhadex') && document.getElementById('aba-minhadex').classList.contains('active')) {
         renderizarTelaMinhaDex();
@@ -406,6 +410,7 @@ async function iniciarApp() {
         filtrarItemsGlobal();
         renderizarNatures();
         renderizarTime();
+        filtrarListaTime();
         inicializarMinhaDex();
         inicializarSimulador1v1();
         configurarSwipeModais();
@@ -420,6 +425,7 @@ function mudarAba(event, abaId) {
     const abaAlvo = document.getElementById(`aba-${abaId}`);
     abaAlvo.classList.remove('hidden'); abaAlvo.classList.add('active');
     if(event && event.target) event.target.classList.add('active');
+    if(abaId === 'teams') { renderizarTime(); filtrarListaTime(); }
     if(abaId === 'typechart') { document.getElementById('global-type-chart').innerHTML = ''; gerarTabelaDeTiposGlobal(); }
     if(abaId === 'minhadex') { renderizarTelaMinhaDex(); }
     if(abaId === 'items') { filtrarItemsGlobal(); }
@@ -432,8 +438,29 @@ function mudarAba(event, abaId) {
     document.getElementById('sidebar-overlay').classList.add('hidden');
 }
 
-function iniciarSelecaoTime(indexSlot) { modoSelecaoTimeSlot = indexSlot; mudarAba(null, 'dexke'); document.getElementById('selecao-time-banner').style.display = 'flex'; }
-function cancelarSelecaoTime() { modoSelecaoTimeSlot = null; document.getElementById('selecao-time-banner').style.display = 'none'; mudarAba(null, 'teams'); }
+function iniciarSelecaoTime(indexSlot) {
+    modoSelecaoTimeSlot = indexSlot;
+    renderizarTime();
+    const indEl = document.getElementById('team-slot-indicator');
+    if (indEl) {
+        indEl.innerHTML = `<span style="color:var(--primary); font-weight:bold;">👉 ${t('team_choosing_slot')} ${indexSlot + 1}</span> <button type="button" class="btn-small" onclick="cancelarSelecaoTime()" style="background:#777; margin-left:8px; padding:3px 8px;">${t('cancel')}</button>`;
+    }
+    const searchContainer = document.getElementById('team-search-container');
+    if (searchContainer) {
+        searchContainer.scrollIntoView({ behavior: 'smooth' });
+        const input = document.getElementById('teamSearchInput');
+        if (input) input.focus();
+    }
+}
+
+function cancelarSelecaoTime() {
+    modoSelecaoTimeSlot = null;
+    const banner = document.getElementById('selecao-time-banner');
+    if (banner) banner.style.display = 'none';
+    const indEl = document.getElementById('team-slot-indicator');
+    if (indEl) indEl.innerHTML = '';
+    renderizarTime();
+}
 
 // --- 4. LISTAS E FILTROS ---
 function filtrarLista() {
@@ -457,6 +484,77 @@ function filtrarLista() {
             <div class="list-types">${p.types.map(t => `<span class="list-type-badge" style="background-color: ${coresTipos[t]}">${t}</span>`).join('')}</div></div>
         </div>`;
     }).join('');
+}
+
+let listaFiltradaPokemonTime = [];
+function filtrarListaTime() {
+    const inputEl = document.getElementById('teamSearchInput');
+    const genEl = document.getElementById('teamGenFilter');
+    const tipoEl = document.getElementById('teamTypeFilter');
+    if (!inputEl || !genEl || !tipoEl) return;
+
+    const termo = escapeHTML(inputEl.value.toLowerCase().trim());
+    const gen = genEl.value;
+    const tipoFiltro = tipoEl.value;
+    const limites = {
+        'all': [1, 20000], 'rby': [1, 151], 'frlg': [1, 151], 'lgpe': [1, 151], 'gsc': [152, 251], 'hgss': [152, 251], 
+        'rse': [252, 386], 'oras': [252, 386], 'dppt': [387, 493], 'bdsp': [387, 493], 'bw': [494, 649], 'xy': [650, 721], 
+        'za': [650, 721], 'sm': [722, 809], 'swsh': [810, 898], 'la': [899, 905], 'sv': [906, 1025], 'special': [10001, 20000]
+    };
+    const [min, max] = limites[gen] || [1, 20000];
+    
+    listaFiltradaPokemonTime = todosPokemon.filter(p => p.id >= min && p.id <= max && (p.name.includes(termo) || p.id == termo) && (tipoFiltro === 'all' || p.types.includes(tipoFiltro)));
+    
+    const container = document.getElementById('team-pokemon-list');
+    if (!container) return;
+
+    container.innerHTML = listaFiltradaPokemonTime.slice(0, 120).map(p => {
+        const numDisplay = p.id > 10000 ? '★ ESP' : '#' + p.id.toString().padStart(3, '0');
+        return `
+        <div class="list-item" onclick="selecionarPokemonParaTime('${p.name}')" title="Adicionar ao time">
+            <div class="list-img-box"><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${p.id}.png" loading="lazy" onerror="this.src='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png'"></div>
+            <div class="list-info">
+                <span class="list-name">${p.name.replace(/-/g, ' ')}</span>
+                <span style="font-size:12px; color:#777">${numDisplay}</span>
+                <div class="list-types">${p.types.map(t => `<span class="list-type-badge" style="background-color: ${coresTipos[t]}">${getTipoNome(t)}</span>`).join('')}</div>
+            </div>
+            <button type="button" class="btn-small" style="background:var(--primary); font-size:11px; padding:5px 8px; margin-left:8px;" onclick="event.stopPropagation(); selecionarPokemonParaTime('${p.name}')">+ Time</button>
+        </div>`;
+    }).join('');
+}
+
+async function selecionarPokemonParaTime(idOuNome) {
+    let pObj = todosPokemon.find(p => p.name === idOuNome || p.id == idOuNome);
+    if (!pObj || !pObj.types || pObj.types.length === 0) {
+        try {
+            const apiData = await (await fetch(`https://pokeapi.co/api/v2/pokemon/${idOuNome}`)).json();
+            pObj = { id: apiData.id, name: escapeHTML(apiData.name), types: apiData.types.map(t => escapeHTML(t.type.name)) };
+        } catch (e) {
+            console.error("Erro ao buscar dados do Pokémon", e);
+            return;
+        }
+    }
+
+    const time = timesSalvos[timeAtualIndex];
+    let slotAlvo = modoSelecaoTimeSlot;
+    if (slotAlvo === null) {
+        slotAlvo = time.findIndex(p => p === null);
+        if (slotAlvo === -1) {
+            alert(t('team_full'));
+            return;
+        }
+    }
+
+    time[slotAlvo] = { id: pObj.id, name: pObj.name, types: pObj.types };
+    localStorage.setItem('dexke_times', JSON.stringify(timesSalvos));
+
+    modoSelecaoTimeSlot = null;
+    const banner = document.getElementById('selecao-time-banner');
+    if (banner) banner.style.display = 'none';
+    const indEl = document.getElementById('team-slot-indicator');
+    if (indEl) indEl.innerHTML = '';
+
+    renderizarTime();
 }
 
 function filtrarMovesGlobal() {
@@ -562,10 +660,8 @@ function renderizarNatures() {
 
 async function tratarCliquePokemon(idOuNome) {
     if (modoSelecaoTimeSlot !== null) {
-        const p = await (await fetch(`https://pokeapi.co/api/v2/pokemon/${idOuNome}`)).json();
-        timesSalvos[timeAtualIndex][modoSelecaoTimeSlot] = { id: p.id, name: escapeHTML(p.name), types: p.types.map(t => escapeHTML(t.type.name)) };
-        localStorage.setItem('dexke_times', JSON.stringify(timesSalvos));
-        cancelarSelecaoTime(); renderizarTime();
+        await selecionarPokemonParaTime(idOuNome);
+        mudarAba(null, 'teams');
     } else abrirDetalhes(idOuNome);
 }
 
@@ -816,25 +912,110 @@ function getIconeClasse(classe) { return classe === 'physical' ? '⚔️ FIS' : 
 async function carregarMovesDoPokemon() {
     const container = document.getElementById('detail-moves-list');
     container.innerHTML = t('js_load_moves');
-    let levelMoves = [], machineMoves = [];
+    if (!pokemonAtualParaMoves || pokemonAtualParaMoves.length === 0) {
+        container.innerHTML = t('js_no_moves');
+        return;
+    }
+
+    // Pré-carregamento concorrente em lotes para acelerar o processo
+    const nomesSemCache = pokemonAtualParaMoves.map(m => m.move.name).filter(nome => !moveCache[nome]);
+    const tamanhoLote = 25;
+    for (let i = 0; i < nomesSemCache.length; i += tamanhoLote) {
+        const lote = nomesSemCache.slice(i, i + tamanhoLote);
+        await Promise.all(lote.map(async nome => {
+            try {
+                const res = await fetch(`https://pokeapi.co/api/v2/move/${nome}`);
+                if (res.ok) moveCache[nome] = await res.json();
+            } catch (e) {
+                console.error("Erro ao carregar move:", nome, e);
+            }
+        }));
+    }
+
+    const ordemGeracoes = [
+        'red-blue', 'yellow', 'gold-silver', 'crystal', 'ruby-sapphire', 'emerald',
+        'firered-leafgreen', 'diamond-pearl', 'platinum', 'heartgold-soulsilver',
+        'black-white', 'colosseum', 'xd', 'black-2-white-2', 'x-y', 'omega-ruby-alpha-sapphire',
+        'sun-moon', 'ultra-sun-ultra-moon', 'lets-go-pikachu-lets-go-eevee',
+        'sword-shield', 'the-isle-of-armor', 'the-crown-tundra',
+        'brilliant-diamond-shining-pearl', 'legends-arceus',
+        'scarlet-violet', 'the-teal-mask', 'the-indigo-disk'
+    ];
+
+    function getMelhorDetalhe(vgDetails, metodo) {
+        const filtrados = vgDetails.filter(d => !metodo || d.move_learn_method.name === metodo);
+        if (filtrados.length === 0) return null;
+        filtrados.sort((a, b) => {
+            const iA = ordemGeracoes.indexOf(a.version_group.name);
+            const iB = ordemGeracoes.indexOf(b.version_group.name);
+            return iA - iB;
+        });
+        return filtrados[filtrados.length - 1];
+    }
+
+    function gerarHtmlLinhaMove(nome, badgeMetodo) {
+        const moveData = moveCache[nome];
+        const tipo = (moveData && moveData.type && moveData.type.name) ? moveData.type.name : 'normal';
+        const classe = (moveData && moveData.damage_class && moveData.damage_class.name) ? moveData.damage_class.name : 'status';
+        const corTipo = coresTipos[tipo] || '#777';
+        return `<div class="move-row" onclick="abrirDetalheMove('${escapeHTML(nome)}')">
+            <div style="display:flex; align-items:center; flex-wrap:wrap; gap:4px;">
+                <strong>${escapeHTML(nome).replace(/-/g, ' ')}</strong>
+                <span class="list-type-badge" style="background-color: ${corTipo};">${getTipoNome(tipo)}</span>
+                <span class="class-badge class-${classe}">${getIconeClasse(classe)}</span>
+            </div>
+            <span class="move-lvl">${badgeMetodo}</span>
+        </div>`;
+    }
+
+    let levelMoves = [], machineMoves = [], eggMoves = [], tutorMoves = [], otherMoves = [];
 
     for (let m of pokemonAtualParaMoves) {
-        const detalhe = m.version_group_details[m.version_group_details.length - 1];
-        if(!detalhe) continue;
-        const metodo = detalhe.move_learn_method.name;
-        if(metodo === 'level-up' || metodo === 'machine') {
-            const nome = m.move.name;
-            if(!moveCache[nome]) moveCache[nome] = await (await fetch(`https://pokeapi.co/api/v2/move/${nome}`)).json();
-            const moveData = moveCache[nome];
-            const htmlLinha = `<div class="move-row" onclick="abrirDetalheMove('${escapeHTML(nome)}')"><div><strong>${escapeHTML(nome).replace(/-/g, ' ')}</strong> <span class="class-badge class-${moveData.damage_class.name}" style="margin-left:5px;">${getIconeClasse(moveData.damage_class.name)}</span></div><span class="move-lvl">${metodo === 'level-up' ? 'Lvl ' + detalhe.level_learned_at : 'TM/HM'}</span></div>`;
-            if (metodo === 'level-up') levelMoves.push({ lvl: detalhe.level_learned_at, html: htmlLinha });
-            else machineMoves.push(htmlLinha);
+        const nome = m.move.name;
+        const vgd = m.version_group_details || [];
+        const lvlDet = getMelhorDetalhe(vgd, 'level-up');
+        const tmDet = getMelhorDetalhe(vgd, 'machine');
+        const eggDet = getMelhorDetalhe(vgd, 'egg');
+        const tutorDet = getMelhorDetalhe(vgd, 'tutor');
+
+        let categorizado = false;
+        if (lvlDet) {
+            const lvlTexto = lvlDet.level_learned_at === 0 ? 'Evo' : 'Lvl ' + lvlDet.level_learned_at;
+            levelMoves.push({ lvl: lvlDet.level_learned_at, html: gerarHtmlLinhaMove(nome, lvlTexto) });
+            categorizado = true;
+        }
+        if (tmDet) {
+            machineMoves.push({ nome: nome, html: gerarHtmlLinhaMove(nome, 'TM/HM') });
+            categorizado = true;
+        }
+        if (eggDet && !lvlDet) {
+            eggMoves.push({ nome: nome, html: gerarHtmlLinhaMove(nome, 'Egg') });
+            categorizado = true;
+        }
+        if (tutorDet && !lvlDet && !tmDet) {
+            tutorMoves.push({ nome: nome, html: gerarHtmlLinhaMove(nome, 'Tutor') });
+            categorizado = true;
+        }
+        if (!categorizado) {
+            const anyDet = vgd[vgd.length - 1];
+            const metodoNome = anyDet ? anyDet.move_learn_method.name.replace(/-/g, ' ') : 'Especial';
+            otherMoves.push({ nome: nome, html: gerarHtmlLinhaMove(nome, metodoNome) });
         }
     }
+
     levelMoves.sort((a, b) => a.lvl - b.lvl);
+    machineMoves.sort((a, b) => a.nome.localeCompare(b.nome));
+    eggMoves.sort((a, b) => a.nome.localeCompare(b.nome));
+    tutorMoves.sort((a, b) => a.nome.localeCompare(b.nome));
+    otherMoves.sort((a, b) => a.nome.localeCompare(b.nome));
+
     let finalHtml = '';
-    if (levelMoves.length > 0) finalHtml += `<div class="move-section-title">${t('js_lvl_moves')}</div>` + levelMoves.map(m => m.html).join('');
-    if (machineMoves.length > 0) finalHtml += `<div class="move-section-title">${t('js_tm_moves')}</div>` + machineMoves.join('');
+    if (levelMoves.length > 0) finalHtml += `<div class="move-section-title">${t('js_lvl_moves')} (${levelMoves.length})</div>` + levelMoves.map(m => m.html).join('');
+    if (machineMoves.length > 0) finalHtml += `<div class="move-section-title">${t('js_tm_moves')} (${machineMoves.length})</div>` + machineMoves.map(m => m.html).join('');
+    if (eggMoves.length > 0) finalHtml += `<div class="move-section-title">${t('js_egg_moves')} (${eggMoves.length})</div>` + eggMoves.map(m => m.html).join('');
+    if (tutorMoves.length > 0) finalHtml += `<div class="move-section-title">${t('js_tutor_moves')} (${tutorMoves.length})</div>` + tutorMoves.map(m => m.html).join('');
+    if (otherMoves.length > 0) finalHtml += `<div class="move-section-title">${t('js_other_moves')} (${otherMoves.length})</div>` + otherMoves.map(m => m.html).join('');
+
     container.innerHTML = finalHtml || t('js_no_moves');
 }
 
@@ -1478,8 +1659,13 @@ async function renderizarTime() {
     const time = timesSalvos[timeAtualIndex]; while(time.length < 6) time.push(null);
     let htmlSlots = '';
     for(let i=0; i<6; i++) {
-        if(time[i]) htmlSlots += `<div class="team-slot" onclick="tratarCliquePokemon('${time[i].name}')"><div class="team-slot-remove" onclick="event.stopPropagation(); removerDoTime(${i})">X</div><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${time[i].id}.png"><div class="team-slot-name">${escapeHTML(time[i].name).replace(/-/g, ' ')}</div></div>`;
-        else htmlSlots += `<div class="team-slot" style="background:transparent; border: 2px dashed #999;" onclick="iniciarSelecaoTime(${i})"><span style="color:#999; font-size:32px;">+</span></div>`;
+        if(time[i]) {
+            htmlSlots += `<div class="team-slot" onclick="tratarCliquePokemon('${time[i].name}')"><div class="team-slot-remove" onclick="event.stopPropagation(); removerDoTime(${i})">X</div><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${time[i].id}.png"><div class="team-slot-name">${escapeHTML(time[i].name).replace(/-/g, ' ')}</div></div>`;
+        } else if (modoSelecaoTimeSlot === i) {
+            htmlSlots += `<div class="team-slot selecting" onclick="cancelarSelecaoTime()" title="Clique para cancelar"><span style="color:var(--primary); font-size:13px; font-weight:bold;">Slot ${i+1}</span><span style="font-size:11px; color:#c84b31; margin-top:4px;">${t('choosing_poke')}</span><span style="font-size:10px; color:#777; margin-top:2px;">(${t('cancel')})</span></div>`;
+        } else {
+            htmlSlots += `<div class="team-slot" style="background:transparent; border: 2px dashed #999;" onclick="iniciarSelecaoTime(${i})"><span style="color:#999; font-size:32px;">+</span></div>`;
+        }
     }
     document.getElementById('team-slots').innerHTML = htmlSlots;
     gerarTabelaFraquezas(time.filter(p => p !== null));
