@@ -214,6 +214,42 @@
                         <div id="team-analysis-table" style="overflow-x: auto;"></div>
                     </article>
                 </div>
+
+                <search class="search-container" role="search" id="team-search-container" style="border-top: 2px solid #ccc; margin-top: 5px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:5px; margin-bottom:5px;">
+                        <h3 data-i18n="team_picker_title" style="font-size: 15px; color: var(--primary); margin:0;">Adicionar Pokémon ao Time</h3>
+                        <span id="team-slot-indicator" style="font-size: 12px; color: #555;"></span>
+                    </div>
+                    <input type="text" id="teamSearchInput" placeholder="Buscar Pokémon para o time (Ex: Ursaluna, Bloodmoon)..." data-i18n-ph="search_poke_team" onkeyup="filtrarListaTime()" aria-label="Buscar Pokémon para o Time">
+                    
+                    <div class="filter-group">
+                        <select id="teamGenFilter" onchange="filtrarListaTime()" aria-label="Filtrar por Região e Geração">
+                            <option value="all" data-i18n="all_regions">Todas as Regiões & Especiais</option>
+                            <optgroup label="Geração 1 (1-151)"><option value="rby">Red / Blue / Yellow</option><option value="frlg">FireRed / LeafGreen</option><option value="lgpe">Let's Go Pikachu / Eevee</option></optgroup>
+                            <optgroup label="Geração 2 (152-251)"><option value="gsc">Gold / Silver / Crystal</option><option value="hgss">HeartGold / SoulSilver</option></optgroup>
+                            <optgroup label="Geração 3 (252-386)"><option value="rse">Ruby / Sapphire / Emerald</option><option value="oras">OmegaRuby / AlphaSapphire</option></optgroup>
+                            <optgroup label="Geração 4 (387-493)"><option value="dppt">Diamond / Pearl / Platinum</option><option value="bdsp">Brilliant Diamond / Shining Pearl</option></optgroup>
+                            <optgroup label="Geração 5 (494-649)"><option value="bw">Black / White & B2 / W2</option></optgroup>
+                            <optgroup label="Geração 6 (650-721)"><option value="xy">X / Y</option><option value="za">Legends: Z-A</option></optgroup>
+                            <optgroup label="Geração 7 (722-809)"><option value="sm">Sun / Moon & Ultra S/M</option></optgroup>
+                            <optgroup label="Geração 8 (810-898)"><option value="swsh">Sword / Shield</option></optgroup>
+                            <optgroup label="Hisui (899-905)"><option value="la">Legends: Arceus</option></optgroup>
+                            <optgroup label="Geração 9 (906-1025)"><option value="sv">Scarlet / Violet</option></optgroup>
+                            <optgroup label="Especiais / Formas"><option value="special">Formas Especiais (Bloodmoon, Regionais, Megas)</option></optgroup>
+                        </select>
+
+                        <select id="teamTypeFilter" onchange="filtrarListaTime()" aria-label="Filtrar por Tipo">
+                            <option value="all" data-i18n="all_types">Todos os Tipos</option>
+                            <option value="normal">Normal</option><option value="fighting">Fighting</option><option value="flying">Flying</option>
+                            <option value="poison">Poison</option><option value="ground">Ground</option><option value="rock">Rock</option>
+                            <option value="bug">Bug</option><option value="ghost">Ghost</option><option value="steel">Steel</option>
+                            <option value="fire">Fire</option><option value="water">Water</option><option value="grass">Grass</option>
+                            <option value="electric">Electric</option><option value="psychic">Psychic</option><option value="ice">Ice</option>
+                            <option value="dragon">Dragon</option><option value="dark">Dark</option><option value="fairy">Fairy</option>
+                        </select>
+                    </div>
+                </search>
+                <div id="team-pokemon-list" class="list-container" role="region" aria-label="Lista de Pokémon para o Time"></div>
             </section>
 
             <!-- ABA BATALHA 1v1 (SHOWDOWN LITE) -->

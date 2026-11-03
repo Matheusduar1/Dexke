@@ -344,6 +344,7 @@ search {
 .team-slots-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 15px; margin-bottom: 15px;}
 .team-slot { background: white; border: 2px dashed #ccc; border-radius: 8px; height: 120px; display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: pointer; position: relative; transition: 0.2s;}
 .team-slot:hover { border-color: var(--primary); background: #fafafa;}
+.team-slot.selecting { border: 2px solid var(--primary) !important; background: #fff5f2 !important; box-shadow: 0 0 10px rgba(200, 75, 49, 0.4) !important; }
 .team-slot img { max-height: 70px; }
 .team-slot-name { font-size: 13px; text-transform: capitalize; font-weight: bold; text-align: center;}
 .team-slot-remove { position: absolute; top: -8px; right: -8px; background: red; color: white; border-radius: 50%; width: 24px; height: 24px; display: flex; justify-content: center; align-items: center; font-size: 14px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.3);}
