@@ -6,7 +6,19 @@ const dicionario = {
         loading: "🔄 Carregando dados da PokéAPI...", loading_sub: "Isso pode levar alguns segundos na primeira vez.",
         choosing_poke: "Escolhendo Pokémon para o Time...", cancel: "Cancelar",
         search_poke: "Buscar Pokémon (Ex: Ursaluna, Bloodmoon)...", search_move: "Buscar Move...", search_ability: "Buscar Habilidade...", search_item: "Buscar Item...", search_nature: "Buscar Natureza...",
-        all_regions: "Todas as Regiões & Especiais", all_types: "Todos os Tipos", type_chart_title: "Tabela de Eficácia de Tipos", team_analysis: "Análise de Fraquezas do Time",
+        all_regions: "Todas as Regiões & Especiais", all_types: "Todos os Tipos",
+        opt_special_cat: "Lendários & Míticos", opt_elemental_types: "Tipos Elementais",
+        filter_leg_myth: "👑 Lendários e Míticos", filter_legendary: "⭐ Apenas Lendários", filter_mythical: "✨ Apenas Míticos",
+        type_chart_title: "Tabela de Eficácia de Tipos", team_analysis: "Análise de Fraquezas do Time",
+        dual_type_title: "Simulador de Fraquezas (Dois Tipos)",
+        dual_type_desc: "Selecione dois tipos para ver as fraquezas, resistências e imunidades que um Pokémon com essa combinação teria.",
+        dual_type_legend: "Selecionar combinação de dois tipos",
+        dual_type_label1: "1º Tipo:", dual_type_label2: "2º Tipo:",
+        dual_select_1: "Selecione o 1º Tipo...", dual_select_2: "Nenhum / Selecione o 2º Tipo...",
+        dual_type_clear: "Limpar",
+        dual_type_empty: "Selecione 1 ou 2 tipos acima para simular as fraquezas defensivas.",
+        dual_group_weak: "⚠️ Fraquezas", dual_group_resist: "🛡️ Resistências", dual_group_immune: "🚫 Imunidades",
+        dual_none: "Nenhuma", dual_comb_label: "Combinação analisada:",
         natures_title: "Tabela de Naturezas (+10% / -10%)",
         footer_made: "Feito por Matheusduar1",
         copyright: "Pokémon e todos os nomes e imagens relacionados são marcas registradas e propriedades exclusivas da Nintendo, Game Freak e The Pokémon Company. Dexke é um projeto não oficial, sem fins lucrativos, criado exclusivamente para fins educacionais e de estudo.",
@@ -21,10 +33,10 @@ const dicionario = {
         start_battle: "⚔️ Iniciar Batalha 1v1!",
         js_load_moves: "<i>Carregando dados precisos...</i>", js_lvl_moves: "Aprende por Nível", js_tm_moves: "Aprende por Máquina", js_egg_moves: "Aprende por Reprodução (Ovo)", js_tutor_moves: "Aprende por Tutor", js_other_moves: "Outros Métodos / Especiais", js_no_moves: "Nenhum golpe encontrado.",
         team_picker_title: "Adicionar Pokémon ao Time", team_choosing_slot: "Escolhendo para o Slot", team_full: "O time já possui 6 Pokémon! Remova um para adicionar outro.", search_poke_team: "Buscar Pokémon para o time (Ex: Ursaluna, Bloodmoon)...",
-        team_total_col: "Total do Time", team_weak_singular: "Fraqueza", team_weak_plural: "Fraquezas", team_resistant: "Resistente", team_balanced: "Equilibrado", team_neutral: "Neutro", team_resist_short: "Resist.", team_immune_short: "Imune",
+        team_total_col: "Total do Time", team_weak_singular: "Fraqueza", team_weak_plural: "Fraquezas", team_resistant: "Resistente", team_balanced: "Equilibrado", team_neutral: "Neutro", team_resist_short: "Resist.", team_resist_singular: "Resistência", team_resist_plural: "Resistências", team_immune_short: "Imune",
         js_calc: "Calculando...", js_normal_dmg: "<p>Recebe dano normal de tudo.</p>", js_no_evo: "Linha evolutiva indisponível.",
         js_add_poke: "<p style='color:#777; font-size: 14px;'>Adicione Pokémon para ver a análise cruzada.</p>", js_gen_table: "<i>Gerando tabela de análise...</i>",
-        js_atk_def: "Atq \\ Def", js_def_atk: "DEFESA ➔<br><br>ATAQUE ⬇",
+        js_atk_def: "Ataque \\ Defesa", js_def_atk: "DEFESA ➔<br><br>ATAQUE ⬇",
         js_chart_desc: "Leia a linha do <strong style='color:var(--primary)'>ATAQUE</strong> na esquerda e cruze com a coluna da <strong style='color:var(--primary)'>DEFESA</strong> no topo.",
         js_no_desc: "Sem descrição disponível.", js_translating: "Traduzindo...",
         evo_lvl: "Nível", evo_trade: "Troca", evo_item: "Item:", evo_happy: "Felicidade", evo_special: "Forma Especial",
@@ -72,7 +84,19 @@ const dicionario = {
         loading: "🔄 Loading PokéAPI data...", loading_sub: "This may take a few seconds the first time.",
         choosing_poke: "Choosing Pokémon for the Team...", cancel: "Cancel",
         search_poke: "Search Pokémon (e.g. Ursaluna, Bloodmoon)...", search_move: "Search Move...", search_ability: "Search Ability...", search_item: "Search Item...", search_nature: "Search Nature...",
-        all_regions: "All Regions & Specials", all_types: "All Types", type_chart_title: "Type Matchup Chart", team_analysis: "Team Weakness Analysis",
+        all_regions: "All Regions & Specials", all_types: "All Types",
+        opt_special_cat: "Legendary & Mythical", opt_elemental_types: "Elemental Types",
+        filter_leg_myth: "👑 Legendary & Mythical", filter_legendary: "⭐ Legendary Only", filter_mythical: "✨ Mythical Only",
+        type_chart_title: "Type Matchup Chart", team_analysis: "Team Weakness Analysis",
+        dual_type_title: "Dual-Type Weakness Calculator",
+        dual_type_desc: "Select two types to see the weaknesses, resistances, and immunities a dual-type Pokémon would have.",
+        dual_type_legend: "Select dual-type combination",
+        dual_type_label1: "1st Type:", dual_type_label2: "2nd Type:",
+        dual_select_1: "Select 1st Type...", dual_select_2: "None / Select 2nd Type...",
+        dual_type_clear: "Clear",
+        dual_type_empty: "Select 1 or 2 types above to simulate defensive weaknesses.",
+        dual_group_weak: "⚠️ Weaknesses", dual_group_resist: "🛡️ Resistances", dual_group_immune: "🚫 Immunities",
+        dual_none: "None", dual_comb_label: "Analyzed combination:",
         natures_title: "Natures Chart (+10% / -10%)",
         footer_made: "Made by Matheusduar1",
         copyright: "Pokémon and all respective names are trademark & copyright of Nintendo, Game Freak, and The Pokémon Company. Dexke is an unofficial, non-profit project created exclusively for educational purposes.",
@@ -87,10 +111,10 @@ const dicionario = {
         start_battle: "⚔️ Start 1v1 Battle!",
         js_load_moves: "<i>Loading precise data...</i>", js_lvl_moves: "Learned by Level Up", js_tm_moves: "Learned by TM/HM", js_egg_moves: "Learned by Breeding (Egg)", js_tutor_moves: "Learned by Move Tutor", js_other_moves: "Other Methods / Special", js_no_moves: "No moves found.",
         team_picker_title: "Add Pokémon to Team", team_choosing_slot: "Choosing for Slot", team_full: "The team already has 6 Pokémon! Remove one to add another.", search_poke_team: "Search Pokémon for team (e.g. Ursaluna, Bloodmoon)...",
-        team_total_col: "Team Total", team_weak_singular: "Weakness", team_weak_plural: "Weaknesses", team_resistant: "Resistant", team_balanced: "Balanced", team_neutral: "Neutral", team_resist_short: "Resist.", team_immune_short: "Immune",
+        team_total_col: "Team Total", team_weak_singular: "Weakness", team_weak_plural: "Weaknesses", team_resistant: "Resistant", team_balanced: "Balanced", team_neutral: "Neutral", team_resist_short: "Resist.", team_resist_singular: "Resistance", team_resist_plural: "Resistances", team_immune_short: "Immune",
         js_calc: "Calculating...", js_normal_dmg: "<p>Takes normal damage from everything.</p>", js_no_evo: "Evolution chain unavailable.",
         js_add_poke: "<p style='color:#777; font-size: 14px;'>Add Pokémon to see the cross analysis.</p>", js_gen_table: "<i>Generating analysis table...</i>",
-        js_atk_def: "Atk \\ Def", js_def_atk: "DEFENSE ➔<br><br>ATTACK ⬇",
+        js_atk_def: "Attack \\ Defense", js_def_atk: "DEFENSE ➔<br><br>ATTACK ⬇",
         js_chart_desc: "Read the <strong style='color:var(--primary)'>ATTACK</strong> row on the left and cross with the <strong style='color:var(--primary)'>DEFENSE</strong> column on top.",
         js_no_desc: "No description available.", js_translating: "Translating...",
         evo_lvl: "Level", evo_trade: "Trade", evo_item: "Item:", evo_happy: "Happiness", evo_special: "Special Form",
@@ -138,7 +162,19 @@ const dicionario = {
         loading: "🔄 Cargando datos de PokéAPI...", loading_sub: "Esto puede tomar unos segundos.",
         choosing_poke: "Eligiendo Pokémon para el Equipo...", cancel: "Cancelar",
         search_poke: "Buscar Pokémon (Ej: Ursaluna, Bloodmoon)...", search_move: "Buscar Movimiento...", search_ability: "Buscar Habilidad...", search_item: "Buscar Objeto...", search_nature: "Buscar Naturaleza...",
-        all_regions: "Todas las Regiones y Especiales", all_types: "Todos los Tipos", type_chart_title: "Tabla de Eficacia de Tipos", team_analysis: "Análisis de Debilidades",
+        all_regions: "Todas las Regiones y Especiales", all_types: "Todos los Tipos",
+        opt_special_cat: "Legendarios y Míticos", opt_elemental_types: "Tipos Elementales",
+        filter_leg_myth: "👑 Legendarios y Míticos", filter_legendary: "⭐ Solo Legendarios", filter_mythical: "✨ Solo Míticos",
+        type_chart_title: "Tabla de Eficacia de Tipos", team_analysis: "Análisis de Debilidades",
+        dual_type_title: "Simulador de Debilidades (Dos Tipos)",
+        dual_type_desc: "Selecciona dos tipos para ver las debilidades, resistencias e inmunidades que tendría un Pokémon con esa combinación.",
+        dual_type_legend: "Seleccionar combinación de dos tipos",
+        dual_type_label1: "1.º Tipo:", dual_type_label2: "2.º Tipo:",
+        dual_select_1: "Selecciona el 1.º Tipo...", dual_select_2: "Ninguno / Selecciona el 2.º Tipo...",
+        dual_type_clear: "Limpiar",
+        dual_type_empty: "Selecciona 1 o 2 tipos arriba para simular las debilidades defensivas.",
+        dual_group_weak: "⚠️ Debilidades", dual_group_resist: "🛡️ Resistencias", dual_group_immune: "🚫 Inmunidades",
+        dual_none: "Ninguna", dual_comb_label: "Combinación analizada:",
         natures_title: "Tabla de Naturalezas (+10% / -10%)",
         footer_made: "Hecho por Matheusduar1",
         copyright: "Pokémon y todos los nombres e imágenes están registrados por Nintendo, Game Freak y The Pokémon Company. Dexke es un proyecto no oficial con fines educativos.",
@@ -153,10 +189,10 @@ const dicionario = {
         start_battle: "⚔️ ¡Iniciar Batalla 1v1!",
         js_load_moves: "<i>Cargando datos precisos...</i>", js_lvl_moves: "Aprende por Nivel", js_tm_moves: "Aprende por Máquina (MT/MO)", js_egg_moves: "Aprende por Huevo (Mov. Huevo)", js_tutor_moves: "Aprende por Tutor", js_other_moves: "Otros Métodos / Especiales", js_no_moves: "No se encontraron movimientos.",
         team_picker_title: "Añadir Pokémon al Equipo", team_choosing_slot: "Eligiendo para el Espacio", team_full: "¡El equipo ya tiene 6 Pokémon! Elimina uno para añadir otro.", search_poke_team: "Buscar Pokémon para el equipo (Ej: Ursaluna, Bloodmoon)...",
-        team_total_col: "Total Equipo", team_weak_singular: "Debilidad", team_weak_plural: "Debilidades", team_resistant: "Resistente", team_balanced: "Equilibrado", team_neutral: "Neutro", team_resist_short: "Resist.", team_immune_short: "Inmune",
+        team_total_col: "Total Equipo", team_weak_singular: "Debilidad", team_weak_plural: "Debilidades", team_resistant: "Resistente", team_balanced: "Equilibrado", team_neutral: "Neutro", team_resist_short: "Resist.", team_resist_singular: "Resistencia", team_resist_plural: "Resistencias", team_immune_short: "Inmune",
         js_calc: "Calculando...", js_normal_dmg: "<p>Recibe daño normal de todo.</p>", js_no_evo: "Cadena evolutiva no disponible.",
         js_add_poke: "<p style='color:#777; font-size: 14px;'>Añade Pokémon para ver el análisis.</p>", js_gen_table: "<i>Generando tabla de análisis...</i>",
-        js_atk_def: "Atq \\ Def", js_def_atk: "DEFENSA ➔<br><br>ATAQUE ⬇",
+        js_atk_def: "Ataque \\ Defensa", js_def_atk: "DEFENSA ➔<br><br>ATAQUE ⬇",
         js_chart_desc: "Lee la fila de <strong style='color:var(--primary)'>ATAQUE</strong> a la izquierda y cruza con la columna de <strong style='color:var(--primary)'>DEFENSA</strong> arriba.",
         js_no_desc: "Sin descripción disponible.", js_translating: "Traduciendo...",
         evo_lvl: "Nivel", evo_trade: "Intercambio", evo_item: "Objeto:", evo_happy: "Felicidad", evo_special: "Forma Especial",
@@ -207,10 +243,17 @@ function mudarIdioma(lang) {
     idiomaAtual = lang;
     document.querySelectorAll('[data-i18n]').forEach(el => { el.innerHTML = dicionario[lang][el.getAttribute('data-i18n')]; });
     document.querySelectorAll('[data-i18n-ph]').forEach(el => { el.placeholder = dicionario[lang][el.getAttribute('data-i18n-ph')]; });
+    document.querySelectorAll('[data-i18n-label]').forEach(el => {
+        if (dicionario[lang][el.getAttribute('data-i18n-label')]) {
+            el.label = dicionario[lang][el.getAttribute('data-i18n-label')];
+        }
+    });
     document.getElementById('desc-chart-global').innerHTML = t('js_chart_desc');
     renderizarTime();
     filtrarListaTime();
     renderizarNatures();
+    popularSelectsDoisTipos();
+    atualizarSimuladorDoisTipos();
     if(document.getElementById('aba-minhadex') && document.getElementById('aba-minhadex').classList.contains('active')) {
         renderizarTelaMinhaDex();
     }
@@ -387,6 +430,7 @@ async function iniciarApp() {
         const dadosTipos = await Promise.all(promessasTipos);
         
         dadosTipos.forEach(tipoAPI => {
+            cacheRelacoesTipos[tipoAPI.name] = tipoAPI.damage_relations;
             tipoAPI.pokemon.forEach(p => {
                 const nomePoke = p.pokemon.name;
                 if(!mapTipos[nomePoke]) mapTipos[nomePoke] = [];
@@ -416,6 +460,7 @@ async function iniciarApp() {
         filtrarListaTime();
         inicializarMinhaDex();
         inicializarSimulador1v1();
+        inicializarSimuladorDoisTipos();
         configurarSwipeModais();
     } catch (e) {
         document.getElementById('loading-global').innerHTML = "❌ Erro de conexão com a PokéAPI.";
@@ -429,7 +474,7 @@ function mudarAba(event, abaId) {
     abaAlvo.classList.remove('hidden'); abaAlvo.classList.add('active');
     if(event && event.target) event.target.classList.add('active');
     if(abaId === 'teams') { renderizarTime(); filtrarListaTime(); }
-    if(abaId === 'typechart') { document.getElementById('global-type-chart').innerHTML = ''; gerarTabelaDeTiposGlobal(); }
+    if(abaId === 'typechart') { popularSelectsDoisTipos(); atualizarSimuladorDoisTipos(); document.getElementById('global-type-chart').innerHTML = ''; gerarTabelaDeTiposGlobal(); }
     if(abaId === 'minhadex') { renderizarTelaMinhaDex(); }
     if(abaId === 'items') { filtrarItemsGlobal(); }
     if(abaId === 'moves') { filtrarMovesGlobal(); }
@@ -466,6 +511,65 @@ function cancelarSelecaoTime() {
 }
 
 // --- 4. LISTAS E FILTROS ---
+const legendaryIds = new Set([
+    144, 145, 146, 150,
+    243, 244, 245, 249, 250,
+    377, 378, 379, 380, 381, 382, 383, 384,
+    480, 481, 482, 483, 484, 485, 486, 487, 488,
+    638, 639, 640, 641, 642, 643, 644, 645, 646,
+    716, 717, 718,
+    772, 773, 785, 786, 787, 788, 789, 790, 791, 792, 800,
+    888, 889, 890, 891, 892, 894, 895, 896, 897, 898, 905,
+    1001, 1002, 1003, 1004, 1007, 1008, 1014, 1015, 1016, 1017, 1024
+]);
+const legendarySlugs = [
+    'articuno','zapdos','moltres','mewtwo',
+    'raikou','entei','suicune','lugia','ho-oh',
+    'regirock','regice','registeel','latias','latios','kyogre','groudon','rayquaza',
+    'uxie','mesprit','azelf','dialga','palkia','heatran','regigigas','giratina','cresselia',
+    'cobalion','terrakion','virizion','tornadus','thundurus','reshiram','zekrom','landorus','kyurem',
+    'xerneas','yveltal','zygarde',
+    'type-null','silvally','tapu-koko','tapu-lele','tapu-bulu','tapu-fini','cosmog','cosmoem','solgaleo','lunala','necrozma',
+    'zacian','zamazenta','eternatus','kubfu','urshifu','regieleki','regidrago','glastrier','spectrier','calyrex','enamorus',
+    'wo-chien','chien-pao','ting-lu','chi-yu','koraidon','miraidon','okidogi','munkidori','fezandipiti','ogerpon','terapagos'
+];
+const mythicalIds = new Set([
+    151, 251, 385, 386,
+    489, 490, 491, 492, 493,
+    494, 647, 648, 649,
+    719, 720, 721,
+    801, 802, 807, 808, 809,
+    893, 1025
+]);
+const mythicalSlugs = [
+    'mew','celebi','jirachi','deoxys',
+    'phione','manaphy','darkrai','shaymin','arceus',
+    'victini','keldeo','meloetta','genesect',
+    'diancie','hoopa','volcanion',
+    'magearna','marshadow','zeraora','meltan','melmetal',
+    'zarude','pecharunt'
+];
+
+function isPokemonLegendary(p) {
+    if (legendaryIds.has(p.id)) return true;
+    if (p.id > 10000) return legendarySlugs.some(s => p.name === s || p.name.startsWith(s + '-'));
+    return false;
+}
+
+function isPokemonMythical(p) {
+    if (mythicalIds.has(p.id)) return true;
+    if (p.id > 10000) return mythicalSlugs.some(s => p.name === s || p.name.startsWith(s + '-'));
+    return false;
+}
+
+function atendeFiltroTipoOuRaridade(p, filtro) {
+    if (filtro === 'all') return true;
+    if (filtro === 'legendary') return isPokemonLegendary(p);
+    if (filtro === 'mythical') return isPokemonMythical(p);
+    if (filtro === 'legendary_mythical') return isPokemonLegendary(p) || isPokemonMythical(p);
+    return p.types.includes(filtro);
+}
+
 function filtrarLista() {
     const termo = escapeHTML(document.getElementById('searchInput').value.toLowerCase());
     const gen = document.getElementById('genFilter').value, tipoFiltro = document.getElementById('typeFilter').value;
@@ -476,7 +580,7 @@ function filtrarLista() {
     };
     const [min, max] = limites[gen];
     
-    listaFiltradaPokemon = todosPokemon.filter(p => p.id >= min && p.id <= max && (p.name.includes(termo) || p.id == termo) && (tipoFiltro === 'all' || p.types.includes(tipoFiltro)));
+    listaFiltradaPokemon = todosPokemon.filter(p => p.id >= min && p.id <= max && (p.name.includes(termo) || p.id == termo) && atendeFiltroTipoOuRaridade(p, tipoFiltro));
     
     document.getElementById('pokemon-list').innerHTML = listaFiltradaPokemon.map(p => {
         const numDisplay = p.id > 10000 ? '★ ESP' : '#' + p.id.toString().padStart(3, '0');
@@ -506,7 +610,7 @@ function filtrarListaTime() {
     };
     const [min, max] = limites[gen] || [1, 20000];
     
-    listaFiltradaPokemonTime = todosPokemon.filter(p => p.id >= min && p.id <= max && (p.name.includes(termo) || p.id == termo) && (tipoFiltro === 'all' || p.types.includes(tipoFiltro)));
+    listaFiltradaPokemonTime = todosPokemon.filter(p => p.id >= min && p.id <= max && (p.name.includes(termo) || p.id == termo) && atendeFiltroTipoOuRaridade(p, tipoFiltro));
     
     const container = document.getElementById('team-pokemon-list');
     if (!container) return;
@@ -1663,11 +1767,12 @@ async function renderizarTime() {
     let htmlSlots = '';
     for(let i=0; i<6; i++) {
         if(time[i]) {
-            htmlSlots += `<div class="team-slot" onclick="tratarCliquePokemon('${time[i].name}')"><div class="team-slot-remove" onclick="event.stopPropagation(); removerDoTime(${i})">X</div><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${time[i].id}.png"><div class="team-slot-name">${escapeHTML(time[i].name).replace(/-/g, ' ')}</div></div>`;
+            const nomePoke = escapeHTML(time[i].name).replace(/-/g, ' ');
+            htmlSlots += `<article class="team-slot" onclick="tratarCliquePokemon('${time[i].name}')"><button type="button" class="team-slot-remove" aria-label="Remover ${nomePoke}" onclick="event.stopPropagation(); removerDoTime(${i})">X</button><img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${time[i].id}.png" alt="${nomePoke}"><div class="team-slot-name">${nomePoke}</div></article>`;
         } else if (modoSelecaoTimeSlot === i) {
-            htmlSlots += `<div class="team-slot selecting" onclick="cancelarSelecaoTime()" title="Clique para cancelar"><span style="color:var(--primary); font-size:13px; font-weight:bold;">Slot ${i+1}</span><span style="font-size:11px; color:#c84b31; margin-top:4px;">${t('choosing_poke')}</span><span style="font-size:10px; color:#777; margin-top:2px;">(${t('cancel')})</span></div>`;
+            htmlSlots += `<button type="button" class="team-slot selecting" onclick="cancelarSelecaoTime()" title="Clique para cancelar"><span style="color:var(--primary); font-size:13px; font-weight:bold;">Slot ${i+1}</span><span style="font-size:11px; color:#c84b31; margin-top:4px;">${t('choosing_poke')}</span><span style="font-size:10px; color:#777; margin-top:2px;">(${t('cancel')})</span></button>`;
         } else {
-            htmlSlots += `<div class="team-slot" style="background:transparent; border: 2px dashed #999;" onclick="iniciarSelecaoTime(${i})"><span style="color:#999; font-size:32px;">+</span></div>`;
+            htmlSlots += `<button type="button" class="team-slot" style="background:transparent; border: 2px dashed #999;" onclick="iniciarSelecaoTime(${i})" aria-label="Adicionar Pokémon no Slot ${i+1}"><span style="color:#999; font-size:32px;">+</span></button>`;
         }
     }
     document.getElementById('team-slots').innerHTML = htmlSlots;
@@ -1679,13 +1784,13 @@ async function gerarTabelaFraquezas(timeValido) {
     if (timeValido.length === 0) return container.innerHTML = t('js_add_poke');
     container.innerHTML = t('js_gen_table');
     
-    let tabela = `<table class="type-table"><tr><th style="background:#444">${t('js_atk_def')}</th>`;
-    timeValido.forEach(p => tabela += `<th>${escapeHTML(p.name).substring(0,4)}.</th>`);
-    tabela += `<th style="background:#222; color:white; min-width:115px;">${t('team_total_col')}</th>`;
-    tabela += '</tr>';
+    let tabela = `<table class="type-table"><thead><tr><th scope="col" style="background:#444">${t('js_atk_def')}</th>`;
+    timeValido.forEach(p => tabela += `<th scope="col" class="team-poke-col">${escapeHTML(p.name).replace(/-/g, ' ')}</th>`);
+    tabela += `<th scope="col" style="background:#222; color:white; min-width:135px;">${t('team_total_col')}</th>`;
+    tabela += '</tr></thead><tbody>';
 
     for (let tipoAtq of Object.keys(coresTipos)) {
-        tabela += `<tr><td style="background-color:${coresTipos[tipoAtq]}; color:white; font-weight:bold; text-transform:uppercase;">${tipoAtq.substring(0,3)}</td>`;
+        tabela += `<tr><th scope="row" style="background-color:${coresTipos[tipoAtq]}; color:white; font-weight:bold; text-transform:uppercase; text-shadow: 1px 1px 1px rgba(0,0,0,0.5);">${escapeHTML(tipoAtq)}</th>`;
         
         let qtdFracos = 0;
         let qtdResist = 0;
@@ -1734,7 +1839,7 @@ async function gerarTabelaFraquezas(timeValido) {
 
         let partes = [];
         if (qtdFracos > 0) partes.push(`${qtdFracos} ${qtdFracos > 1 ? t('team_weak_plural') : t('team_weak_singular')}`);
-        if (qtdResist > 0) partes.push(`${qtdResist} ${t('team_resist_short')}`);
+        if (qtdResist > 0) partes.push(`${qtdResist} ${qtdResist > 1 ? t('team_resist_plural') : t('team_resist_singular')}`);
         if (qtdImune > 0) partes.push(`${qtdImune} ${t('team_immune_short')}`);
         if (partes.length === 0) partes.push(`0 ${t('team_weak_plural')}`);
         const detalheTexto = partes.join(' / ');
@@ -1746,7 +1851,7 @@ async function gerarTabelaFraquezas(timeValido) {
 
         tabela += '</tr>';
     }
-    container.innerHTML = tabela + '</table>';
+    container.innerHTML = tabela + '</tbody></table>';
 }
 
 async function gerarTabelaDeTiposGlobal() {
@@ -1756,16 +1861,16 @@ async function gerarTabelaDeTiposGlobal() {
     const todosOsTipos = Object.keys(coresTipos);
     let tabela = '<table class="type-table" style="width: 100%; max-width: 900px; margin: auto;">';
     
-    tabela += `<tr><th style="background:#444; color:white; font-size: 10px;">${t('js_def_atk')}</th>`;
+    tabela += `<thead><tr><th scope="col" style="background:#444; color:white; font-size: 10px;">${t('js_def_atk')}</th>`;
     todosOsTipos.forEach(t => {
-        tabela += `<th style="background-color:${coresTipos[t]}; height: 90px; vertical-align: bottom;">
+        tabela += `<th scope="col" style="background-color:${coresTipos[t]}; height: 90px; vertical-align: bottom;">
                        <div style="writing-mode: vertical-rl; transform: rotate(180deg); margin: auto; padding-top: 5px; color: white; text-shadow: 1px 1px 1px #000; letter-spacing: 1px; font-size: 11px;">${t.toUpperCase()}</div>
                    </th>`;
     });
-    tabela += '</tr>';
+    tabela += '</tr></thead><tbody>';
 
     for (let tipoAtq of todosOsTipos) {
-        tabela += `<tr><td style="background-color:${coresTipos[tipoAtq]}; text-align: center; padding: 4px; border: 1px solid #ddd;"><span style="color:white; font-weight:bold; text-transform:uppercase; text-shadow: 1px 1px 1px #000; font-size: 11px; letter-spacing: 1px;">${escapeHTML(tipoAtq)}</span></td>`;
+        tabela += `<tr><th scope="row" style="background-color:${coresTipos[tipoAtq]}; text-align: center; padding: 4px; border: 1px solid #ddd;"><span style="color:white; font-weight:bold; text-transform:uppercase; text-shadow: 1px 1px 1px #000; font-size: 11px; letter-spacing: 1px;">${escapeHTML(tipoAtq)}</span></th>`;
         for (let tipoDef of todosOsTipos) {
             let mult = await calcularMultiplicadorExato(tipoAtq, [tipoDef]);
             const estilo = getCorEficacia(mult);
@@ -1773,7 +1878,135 @@ async function gerarTabelaDeTiposGlobal() {
         }
         tabela += '</tr>';
     }
-    container.innerHTML = tabela + '</table>';
+    container.innerHTML = tabela + '</tbody></table>';
+}
+
+function popularSelectsDoisTipos() {
+    const sel1 = document.getElementById('dual-type-1');
+    const sel2 = document.getElementById('dual-type-2');
+    if (!sel1 || !sel2) return;
+
+    const val1 = sel1.value;
+    const val2 = sel2.value;
+    const tipos = Object.keys(coresTipos);
+
+    const gerarOpcoes = (placeholderKey) => {
+        let html = `<option value="">${escapeHTML(t(placeholderKey))}</option>`;
+        tipos.forEach(tp => {
+            const tCap = tp.charAt(0).toUpperCase() + tp.slice(1);
+            const label = idiomaAtual === 'en_US' ? tCap : `${getTipoNome(tp)} (${tCap})`;
+            html += `<option value="${tp}">${escapeHTML(label)}</option>`;
+        });
+        return html;
+    };
+
+    sel1.innerHTML = gerarOpcoes('dual_select_1');
+    sel2.innerHTML = gerarOpcoes('dual_select_2');
+
+    if (val1 && tipos.includes(val1)) sel1.value = val1;
+    if (val2 && tipos.includes(val2) && val2 !== sel1.value) sel2.value = val2;
+
+    Array.from(sel2.options).forEach(opt => {
+        opt.disabled = Boolean(sel1.value && opt.value === sel1.value);
+    });
+    Array.from(sel1.options).forEach(opt => {
+        opt.disabled = Boolean(sel2.value && opt.value === sel2.value);
+    });
+}
+
+function inicializarSimuladorDoisTipos() {
+    popularSelectsDoisTipos();
+    atualizarSimuladorDoisTipos();
+}
+
+function limparSimuladorDoisTipos() {
+    const sel1 = document.getElementById('dual-type-1');
+    const sel2 = document.getElementById('dual-type-2');
+    if (sel1) {
+        sel1.value = '';
+        Array.from(sel1.options).forEach(opt => { opt.disabled = false; });
+    }
+    if (sel2) {
+        sel2.value = '';
+        Array.from(sel2.options).forEach(opt => { opt.disabled = false; });
+    }
+    atualizarSimuladorDoisTipos();
+}
+
+async function atualizarSimuladorDoisTipos() {
+    const sel1 = document.getElementById('dual-type-1');
+    const sel2 = document.getElementById('dual-type-2');
+    const resEl = document.getElementById('dual-type-result');
+    if (!sel1 || !sel2 || !resEl) return;
+
+    let t1 = sel1.value;
+    let t2 = sel2.value;
+    if (t1 && t2 && t1 === t2) {
+        t2 = '';
+        sel2.value = '';
+    }
+
+    Array.from(sel2.options).forEach(opt => {
+        opt.disabled = Boolean(t1 && opt.value === t1);
+    });
+    Array.from(sel1.options).forEach(opt => {
+        opt.disabled = Boolean(t2 && opt.value === t2);
+    });
+
+    const tiposDef = [...new Set([t1, t2].filter(Boolean))];
+    if (tiposDef.length === 0) {
+        resEl.innerHTML = `<p class="dual-type-empty">${escapeHTML(t('dual_type_empty'))}</p>`;
+        return;
+    }
+
+    const fraquezas = [];
+    const resistencias = [];
+    const imunidades = [];
+
+    for (const tipoAtq of Object.keys(coresTipos)) {
+        const mult = await calcularMultiplicadorExato(tipoAtq, tiposDef);
+        if (mult > 1) fraquezas.push({ tipo: tipoAtq, mult });
+        else if (mult === 0) imunidades.push({ tipo: tipoAtq, mult });
+        else if (mult > 0 && mult < 1) resistencias.push({ tipo: tipoAtq, mult });
+    }
+
+    if (sel1.value !== t1 || sel2.value !== t2) return;
+
+    fraquezas.sort((a, b) => b.mult - a.mult);
+    resistencias.sort((a, b) => a.mult - b.mult);
+
+    const renderizarGrupo = (titulo, itens, classeGrupo) => {
+        const conteudo = itens.length > 0
+            ? `<ul class="dual-badge-list">${itens.map(item => {
+                const estilo = getCorEficacia(item.mult);
+                return `<li class="dual-badge-item">
+                    <span class="dual-type-chip" style="background-color:${coresTipos[item.tipo]}">${escapeHTML(getTipoNome(item.tipo))}</span>
+                    <strong class="dual-mult-tag" style="background-color:${estilo.bg}; color:${estilo.text}">${formatarMultiplicador(item.mult)}x</strong>
+                </li>`;
+            }).join('')}</ul>`
+            : `<p class="dual-none">${escapeHTML(t('dual_none'))}</p>`;
+
+        return `<section class="dual-result-group ${classeGrupo}">
+            <h4>${escapeHTML(titulo)} (${itens.length})</h4>
+            ${conteudo}
+        </section>`;
+    };
+
+    const badgesSelecionados = tiposDef.map(tp =>
+        `<span class="type-badge" style="background-color:${coresTipos[tp]}">${escapeHTML(getTipoNome(tp))}</span>`
+    ).join('');
+
+    resEl.innerHTML = `
+        <div class="dual-type-selected-bar">
+            <strong>${escapeHTML(t('dual_comb_label'))}</strong>
+            ${badgesSelecionados}
+        </div>
+        <div class="dual-type-grid">
+            ${renderizarGrupo(t('dual_group_weak'), fraquezas, 'group-weak')}
+            ${renderizarGrupo(t('dual_group_resist'), resistencias, 'group-resist')}
+            ${renderizarGrupo(t('dual_group_immune'), imunidades, 'group-immune')}
+        </div>
+    `;
 }
 
 async function calcularMultiplicadorExato(tipoAtacante, tiposDefensor) {
