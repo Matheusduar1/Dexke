@@ -57,9 +57,9 @@ Mais do que uma enciclopédia estática, o Dexke une ferramentas analíticas par
 ## ✨ Funcionalidades em Destaque
 
 ### 1. Pokédex Completa
-- **Catálogo de mais de 1025+ Pokémon:** Suporte a todas as gerações canônicas (Gen 1 a Gen 9 / Paldea), incluindo DLCs, formas regionais (*Alola, Galar, Hisui, Paldea*), Mega Evoluções e formas especiais.
-- **Filtros Regionais & Especiais:** Navegue por jogos específicos, como *Legends: Arceus*, *Legends: Z-A*, Remakes (*Brilliant Diamond/Shining Pearl*, *Let's Go*), ou visualize a National Dex completa.
-- **Busca e Ordenação Instantâneas:** Pesquisa em tempo real por nome ou número e ordenação numérica ou alfabética instantânea.
+- **Catálogo de mais de 1350+ Pokémon:** Suporte a todas as gerações canônicas (Gen 1 a Gen 9 / Paldea), formas regionais (*Alola, Galar, Hisui, Paldea*), Mega Evoluções clássicas e de *Legends: Z-A*, Ultra Beasts, Paradoxos, Lendários e Míticos.
+- **Filtros Regionais, Raridade & Ordenação:** Navegue por jogos específicos, filtre apenas Lendários, Míticos, Megas, Regionais ou Ultra Beasts/Paradoxos e ordene por Número, Nome (A–Z) ou Base Stat Total (BST).
+- **Comparador Lado a Lado & Deep Linking:** Compare dois Pokémon lado a lado (stats, habilidades e fraquezas) e compartilhe links diretos via URL (`#dex/charizard`, `#teams`, etc.).
 
 ### 2. Minha Dex (Quiz & Criação de Tipos)
 Uma brincadeira interativa onde você redefine a tipagem dos Pokémon:
@@ -78,25 +78,22 @@ Uma brincadeira interativa onde você redefine a tipagem dos Pokémon:
   - Alternador para versão **Shiny** ✨ em alta resolução.
   - Visualizador de **Modelos 3D Animados** (sprites animados de Pokémon Showdown).
   - Reprodução do **Áudio Oficial (Cry)** de cada espécie.
-- **Status Base (BST):** Gráficos de barras animados para HP, Ataque, Defesa, Ataque Especial, Defesa Especial e Velocidade, com totalizador de pontos.
-- **Linha Evolutiva Dinâmica:** Mapeamento visual das árvores de evolução com métodos (nível, pedra, amizade, troca, itens).
-- **Matriz de Fraquezas & Resistências:** Cálculo em tempo real dos multiplicadores de dano recebido (0x, 0.25x, 0.5x, 1x, 2x, 4x) para a tipagem do Pokémon.
+- **Status Base (BST) & Espécie:** Gráficos de barras proporcionais coloridas para HP, Ataque, Defesa, Ataque Especial, Defesa Especial e Velocidade, além de categoria, descrição oficial, taxa de captura, proporção de gênero e Egg Groups.
+- **Linha Evolutiva Dinâmica:** Mapeamento visual das árvores de evolução com métodos detalhados (nível, pedra, amizade, troca, itens e formas especiais).
+- **Matriz de Fraquezas & Resistências:** Cálculo em tempo real dos multiplicadores de dano recebido (0x, 0.25x, 0.5x, 1x, 2x, 4x) para a tipagem do Pokémon e simulador interativo de dois tipos + habilidades defensivas.
 - **Ataques Aprendidos:** Divisão categorizada entre ataques por **Nível (Level-up)** e por **Máquina (TM/HM)**.
 
 ### 4. Team Builder & Análise Showdown
-- **Gerenciamento de Equipes:** Crie, edite e salve até 6 equipes diferentes com persistência automática no `localStorage`.
-- **Compatibilidade Showdown:** Importação e exportação de times no formato de texto padrão do **Pokémon Showdown**.
-- **Matriz Defensiva de Equipe:** Tabela dinâmica que cruza as fraquezas e resistências de todos os 6 membros da equipe contra os 18 tipos de ataque, revelando vulnerabilidades compartilhadas e coberturas defensivas.
-- **Customização Total:** Definição de item, habilidade, natureza, ataques e distribuição de IVs para cada integrante.
+- **Gerenciamento de Equipes & Set Editor:** Crie, edite e salve até 6 equipes com persistência no `localStorage`, configurando Habilidade, Item, Natureza, Tera Type, EVs/IVs e 4 Moves por membro.
+- **Compatibilidade Showdown Real:** Importação e exportação completa no formato de texto padrão do **Pokémon Showdown**.
+- **Matriz Defensiva & Cobertura Ofensiva:** Tabela dinâmica sem abreviações que cruza as fraquezas e resistências dos 6 membros contra os 18 tipos de ataque, além do mapa de cobertura ofensiva dos golpes do time.
 
-### 5. Simulador de Batalha 1v1
+### 5. Simulador de Batalha 1v1 & 6v6
 - **Arena Competitiva no Navegador:**
-  - Cálculo de dano fiel às fórmulas oficiais da Geração 9.
-  - Suporte a condições de status (*Burn, Freeze, Paralyze, Poison, Sleep*).
-  - Modificadores de clima (*Sun, Rain, Sandstorm, Snow/Hail*).
-  - Prioridade de movimentos, cálculo de acerto crítico e multiplicadores de efetividade de tipos.
-  - Efeitos de itens competitivos populares (*Life Orb, Focus Sash, Leftovers, Choice Band, etc.*).
-  - Log detalhado de turnos e barras de vida com animação fluída.
+  - Modos **Duelo 1v1 Personalizado** (com EVs e IVs) e **Batalha de Equipes 6v6** usando seus Times salvos ou times aleatórios, com troca estratégica em combate.
+  - Suporte a condições de status (*Burn, Freeze, Paralyze, Poison, Sleep*), estágios de stats (-6 a +6), precisão e acerto crítico.
+  - Modificadores de clima (*Sun, Rain, Sandstorm, Snow*), habilidades de entrada/passivas (*Intimidate, Drizzle, Drought, Levitate, Sturdy, Multiscale, Huge Power, Guts*) e itens competitivos.
+  - Log detalhado de turnos, indicador de equipe (Pokébolas) e barras de vida com animação fluída.
 
 ### 6. Enciclopédia Global (Moves, Habilidades, Itens e Natures)
 - **Moves:** Catálogo com filtro por tipo, categoria de dano (⚔️ Físico, 🔮 Especial, 🛡️ Status), poder, precisão, PP e lista de todos os Pokémon aptos a aprender o golpe.
@@ -126,8 +123,10 @@ O Dexke foi construído priorizando performance, ausência de dependências pesa
 ```
 Dexke/
 ├── index.html        # Estrutura semântica HTML5 completa (Acessibilidade A11y & ARIA)
-├── style.css         # CSS3 moderno: Variáveis, Flexbox/Grid, Dark Theme e Animações
+├── style.css         # CSS3 moderno: Variáveis, Flexbox/Grid, Modo Escuro e Animações
 ├── app.js            # Lógica SPA Vanilla JS (ES6+), estado, cache e i18n
+├── features.js       # Módulo avançado: GraphQL, Comparador, Set Editor, 6v6 e UX
+├── manifest.json     # Manifesto PWA instalável
 ├── sitemap.xml       # Mapa do site para indexação de motores de busca
 ├── CNAME             # Configuração de domínio personalizado (dexke.com.br)
 └── README.md         # Documentação completa do projeto
