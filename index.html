@@ -120,14 +120,21 @@
                             <optgroup label="Especiais / Formas"><option value="special">Formas Especiais (Bloodmoon, Regionais, Megas)</option></optgroup>
                         </select>
 
-                        <select id="typeFilter" onchange="filtrarLista()" aria-label="Filtrar por Tipo">
+                        <select id="typeFilter" onchange="filtrarLista()" aria-label="Filtrar por Tipo ou Raridade">
                             <option value="all" data-i18n="all_types">Todos os Tipos</option>
-                            <option value="normal">Normal</option><option value="fighting">Fighting</option><option value="flying">Flying</option>
-                            <option value="poison">Poison</option><option value="ground">Ground</option><option value="rock">Rock</option>
-                            <option value="bug">Bug</option><option value="ghost">Ghost</option><option value="steel">Steel</option>
-                            <option value="fire">Fire</option><option value="water">Water</option><option value="grass">Grass</option>
-                            <option value="electric">Electric</option><option value="psychic">Psychic</option><option value="ice">Ice</option>
-                            <option value="dragon">Dragon</option><option value="dark">Dark</option><option value="fairy">Fairy</option>
+                            <optgroup label="Lendários & Míticos" data-i18n-label="opt_special_cat">
+                                <option value="legendary_mythical" data-i18n="filter_leg_myth">👑 Lendários e Míticos</option>
+                                <option value="legendary" data-i18n="filter_legendary">⭐ Apenas Lendários</option>
+                                <option value="mythical" data-i18n="filter_mythical">✨ Apenas Míticos</option>
+                            </optgroup>
+                            <optgroup label="Tipos Elementais" data-i18n-label="opt_elemental_types">
+                                <option value="normal">Normal</option><option value="fighting">Fighting</option><option value="flying">Flying</option>
+                                <option value="poison">Poison</option><option value="ground">Ground</option><option value="rock">Rock</option>
+                                <option value="bug">Bug</option><option value="ghost">Ghost</option><option value="steel">Steel</option>
+                                <option value="fire">Fire</option><option value="water">Water</option><option value="grass">Grass</option>
+                                <option value="electric">Electric</option><option value="psychic">Psychic</option><option value="ice">Ice</option>
+                                <option value="dragon">Dragon</option><option value="dark">Dark</option><option value="fairy">Fairy</option>
+                            </optgroup>
                         </select>
                     </div>
                 </search>
@@ -176,8 +183,31 @@
 
             <!-- ABA TABELA DE TIPOS -->
             <section id="aba-typechart" class="aba-content hidden" aria-label="Tabela de Tipos">
-                <article class="info-section" style="margin: 15px;">
-                    <h3 style="text-align: center; font-size: 18px;" data-i18n="type_chart_title">Tabela de Eficácia de Tipos</h3>
+                <section class="info-section dual-type-section" aria-labelledby="dual-type-title">
+                    <header class="dual-type-header">
+                        <h3 id="dual-type-title" data-i18n="dual_type_title">Simulador de Fraquezas (Dois Tipos)</h3>
+                        <p id="dual-type-desc" class="dual-type-desc" data-i18n="dual_type_desc">Selecione dois tipos para ver as fraquezas, resistências e imunidades que um Pokémon com essa combinação teria.</p>
+                    </header>
+                    <form class="dual-type-form" onsubmit="event.preventDefault();">
+                        <fieldset class="dual-type-fieldset">
+                            <legend class="sr-only" data-i18n="dual_type_legend">Selecionar combinação de dois tipos</legend>
+                            <div class="dual-type-field">
+                                <label for="dual-type-1" data-i18n="dual_type_label1">1º Tipo:</label>
+                                <select id="dual-type-1" onchange="atualizarSimuladorDoisTipos()"></select>
+                            </div>
+                            <span class="dual-type-plus" aria-hidden="true">+</span>
+                            <div class="dual-type-field">
+                                <label for="dual-type-2" data-i18n="dual_type_label2">2º Tipo:</label>
+                                <select id="dual-type-2" onchange="atualizarSimuladorDoisTipos()"></select>
+                            </div>
+                            <button type="button" class="btn-small dual-type-clear-btn" onclick="limparSimuladorDoisTipos()" data-i18n="dual_type_clear">Limpar</button>
+                        </fieldset>
+                    </form>
+                    <output id="dual-type-result" class="dual-type-result" for="dual-type-1 dual-type-2" aria-live="polite"></output>
+                </section>
+
+                <article class="info-section" style="margin: 15px;" aria-labelledby="global-chart-title">
+                    <h3 id="global-chart-title" style="text-align: center; font-size: 18px;" data-i18n="type_chart_title">Tabela de Eficácia de Tipos</h3>
                     <p id="desc-chart-global" style="text-align: center; margin-bottom: 15px; font-size: 12px; color: #555;">Leia a linha do ATAQUE na esquerda e cruze com a coluna da DEFESA no topo.</p>
                     <div id="global-type-chart" style="overflow-x: auto; padding-bottom: 10px;"><i>Gerando tabela...</i></div>
                 </article>
@@ -238,14 +268,21 @@
                             <optgroup label="Especiais / Formas"><option value="special">Formas Especiais (Bloodmoon, Regionais, Megas)</option></optgroup>
                         </select>
 
-                        <select id="teamTypeFilter" onchange="filtrarListaTime()" aria-label="Filtrar por Tipo">
+                        <select id="teamTypeFilter" onchange="filtrarListaTime()" aria-label="Filtrar por Tipo ou Raridade">
                             <option value="all" data-i18n="all_types">Todos os Tipos</option>
-                            <option value="normal">Normal</option><option value="fighting">Fighting</option><option value="flying">Flying</option>
-                            <option value="poison">Poison</option><option value="ground">Ground</option><option value="rock">Rock</option>
-                            <option value="bug">Bug</option><option value="ghost">Ghost</option><option value="steel">Steel</option>
-                            <option value="fire">Fire</option><option value="water">Water</option><option value="grass">Grass</option>
-                            <option value="electric">Electric</option><option value="psychic">Psychic</option><option value="ice">Ice</option>
-                            <option value="dragon">Dragon</option><option value="dark">Dark</option><option value="fairy">Fairy</option>
+                            <optgroup label="Lendários & Míticos" data-i18n-label="opt_special_cat">
+                                <option value="legendary_mythical" data-i18n="filter_leg_myth">👑 Lendários e Míticos</option>
+                                <option value="legendary" data-i18n="filter_legendary">⭐ Apenas Lendários</option>
+                                <option value="mythical" data-i18n="filter_mythical">✨ Apenas Míticos</option>
+                            </optgroup>
+                            <optgroup label="Tipos Elementais" data-i18n-label="opt_elemental_types">
+                                <option value="normal">Normal</option><option value="fighting">Fighting</option><option value="flying">Flying</option>
+                                <option value="poison">Poison</option><option value="ground">Ground</option><option value="rock">Rock</option>
+                                <option value="bug">Bug</option><option value="ghost">Ghost</option><option value="steel">Steel</option>
+                                <option value="fire">Fire</option><option value="water">Water</option><option value="grass">Grass</option>
+                                <option value="electric">Electric</option><option value="psychic">Psychic</option><option value="ice">Ice</option>
+                                <option value="dragon">Dragon</option><option value="dark">Dark</option><option value="fairy">Fairy</option>
+                            </optgroup>
                         </select>
                     </div>
                 </search>
