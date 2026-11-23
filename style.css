@@ -4,6 +4,23 @@
     --poke-orange: #F08030;
     --bg-dark: #222;
     --bg-light: #f4f4f4;
+    --surface-app: #e0e0e0;
+    --surface-card: #ffffff;
+    --surface-section: #f9f9f9;
+    --text-main: #222222;
+    --text-muted: #666666;
+    --border-color: #dddddd;
+    --input-bg: #ffffff;
+}
+
+body.dark-mode {
+    --surface-app: #181a1f;
+    --surface-card: #23262e;
+    --surface-section: #20232a;
+    --text-main: #f1f5f9;
+    --text-muted: #94a3b8;
+    --border-color: #383d4a;
+    --input-bg: #15171c;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Arial', sans-serif; }
@@ -170,7 +187,12 @@ search {
 .nav-btn:hover { background-color: #3d3d3d; }
 .battle-tab-btn { border: 1px solid var(--poke-orange); }
 
+.lang-selector-container { display: flex; align-items: center; gap: 8px; }
+.theme-toggle-btn { width: 38px; height: 38px; border-radius: 6px; border: 2px solid #000; background: #fff; cursor: pointer; font-size: 17px; display: flex; align-items: center; justify-content: center; transition: background 0.2s, transform 0.1s; }
+.theme-toggle-btn:hover { background: #f3f3f3; }
 .lang-selector-container select { padding: 8px 10px; border-radius: 6px; border: 2px solid #000; font-weight: bold; background: white; color: var(--primary); cursor: pointer; outline: none; }
+.btn-compare-open { padding: 10px 14px; border-radius: 5px; border: none; background: #2c3e50; color: #fff; font-weight: bold; font-size: 14px; cursor: pointer; white-space: nowrap; }
+.btn-compare-open:hover { background: #1a252f; }
 
 .search-container { padding: 15px; background-color: #fff; border-bottom: 2px solid #ccc; display: flex; flex-direction: column; gap: 10px;}
 .search-container input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 5px; font-size: 15px; }
@@ -1361,4 +1383,468 @@ search {
     color: #888;
     font-style: italic;
     margin: 0;
+}
+
+/* ==========================================================
+   BARRAS DE STATS, METADADOS ESPÉCIE & MODAL EXTRAS
+   ========================================================== */
+.stat-bar-row {
+    display: grid;
+    grid-template-columns: 105px 38px 1fr;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    margin-bottom: 6px;
+}
+
+.stat-bar-label {
+    text-transform: capitalize;
+    font-weight: 600;
+}
+
+.stat-bar-track {
+    width: 100%;
+    height: 10px;
+    background: #e2e8f0;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.stat-bar-fill {
+    height: 100%;
+    border-radius: 5px;
+    transition: width 0.35s ease;
+}
+
+.poke-genus {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-style: italic;
+    margin-top: 3px;
+}
+
+.poke-flavor-box {
+    background: rgba(200, 75, 49, 0.08);
+    border-left: 3px solid var(--primary);
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 13px;
+    font-style: italic;
+    margin-bottom: 10px;
+    line-height: 1.4;
+}
+
+.species-meta-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(135px, 1fr));
+    gap: 6px;
+    margin-top: 10px;
+    font-size: 12px;
+}
+
+.species-meta-chip {
+    background: rgba(0, 0, 0, 0.04);
+    padding: 6px 8px;
+    border-radius: 6px;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+/* ==========================================================
+   TABELA DE TIPOS: CROSSHAIR, POKÉMON MATCHING & HABILIDADES
+   ========================================================== */
+.dual-matching-section {
+    margin-top: 14px;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 10px 12px;
+}
+
+.dual-matching-section h4 {
+    font-size: 13px;
+    color: var(--primary);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+}
+
+.chart-hover-readout {
+    display: block;
+    text-align: center;
+    font-size: 13px;
+    font-weight: bold;
+    padding: 7px 12px;
+    margin: 0 auto 10px;
+    max-width: 900px;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    color: #333;
+}
+
+.type-table tr.chart-row-hl td {
+    filter: brightness(0.9);
+}
+
+.type-table th.chart-col-hl {
+    outline: 2px solid #000;
+    z-index: 2;
+}
+
+.type-table td.chart-cell-hl {
+    outline: 3px solid #111;
+    transform: scale(1.08);
+    position: relative;
+    z-index: 3;
+}
+
+/* ==========================================================
+   TEAM SET EDITOR, COBERTURA OFENSIVA & COMPARADOR
+   ========================================================== */
+.team-slot-edit {
+    position: absolute;
+    top: -8px;
+    left: -8px;
+    background: #2c3e50;
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    padding: 3px 7px;
+    font-size: 10px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.team-slot-edit:hover {
+    background: var(--primary);
+}
+
+.team-slot-meta {
+    font-size: 10px;
+    color: var(--text-muted);
+    text-align: center;
+    margin-top: 3px;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.off-coverage-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 8px;
+}
+
+.off-cov-chip {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 8px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+    background: #fff;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.off-cov-chip.cov-good {
+    border-left: 4px solid #27ae60;
+}
+
+.off-cov-chip.cov-warn {
+    border-left: 4px solid #e74c3c;
+    background: #fff5f5;
+}
+
+.set-editor-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 10px;
+}
+
+.set-editor-grid label {
+    display: block;
+    font-size: 12px;
+    font-weight: bold;
+    margin-bottom: 3px;
+}
+
+.set-editor-grid select,
+.set-editor-form .moves-select-grid select {
+    width: 100%;
+    padding: 7px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    text-transform: capitalize;
+}
+
+.compare-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-top: 12px;
+}
+
+@media (max-width: 600px) {
+    .compare-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.cmp-card {
+    background: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 12px;
+}
+
+.cmp-header {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.cmp-header img {
+    width: 100px;
+    height: 100px;
+    object-fit: contain;
+}
+
+.cmp-stat-win {
+    color: #27ae60;
+    font-weight: bold;
+}
+
+/* ==========================================================
+   MODO DE BATALHA 1v1 / 6v6, EVs & HUD DE EQUIPE
+   ========================================================== */
+.battle-mode-tabs {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.battle-mode-btn {
+    flex: 1;
+    min-width: 200px;
+    padding: 10px 14px;
+    border: 2px solid #ccc;
+    border-radius: 6px;
+    background: #fff;
+    color: #222;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.battle-mode-btn.active {
+    background: var(--primary);
+    color: #fff;
+    border-color: var(--primary);
+}
+
+.battle-team-setup {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+    justify-content: center;
+}
+
+.party-balls {
+    display: flex;
+    gap: 4px;
+    margin-top: 4px;
+    font-size: 11px;
+}
+
+.battle-switch-grid {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px dashed #ccc;
+}
+
+.battle-switch-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: 1px solid #bbb;
+    background: #fff;
+    color: #222;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: bold;
+    text-transform: capitalize;
+}
+
+.battle-switch-btn:hover:not(:disabled) {
+    border-color: var(--primary);
+}
+
+.battle-switch-btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.iv-ev-inputs {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.iv-ev-inputs small {
+    font-size: 10px;
+    color: var(--text-muted);
+}
+
+.iv-ev-inputs input[type="number"] {
+    width: 48px;
+    padding: 3px;
+}
+
+/* ==========================================================
+   MODO ESCURO (DARK MODE)
+   ========================================================== */
+body.dark-mode .app-container {
+    background-color: var(--surface-app);
+    color: var(--text-main);
+}
+
+body.dark-mode .theme-toggle-btn {
+    background: #1f242d;
+    color: #facc15;
+    border-color: #f1f5f9;
+}
+
+body.dark-mode .lang-selector-container select {
+    background: #1f242d;
+    color: #f1f5f9;
+    border-color: #f1f5f9;
+}
+
+body.dark-mode .search-container,
+body.dark-mode #showdown-io-container {
+    background-color: var(--surface-card) !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-main);
+}
+
+body.dark-mode .search-container input,
+body.dark-mode .filter-group select,
+body.dark-mode #team-selector,
+body.dark-mode #showdown-textarea,
+body.dark-mode .battle-card select,
+body.dark-mode .iv-row input[type="number"],
+body.dark-mode .dual-type-field select,
+body.dark-mode .set-editor-grid select,
+body.dark-mode .set-editor-form .moves-select-grid select,
+body.dark-mode .minhadex-region-select,
+body.dark-mode .minhadex-filter-bar input,
+body.dark-mode .minhadex-filter-bar select,
+body.dark-mode #gba-console {
+    background-color: var(--input-bg);
+    color: var(--text-main);
+    border-color: var(--border-color);
+}
+
+body.dark-mode .list-item,
+body.dark-mode .modal-content,
+body.dark-mode .team-slot,
+body.dark-mode .battle-setup-preview,
+body.dark-mode .iv-grid,
+body.dark-mode .dual-result-group,
+body.dark-mode .dual-matching-section,
+body.dark-mode .chart-hover-readout,
+body.dark-mode .off-cov-chip,
+body.dark-mode .mini-poke-card,
+body.dark-mode .location-row,
+body.dark-mode .minhadex-intro-card,
+body.dark-mode .minhadex-game-header,
+body.dark-mode .minhadex-poke-card,
+body.dark-mode .minhadex-results-header,
+body.dark-mode .minhadex-filter-bar,
+body.dark-mode .minhadex-result-card,
+body.dark-mode .minhadex-stat-card,
+body.dark-mode .minhadex-steps-box,
+body.dark-mode .minhadex-official-types-container,
+body.dark-mode .minhadex-selected-preview,
+body.dark-mode .battle-mode-btn:not(.active),
+body.dark-mode .battle-switch-btn {
+    background-color: var(--surface-card);
+    color: var(--text-main);
+    border-color: var(--border-color);
+}
+
+body.dark-mode .info-section,
+body.dark-mode .cmp-card {
+    background-color: var(--surface-section);
+    color: var(--text-main);
+    border-color: var(--border-color);
+}
+
+body.dark-mode .list-name,
+body.dark-mode .close-btn,
+body.dark-mode .dual-type-field label,
+body.dark-mode .dual-result-group h4,
+body.dark-mode .minhadex-poke-title,
+body.dark-mode .minhadex-result-name,
+body.dark-mode .minhadex-form-group label,
+body.dark-mode .minhadex-steps-box h3,
+body.dark-mode .minhadex-progress-info,
+body.dark-mode .minhadex-types-label,
+body.dark-mode .location-area-list {
+    color: var(--text-main);
+}
+
+body.dark-mode .dual-type-desc,
+body.dark-mode .minhadex-steps-list li,
+body.dark-mode .minhadex-intro-desc,
+body.dark-mode .gba-note,
+body.dark-mode .loading-message {
+    color: var(--text-muted);
+}
+
+body.dark-mode .stat-bar-track,
+body.dark-mode .minhadex-progress-bar-bg {
+    background: #333842;
+}
+
+body.dark-mode .species-meta-chip {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: var(--border-color);
+}
+
+body.dark-mode .hp-box {
+    background: rgba(24, 26, 31, 0.92);
+    color: var(--text-main);
+    border-color: #f1f5f9;
+}
+
+body.dark-mode .ability-box-btn {
+    background: #1f242d;
+    color: #f97316;
+    border-color: #f97316;
+}
+
+body.dark-mode .ability-box-btn:hover {
+    background: #f97316;
+    color: #fff;
+}
+
+body.dark-mode .move-row:hover,
+body.dark-mode .mini-poke-card:hover {
+    background: #2c313c;
+}
+
+body.dark-mode .type-table th,
+body.dark-mode .type-table td {
+    border-color: #3a3f4b;
+}
+
+body.dark-mode .off-cov-chip.cov-warn {
+    background: rgba(231, 76, 60, 0.14);
 }

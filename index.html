@@ -40,8 +40,9 @@
     <!-- 6. Segurança (CSP) -->
     <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://*; img-src 'self' data: https://*; media-src 'self' https://* blob: data:; style-src 'self' 'unsafe-inline' https://*; font-src 'self' https://* data:; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' 'unsafe-eval' blob: https://cdn.emulatorjs.org; connect-src 'self' https://* blob: data:; worker-src 'self' blob: https://cdn.emulatorjs.org; child-src 'self' blob:;">
 
-    <!-- Ícone da Aba do Navegador (Favicon) -->
+    <!-- Ícone da Aba do Navegador (Favicon) & Manifesto PWA -->
     <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png">
+    <link rel="manifest" href="manifest.json">
 
     <!-- Fontes e CSS -->
     <link href="https://fonts.cdnfonts.com/css/pokemon-solid" rel="stylesheet">
@@ -79,6 +80,7 @@
                 <span class="dexke-logo" onclick="mudarAba(null, 'dexke')" role="button" tabindex="0">Dexke</span>
             </div>
             <div class="lang-selector-container">
+                <button type="button" id="theme-toggle" class="theme-toggle-btn" onclick="alternarTema()" aria-label="Alternar Modo Escuro ou Claro" title="Alternar Modo Escuro / Claro">🌙</button>
                 <select id="lang-selector" onchange="mudarIdioma(this.value)" aria-label="Seletor de Idioma">
                     <option value="pt_BR">PT_BR</option>
                     <option value="en_US">EN_US</option>
@@ -102,7 +104,7 @@
                 </aside>
 
                 <search class="search-container" role="search">
-                    <input type="text" id="searchInput" placeholder="Buscar Pokémon (Ex: Ursaluna, Bloodmoon)..." data-i18n-ph="search_poke" onkeyup="filtrarLista()" aria-label="Buscar Pokémon">
+                    <input type="text" id="searchInput" placeholder="Buscar Pokémon (Ex: Ursaluna, Bloodmoon)..." data-i18n-ph="search_poke" oninput="agendarFiltroDex()" aria-label="Buscar Pokémon">
                     
                     <div class="filter-group">
                         <select id="genFilter" onchange="filtrarLista()" aria-label="Filtrar por Região e Geração">
@@ -126,6 +128,9 @@
                                 <option value="legendary_mythical" data-i18n="filter_leg_myth">👑 Lendários e Míticos</option>
                                 <option value="legendary" data-i18n="filter_legendary">⭐ Apenas Lendários</option>
                                 <option value="mythical" data-i18n="filter_mythical">✨ Apenas Míticos</option>
+                                <option value="megas" data-i18n="filter_megas">🧬 Mega Evoluções</option>
+                                <option value="regional" data-i18n="filter_regional">🌍 Formas Regionais</option>
+                                <option value="ub_paradox" data-i18n="filter_ub_paradox">🔮 Ultra Beasts & Paradoxos</option>
                             </optgroup>
                             <optgroup label="Tipos Elementais" data-i18n-label="opt_elemental_types">
                                 <option value="normal">Normal</option><option value="fighting">Fighting</option><option value="flying">Flying</option>
@@ -136,6 +141,17 @@
                                 <option value="dragon">Dragon</option><option value="dark">Dark</option><option value="fairy">Fairy</option>
                             </optgroup>
                         </select>
+
+                        <select id="dexSort" onchange="filtrarLista()" aria-label="Ordenar Pokémon">
+                            <option value="id_asc" data-i18n="sort_id_asc">🔢 Nº (Menor ➔ Maior)</option>
+                            <option value="id_desc" data-i18n="sort_id_desc">🔢 Nº (Maior ➔ Menor)</option>
+                            <option value="name_asc" data-i18n="sort_name_asc">🔤 Nome (A ➔ Z)</option>
+                            <option value="name_desc" data-i18n="sort_name_desc">🔤 Nome (Z ➔ A)</option>
+                            <option value="bst_desc" data-i18n="sort_bst_desc">📊 Maior Total de Stats (BST)</option>
+                            <option value="bst_asc" data-i18n="sort_bst_asc">📊 Menor Total de Stats (BST)</option>
+                        </select>
+
+                        <button type="button" class="btn-compare-open" onclick="abrirComparador()" data-i18n="btn_compare">⚖️ Comparar</button>
                     </div>
                 </search>
                 <div id="pokemon-list" class="list-container" role="region" aria-label="Lista de Pokémon"></div>
@@ -149,7 +165,29 @@
             <!-- ABA MOVES -->
             <section id="aba-moves" class="aba-content hidden" aria-label="Moves e Golpes">
                 <search class="search-container" role="search">
-                    <input type="text" id="searchMoveInput" placeholder="Buscar Move..." data-i18n-ph="search_move" onkeyup="filtrarMovesGlobal()" aria-label="Buscar Move">
+                    <input type="text" id="searchMoveInput" placeholder="Buscar Move..." data-i18n-ph="search_move" oninput="filtrarMovesGlobal()" aria-label="Buscar Move">
+                    <div class="filter-group">
+                        <select id="moveTypeFilter" onchange="filtrarMovesGlobal()" aria-label="Filtrar Move por Tipo">
+                            <option value="all" data-i18n="all_types">Todos os Tipos</option>
+                            <option value="normal">Normal</option><option value="fighting">Fighting</option><option value="flying">Flying</option>
+                            <option value="poison">Poison</option><option value="ground">Ground</option><option value="rock">Rock</option>
+                            <option value="bug">Bug</option><option value="ghost">Ghost</option><option value="steel">Steel</option>
+                            <option value="fire">Fire</option><option value="water">Water</option><option value="grass">Grass</option>
+                            <option value="electric">Electric</option><option value="psychic">Psychic</option><option value="ice">Ice</option>
+                            <option value="dragon">Dragon</option><option value="dark">Dark</option><option value="fairy">Fairy</option>
+                        </select>
+                        <select id="moveClassFilter" onchange="filtrarMovesGlobal()" aria-label="Filtrar Move por Classe">
+                            <option value="all" data-i18n="all_classes">Todas as Classes</option>
+                            <option value="physical" data-i18n="class_physical_opt">⚔️ Físico (Physical)</option>
+                            <option value="special" data-i18n="class_special_opt">🔮 Especial (Special)</option>
+                            <option value="status" data-i18n="class_status_opt">🛡️ Status</option>
+                        </select>
+                        <select id="moveSort" onchange="filtrarMovesGlobal()" aria-label="Ordenar Moves">
+                            <option value="name_asc" data-i18n="sort_name_asc">🔤 Nome (A ➔ Z)</option>
+                            <option value="power_desc" data-i18n="sort_power_desc">💥 Maior Poder</option>
+                            <option value="acc_desc" data-i18n="sort_acc_desc">🎯 Maior Precisão</option>
+                        </select>
+                    </div>
                 </search>
                 <div id="moves-list" class="list-container" role="region" aria-label="Lista de Moves"></div>
             </section>
@@ -157,7 +195,7 @@
             <!-- ABA HABILIDADES -->
             <section id="aba-abilities" class="aba-content hidden" aria-label="Habilidades Pokémon">
                 <search class="search-container" role="search">
-                    <input type="text" id="searchAbilityInput" placeholder="Buscar Habilidade..." data-i18n-ph="search_ability" onkeyup="filtrarAbilitiesGlobal()" aria-label="Buscar Habilidade">
+                    <input type="text" id="searchAbilityInput" placeholder="Buscar Habilidade..." data-i18n-ph="search_ability" oninput="filtrarAbilitiesGlobal()" aria-label="Buscar Habilidade">
                 </search>
                 <div id="abilities-list" class="list-container" role="region" aria-label="Lista de Habilidades"></div>
             </section>
@@ -165,7 +203,18 @@
             <!-- ABA ITENS -->
             <section id="aba-items" class="aba-content hidden" aria-label="Itens Pokémon">
                 <search class="search-container" role="search">
-                    <input type="text" id="searchItemInput" placeholder="Buscar Item..." data-i18n-ph="search_item" onkeyup="filtrarItemsGlobal()" aria-label="Buscar Item">
+                    <input type="text" id="searchItemInput" placeholder="Buscar Item..." data-i18n-ph="search_item" oninput="filtrarItemsGlobal()" aria-label="Buscar Item">
+                    <div class="filter-group">
+                        <select id="itemCategoryFilter" onchange="filtrarItemsGlobal()" aria-label="Filtrar Itens por Categoria">
+                            <option value="all" data-i18n="all_item_cats">Todas as Categorias</option>
+                            <option value="competitive" data-i18n="item_cat_comp">⚔️ Competitivos & Batalha</option>
+                            <option value="balls" data-i18n="item_cat_balls">🔴 Poké Balls</option>
+                            <option value="stones_evo" data-i18n="item_cat_evo">💎 Evolução & Formas Especiais</option>
+                            <option value="mega_z" data-i18n="item_cat_megaz">🧬 Mega Stones & Cristais Z</option>
+                            <option value="berries" data-i18n="item_cat_berries">🍒 Berries (Bagas)</option>
+                            <option value="tms" data-i18n="item_cat_tms">💿 Máquinas (TM / TR)</option>
+                        </select>
+                    </div>
                 </search>
                 <div id="items-list" class="list-container" role="region" aria-label="Lista de Itens"></div>
             </section>
@@ -200,15 +249,33 @@
                                 <label for="dual-type-2" data-i18n="dual_type_label2">2º Tipo:</label>
                                 <select id="dual-type-2" onchange="atualizarSimuladorDoisTipos()"></select>
                             </div>
+                            <div class="dual-type-field">
+                                <label for="dual-ability" data-i18n="dual_ability_label">Habilidade Defensiva:</label>
+                                <select id="dual-ability" onchange="atualizarSimuladorDoisTipos()">
+                                    <option value="" data-i18n="dual_ability_none">Nenhuma (Padrão)</option>
+                                    <option value="levitate">Levitate (0x Ground)</option>
+                                    <option value="earth-eater">Earth Eater (0x Ground)</option>
+                                    <option value="flash-fire">Flash Fire / Well-Baked Body (0x Fire)</option>
+                                    <option value="water-absorb">Water Absorb / Storm Drain (0x Water)</option>
+                                    <option value="volt-absorb">Volt Absorb / Lightning Rod (0x Electric)</option>
+                                    <option value="sap-sipper">Sap Sipper (0x Grass)</option>
+                                    <option value="thick-fat">Thick Fat (½x Fire / Ice)</option>
+                                    <option value="purifying-salt">Purifying Salt (½x Ghost)</option>
+                                    <option value="heatproof">Heatproof (½x Fire)</option>
+                                    <option value="fluffy">Fluffy (2x Fire)</option>
+                                    <option value="wonder-guard">Wonder Guard (Só Super Efetivo)</option>
+                                </select>
+                            </div>
                             <button type="button" class="btn-small dual-type-clear-btn" onclick="limparSimuladorDoisTipos()" data-i18n="dual_type_clear">Limpar</button>
                         </fieldset>
                     </form>
-                    <output id="dual-type-result" class="dual-type-result" for="dual-type-1 dual-type-2" aria-live="polite"></output>
+                    <output id="dual-type-result" class="dual-type-result" for="dual-type-1 dual-type-2 dual-ability" aria-live="polite"></output>
                 </section>
 
                 <article class="info-section" style="margin: 15px;" aria-labelledby="global-chart-title">
                     <h3 id="global-chart-title" style="text-align: center; font-size: 18px;" data-i18n="type_chart_title">Tabela de Eficácia de Tipos</h3>
-                    <p id="desc-chart-global" style="text-align: center; margin-bottom: 15px; font-size: 12px; color: #555;">Leia a linha do ATAQUE na esquerda e cruze com a coluna da DEFESA no topo.</p>
+                    <p id="desc-chart-global" style="text-align: center; margin-bottom: 10px; font-size: 12px; color: #555;">Leia a linha do ATAQUE na esquerda e cruze com a coluna da DEFESA no topo.</p>
+                    <output id="chart-hover-readout" class="chart-hover-readout" aria-live="polite" data-i18n="chart_hover_hint">Passe o mouse sobre uma célula para destacar o cruzamento Ataque × Defesa.</output>
                     <div id="global-type-chart" style="overflow-x: auto; padding-bottom: 10px;"><i>Gerando tabela...</i></div>
                 </article>
             </section>
@@ -243,6 +310,11 @@
                         <h3 data-i18n="team_analysis">Análise de Fraquezas do Time</h3>
                         <div id="team-analysis-table" style="overflow-x: auto;"></div>
                     </article>
+                    <article class="info-section" style="margin-top: 15px;">
+                        <h3 data-i18n="team_off_coverage">Cobertura Ofensiva do Time</h3>
+                        <p style="font-size: 12px; color: var(--text-muted, #666); margin-bottom: 10px;" data-i18n="team_off_desc">Baseada nos golpes de dano configurados no Set de cada Pokémon (ou nos tipos STAB caso sem golpes definidos).</p>
+                        <div id="team-offensive-coverage"></div>
+                    </article>
                 </div>
 
                 <search class="search-container" role="search" id="team-search-container" style="border-top: 2px solid #ccc; margin-top: 5px;">
@@ -250,7 +322,7 @@
                         <h3 data-i18n="team_picker_title" style="font-size: 15px; color: var(--primary); margin:0;">Adicionar Pokémon ao Time</h3>
                         <span id="team-slot-indicator" style="font-size: 12px; color: #555;"></span>
                     </div>
-                    <input type="text" id="teamSearchInput" placeholder="Buscar Pokémon para o time (Ex: Ursaluna, Bloodmoon)..." data-i18n-ph="search_poke_team" onkeyup="filtrarListaTime()" aria-label="Buscar Pokémon para o Time">
+                    <input type="text" id="teamSearchInput" placeholder="Buscar Pokémon para o time (Ex: Ursaluna, Bloodmoon)..." data-i18n-ph="search_poke_team" oninput="filtrarListaTime()" aria-label="Buscar Pokémon para o Time">
                     
                     <div class="filter-group">
                         <select id="teamGenFilter" onchange="filtrarListaTime()" aria-label="Filtrar por Região e Geração">
@@ -274,6 +346,9 @@
                                 <option value="legendary_mythical" data-i18n="filter_leg_myth">👑 Lendários e Míticos</option>
                                 <option value="legendary" data-i18n="filter_legendary">⭐ Apenas Lendários</option>
                                 <option value="mythical" data-i18n="filter_mythical">✨ Apenas Míticos</option>
+                                <option value="megas" data-i18n="filter_megas">🧬 Mega Evoluções</option>
+                                <option value="regional" data-i18n="filter_regional">🌍 Formas Regionais</option>
+                                <option value="ub_paradox" data-i18n="filter_ub_paradox">🔮 Ultra Beasts & Paradoxos</option>
                             </optgroup>
                             <optgroup label="Tipos Elementais" data-i18n-label="opt_elemental_types">
                                 <option value="normal">Normal</option><option value="fighting">Fighting</option><option value="flying">Flying</option>
@@ -289,9 +364,36 @@
                 <div id="team-pokemon-list" class="list-container" role="region" aria-label="Lista de Pokémon para o Time"></div>
             </section>
 
-            <!-- ABA BATALHA 1v1 (SHOWDOWN LITE) -->
-            <section id="aba-battle" class="aba-content hidden" aria-label="Batalha 1v1">
+            <!-- ABA BATALHA 1v1 / 6v6 -->
+            <section id="aba-battle" class="aba-content hidden" aria-label="Simulador de Batalha">
                 <div class="battle-wrapper">
+                    <header class="battle-mode-bar info-section" style="margin: 15px 15px 0 15px;">
+                        <div class="battle-mode-tabs" role="tablist" aria-label="Modo de Batalha">
+                            <button type="button" id="btn-mode-1v1" class="battle-mode-btn active" onclick="mudarModoBatalha('1v1')" data-i18n="battle_mode_1v1">⚔️ Duelo 1v1 Personalizado</button>
+                            <button type="button" id="btn-mode-6v6" class="battle-mode-btn" onclick="mudarModoBatalha('6v6')" data-i18n="battle_mode_6v6">🏆 Batalha de Equipes (Times Salvos / 6v6)</button>
+                        </div>
+                        <div id="battle-team-setup" class="battle-team-setup hidden">
+                            <div class="dual-type-field">
+                                <label for="battle-p1-team" data-i18n="battle_your_team">Sua Equipe:</label>
+                                <select id="battle-p1-team">
+                                    <option value="0" data-i18n="team_1">Time 1</option><option value="1" data-i18n="team_2">Time 2</option>
+                                    <option value="2" data-i18n="team_3">Time 3</option><option value="3" data-i18n="team_4">Time 4</option>
+                                    <option value="4" data-i18n="team_5">Time 5</option><option value="5" data-i18n="team_6">Time 6</option>
+                                    <option value="random" data-i18n="battle_random_team">🎲 Equipe Aleatória (6 Pokémon)</option>
+                                </select>
+                            </div>
+                            <div class="dual-type-field">
+                                <label for="battle-p2-team" data-i18n="battle_cpu_team">Equipe da Máquina (CPU):</label>
+                                <select id="battle-p2-team">
+                                    <option value="random" data-i18n="battle_random_team">🎲 Equipe Aleatória Competitiva (6 Pokémon)</option>
+                                    <option value="0" data-i18n="team_1">Time 1</option><option value="1" data-i18n="team_2">Time 2</option>
+                                    <option value="2" data-i18n="team_3">Time 3</option><option value="3" data-i18n="team_4">Time 4</option>
+                                    <option value="4" data-i18n="team_5">Time 5</option><option value="5" data-i18n="team_6">Time 6</option>
+                                </select>
+                            </div>
+                        </div>
+                    </header>
+
                     <!-- Configuração da Batalha -->
                     <section id="battle-setup" class="battle-setup-grid" aria-label="Configuração dos Lutadores">
                         <!-- Card Jogador -->
@@ -309,7 +411,7 @@
                             <label data-i18n="nature_label">Natureza:</label>
                             <select id="p1-nature" onchange="atualizarPreviewStats('p1')" aria-label="Natureza do Jogador"></select>
                             
-                            <label style="margin-top:8px; display:block;"><strong data-i18n="ivs_label">IVs (0 - 31) & Stats Finais:</strong></label>
+                            <label style="margin-top:8px; display:block;"><strong data-i18n="ivs_label">IVs, EVs &amp; Stats Finais:</strong></label>
                             <div id="p1-ivs" class="iv-grid"></div>
 
                             <label style="margin-top:8px; display:block;"><strong data-i18n="moves_label">Moves (Escolha 4):</strong></label>
@@ -339,7 +441,7 @@
                             <label data-i18n="nature_label">Natureza:</label>
                             <select id="p2-nature" onchange="atualizarPreviewStats('p2')" aria-label="Natureza da Máquina"></select>
                             
-                            <label style="margin-top:8px; display:block;"><strong data-i18n="ivs_label">IVs (0 - 31) & Stats Finais:</strong></label>
+                            <label style="margin-top:8px; display:block;"><strong data-i18n="ivs_label">IVs, EVs &amp; Stats Finais:</strong></label>
                             <div id="p2-ivs" class="iv-grid"></div>
 
                             <label style="margin-top:8px; display:block;"><strong data-i18n="moves_label">Moves (Escolha 4):</strong></label>
@@ -352,8 +454,8 @@
                         </article>
                     </section>
 
-                    <div style="padding: 0 15px 15px 15px;">
-                        <button type="button" class="btn-dark" style="background: var(--primary); font-size: 16px; padding: 15px;" onclick="iniciarBatalha1v1()" data-i18n="start_battle">⚔️ Iniciar Batalha 1v1!</button>
+                    <div style="padding: 15px;">
+                        <button type="button" class="btn-dark" style="background: var(--primary); font-size: 16px; padding: 15px;" onclick="iniciarBatalha1v1()" data-i18n="start_battle">⚔️ Iniciar Batalha!</button>
                     </div>
 
                     <!-- Arena de Batalha (Com Clima e Status) -->
@@ -371,6 +473,7 @@
                                     </header>
                                     <div class="hp-bar-bg"><div id="arena-p2-hp-bar" class="hp-bar-fill"></div></div>
                                     <output style="font-size:11px; text-align:right; display:block;" id="arena-p2-hp-text">100/100</output>
+                                    <div id="arena-p2-party" class="party-balls"></div>
                                 </div>
                                 <img id="arena-p2-img" src="" alt="CPU Sprite">
                             </div>
@@ -385,12 +488,14 @@
                                     </header>
                                     <div class="hp-bar-bg"><div id="arena-p1-hp-bar" class="hp-bar-fill"></div></div>
                                     <output style="font-size:11px; text-align:right; display:block;" id="arena-p1-hp-text">100/100</output>
+                                    <div id="arena-p1-party" class="party-balls"></div>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Controles de Ataque -->
                         <div id="battle-controls" class="battle-moves-grid"></div>
+                        <nav id="battle-switch-controls" class="battle-switch-grid hidden" aria-label="Trocar Pokémon"></nav>
 
                         <!-- Log da Batalha -->
                         <output id="battle-log" class="battle-log" aria-live="polite" style="display:block;"></output>
@@ -452,10 +557,11 @@
             <button type="button" class="modal-nav-arrow right" onclick="navegarModal('pokemon', 1, this)" aria-label="Próximo">&#10095;</button>
             <button type="button" class="close-btn" onclick="fecharModal('pokemon-modal')" aria-label="Fechar">&times;</button>
             
-            <!-- Botões Fixos de Ação (Shiny, Áudio e Modelo 3D Animado) -->
+            <!-- Botões Fixos de Ação (Shiny, Áudio, Modelo 3D e Comparar) -->
             <button type="button" id="shiny-toggle" onclick="toggleShiny()" title="Shiny Toggle" style="position: absolute; top: 15px; left: 20px; z-index: 10; cursor:pointer; background: transparent; border: none; font-size: 16px;">⭐</button>
             <button type="button" id="cry-btn" onclick="tocarGrito()" title="Tocar Grito" style="position: absolute; top: 15px; left: 55px; z-index: 10; cursor:pointer; font-size: 22px; transition: 0.2s; background: transparent; border: none;">🔊</button>
             <button type="button" id="model3d-toggle" onclick="toggle3D()" title="Alternar Modelo 3D / Animado" style="position: absolute; top: 17px; left: 95px; z-index: 10; cursor:pointer; font-size: 12px; font-weight: bold; background: #333; color: white; padding: 2px 7px; border-radius: 5px; transition: 0.2s; user-select: none; border: none;">3D</button>
+            <button type="button" id="modal-compare-btn" onclick="iniciarComparacao(atualModalPokemon)" title="Comparar Pokémon" style="position: absolute; top: 17px; left: 138px; z-index: 10; cursor:pointer; font-size: 11px; font-weight: bold; background: var(--primary); color: white; padding: 2px 7px; border-radius: 5px; border: none;" data-i18n="btn_compare_short">⚖️ Comparar</button>
 
             <header class="modal-header" style="margin-top: 30px;">
                 <!-- Botões de forma centralizados e no fluxo normal para acomodar Pokémons com muitas variações (Ex: Pikachu) -->
@@ -467,14 +573,17 @@
                     <span id="detail-id" style="font-weight: bold;">#000</span>
                     <span id="detail-gen" style="font-size: 11px; color: #888; margin-left: 8px; text-transform: uppercase;"></span>
                 </div>
+                <p id="detail-genus" class="poke-genus"></p>
                 <div id="detail-types" class="types"></div>
             </header>
 
             <div class="modal-body">
                 <section class="info-section">
                     <h3 data-i18n="basic_data">Dados Básicos</h3>
+                    <blockquote id="detail-flavor" class="poke-flavor-box"></blockquote>
                     <p><strong data-i18n="height">Altura:</strong> <span id="detail-height"></span>m</p>
                     <p><strong data-i18n="weight">Peso:</strong> <span id="detail-weight"></span>kg</p>
+                    <div id="detail-species-meta" class="species-meta-grid"></div>
                     <div style="margin-top:8px;">
                         <strong data-i18n="abilities">Habilidades:</strong>
                         <div id="detail-abilities" class="abilities-box-container"></div>
@@ -559,10 +668,86 @@
                     <h4 style="margin: 0 0 6px 0; font-size: 14px; color: var(--primary);" data-i18n="item_desc_title">Descrição do Efeito:</h4>
                     <p id="it-desc" style="margin: 0; font-size: 14px; line-height: 1.4;"></p>
                 </div>
+                <div style="margin-top: 12px; padding-top: 12px; border-top: 1px dashed #ddd; text-align:left;">
+                    <h4 style="margin: 0 0 6px 0; font-size: 14px; color: var(--primary);" data-i18n="item_obtain_title">Onde Encontrar / Como Obter:</h4>
+                    <p id="it-obtain" style="margin: 0; font-size: 13px; line-height: 1.4;"></p>
+                </div>
             </section>
         </article>
     </div>
 
+    <!-- MODAL COMPARADOR DE POKÉMON -->
+    <div id="compare-modal" class="modal hidden" style="z-index: 210;" role="dialog" aria-modal="true" aria-labelledby="cmp-title">
+        <article class="modal-content" style="max-width: 780px; height: auto; max-height: 90%;">
+            <button type="button" class="close-btn" onclick="fecharModal('compare-modal')" aria-label="Fechar">&times;</button>
+            <header style="text-align:center; margin-bottom: 12px;">
+                <h2 id="cmp-title" style="color: var(--primary); font-size: 20px;" data-i18n="cmp_title">⚖️ Comparador de Pokémon</h2>
+            </header>
+            <form class="dual-type-form" onsubmit="event.preventDefault();">
+                <fieldset class="dual-type-fieldset">
+                    <legend class="sr-only" data-i18n="cmp_title">Comparador de Pokémon</legend>
+                    <div class="dual-type-field">
+                        <label for="cmp-select-1" data-i18n="cmp_poke_1">Pokémon 1:</label>
+                        <select id="cmp-select-1" onchange="atualizarComparador()"></select>
+                    </div>
+                    <button type="button" class="btn-small" onclick="trocarPokemonsComparador()" style="height:39px; background:#444;" title="Trocar lados" aria-label="Trocar lados">⇄</button>
+                    <div class="dual-type-field">
+                        <label for="cmp-select-2" data-i18n="cmp_poke_2">Pokémon 2:</label>
+                        <select id="cmp-select-2" onchange="atualizarComparador()"></select>
+                    </div>
+                </fieldset>
+            </form>
+            <div id="compare-body" class="compare-grid"></div>
+        </article>
+    </div>
+
+    <!-- MODAL EDITOR DE SET COMPETITIVO (TIMES) -->
+    <div id="team-set-modal" class="modal hidden" style="z-index: 210;" role="dialog" aria-modal="true" aria-labelledby="set-poke-title">
+        <article class="modal-content" style="max-width: 600px; height: auto; max-height: 90%;">
+            <button type="button" class="close-btn" onclick="fecharModal('team-set-modal')" aria-label="Fechar">&times;</button>
+            <header style="text-align:center; margin-bottom: 12px;">
+                <h2 id="set-poke-title" style="color: var(--primary); text-transform: capitalize;">Set Competitivo</h2>
+            </header>
+            <form onsubmit="event.preventDefault(); salvarSetTime();" class="set-editor-form">
+                <div class="set-editor-grid">
+                    <div>
+                        <label for="set-ability" data-i18n="abilities">Habilidade:</label>
+                        <select id="set-ability"></select>
+                    </div>
+                    <div>
+                        <label for="set-item" data-i18n="item_label">Item:</label>
+                        <select id="set-item"></select>
+                    </div>
+                    <div>
+                        <label for="set-nature" data-i18n="nature_label">Natureza:</label>
+                        <select id="set-nature" onchange="atualizarPreviewSetTime()"></select>
+                    </div>
+                    <div>
+                        <label for="set-tera" data-i18n="set_tera_label">Tera Type:</label>
+                        <select id="set-tera"></select>
+                    </div>
+                </div>
+                <div style="margin-top: 10px;">
+                    <strong data-i18n="set_evs_ivs_label" style="font-size: 13px;">EVs (0-252, Máx 510) / IVs (0-31):</strong>
+                    <div id="set-evs-ivs" class="iv-grid" style="margin-top: 5px;"></div>
+                </div>
+                <div style="margin-top: 10px;">
+                    <strong data-i18n="moves_label" style="font-size: 13px;">Moves (Escolha 4):</strong>
+                    <div class="moves-select-grid">
+                        <select id="set-move-0" aria-label="Move 1"></select>
+                        <select id="set-move-1" aria-label="Move 2"></select>
+                        <select id="set-move-2" aria-label="Move 3"></select>
+                        <select id="set-move-3" aria-label="Move 4"></select>
+                    </div>
+                </div>
+                <footer style="display:flex; gap:10px; margin-top: 14px;">
+                    <button type="submit" class="btn-dark" style="background: var(--primary);" data-i18n="set_save_btn">💾 Salvar Set</button>
+                </footer>
+            </form>
+        </article>
+    </div>
+
     <script src="app.js"></script>
+    <script src="features.js"></script>
 </body>
 </html>

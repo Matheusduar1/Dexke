@@ -1,0 +1,24 @@
+{
+  "name": "Dexke - Pokédex, Team Builder & Simulador",
+  "short_name": "Dexke",
+  "description": "Pokédex completa com formas especiais, calculadora de tipos, Team Builder Showdown, comparador e simulador de batalhas.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#1a1a1a",
+  "theme_color": "#c84b31",
+  "lang": "pt-BR",
+  "icons": [
+    {
+      "src": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png",
+      "sizes": "96x96",
+      "type": "image/png"
+    },
+    {
+      "src": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/323.png",
+      "sizes": "475x475",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
