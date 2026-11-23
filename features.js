@@ -1,5 +1,5 @@
 // ============================================================================
-// DEXKE FEATURES MODULE (GraphQL, Dark Mode, UX, Comparador, Set Editor & 6v6)
+// DEXKE FEATURES MODULE (Hybrid Local Data, Dark Mode, UX, Comparador, Set Editor & 6v6)
 // ============================================================================
 
 // --- 1. EXTENSÃO DO DICIONÁRIO i18n ---
@@ -234,7 +234,6 @@ function inicializarExtras() {
     } catch (e) {}
 
     configurarUXModais();
-    carregarMetadadosExtrasGraphQL();
     aplicarRotaHash();
     window.addEventListener('hashchange', aplicarRotaHash);
 }
@@ -271,80 +270,8 @@ function aplicarTema(tema) {
     if (btn) btn.textContent = isDark ? '☀️' : '🌙';
 }
 
-// --- 4. CARREGAMENTO EM LOTE VIA GRAPHQL (BST + MOVES) ---
-async function carregarMetadadosExtrasGraphQL() {
-    const cacheKey = 'dexke_gql_meta_v1';
-    try {
-        const cachedRaw = sessionStorage.getItem(cacheKey);
-        if (cachedRaw) {
-            const parsed = JSON.parse(cachedRaw);
-            if (parsed && parsed.bstMap && parsed.moveMetaMap) {
-                window.bstMap = parsed.bstMap;
-                window.moveMetaMap = parsed.moveMetaMap;
-                aplicarBSTEmTodosPokemon();
-                return;
-            }
-        }
-    } catch (e) {}
-
-    try {
-        const query = `{
-            pokemon { id pokemonstats { base_stat } }
-            move { name power accuracy pp type { name } movedamageclass { name } }
-        }`;
-        const res = await fetch('https://graphql.pokeapi.co/v1beta2', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ query })
-        });
-        if (!res.ok) return;
-        const json = await res.json();
-        const data = json && json.data ? json.data : null;
-        if (!data) return;
-
-        if (Array.isArray(data.pokemon)) {
-            data.pokemon.forEach(pk => {
-                if (pk && pk.id && Array.isArray(pk.pokemonstats)) {
-                    window.bstMap[pk.id] = pk.pokemonstats.reduce((acc, st) => acc + (st.base_stat || 0), 0);
-                }
-            });
-            aplicarBSTEmTodosPokemon();
-        }
-
-        if (Array.isArray(data.move)) {
-            data.move.forEach(mv => {
-                if (!mv || !mv.name) return;
-                window.moveMetaMap[mv.name] = {
-                    type: mv.type ? mv.type.name : 'normal',
-                    cls: mv.movedamageclass ? mv.movedamageclass.name : 'status',
-                    power: mv.power || 0,
-                    acc: mv.accuracy || 0,
-                    pp: mv.pp || 0
-                };
-            });
-            filtrarMovesGlobal(false);
-        }
-
-        try {
-            sessionStorage.setItem(cacheKey, JSON.stringify({
-                bstMap: window.bstMap,
-                moveMetaMap: window.moveMetaMap
-            }));
-        } catch (e) {}
-    } catch (e) {
-        console.warn('GraphQL metadata fetch failed:', e);
-    }
-}
-
-function aplicarBSTEmTodosPokemon() {
-    if (!Array.isArray(todosPokemon)) return;
-    todosPokemon.forEach(p => {
-        if (window.bstMap[p.id]) p.bst = window.bstMap[p.id];
-    });
-    if (document.getElementById('aba-dexke')?.classList.contains('active')) {
-        filtrarLista(false);
-    }
-}
+// --- 4. METADADOS LOCAIS (BST E MOVES) ---
+// Carregados diretamente via data/core.json e data/moves.json em iniciarApp() (app.js).
 
 // --- 5. UX DE MODAIS (ESC, CLIQUE FORA E SETAS) ---
 function configurarUXModais() {
@@ -481,8 +408,10 @@ function configurarCrosshairTabelaTipos() {
 
 // --- 8. COMPARADOR DE POKÉMON LADO A LADO ---
 async function getPokeFullData(idOuNome) {
-    if (pokeFullCache[idOuNome]) return pokeFullCache[idOuNome];
-    const data = await (await fetch(`https://pokeapi.co/api/v2/pokemon/${idOuNome}`)).json();
+    const cached = pokeFullCache[idOuNome];
+    if (cached && cached._withMoves) return cached;
+    const data = await montarPokemonCompletoLocal(idOuNome, true);
+    data._withMoves = true;
     pokeFullCache[data.name] = data;
     pokeFullCache[data.id] = data;
     return data;
@@ -748,7 +677,8 @@ function exportarShowdown() {
     const texto = time.map(p => {
         const nome = formatarNomeShowdown(p.name);
         const item = p.item ? ` @ ${formatarNomeShowdown(p.item)}` : '';
-        const abil = p.ability ? formatarNomeShowdown(p.ability) : 'Unknown';
+        const defaultAbil = (typeof todosPokemonByName !== 'undefined' && todosPokemonByName[p.name] && todosPokemonByName[p.name].abilities && todosPokemonByName[p.name].abilities[0]) || '';
+        const abil = (p.ability || defaultAbil) ? formatarNomeShowdown(p.ability || defaultAbil) : 'Unknown';
         const tera = p.teraType ? formatarNomeShowdown(p.teraType) : formatarNomeShowdown((p.types && p.types[0]) || 'Normal');
         const nature = p.nature || 'Hardy';
 
@@ -859,16 +789,14 @@ async function gerarCoberturaOfensivaTime(timeValido) {
         return;
     }
 
+    if (typeof garantirMovesCarregados === 'function') await garantirMovesCarregados();
+
     const tiposAtaqueTime = [];
     for (const p of timeValido) {
         const tiposSet = new Set();
         if (Array.isArray(p.moves) && p.moves.length > 0) {
             for (const mv of p.moves) {
-                let meta = typeof getMoveMeta === 'function' ? getMoveMeta(mv) : null;
-                if (!meta && !moveCache[mv]) {
-                    try { moveCache[mv] = await (await fetch(`https://pokeapi.co/api/v2/move/${mv}`)).json(); } catch (e) {}
-                    meta = typeof getMoveMeta === 'function' ? getMoveMeta(mv) : null;
-                }
+                const meta = typeof getMoveMeta === 'function' ? getMoveMeta(mv) : null;
                 if (meta && meta.cls !== 'status') tiposSet.add(meta.type);
             }
         }
@@ -1026,12 +954,10 @@ async function randomizarCPU() {
 }
 
 async function carregarMovesDados(nomes) {
+    if (typeof garantirMovesCarregados === 'function') await garantirMovesCarregados();
     const lista = [];
     for (const mName of nomes) {
         if (!mName) continue;
-        if (!moveCache[mName]) {
-            try { moveCache[mName] = await (await fetch(`https://pokeapi.co/api/v2/move/${mName}`)).json(); } catch (e) {}
-        }
         if (moveCache[mName]) lista.push(moveCache[mName]);
     }
     return lista;
@@ -1132,6 +1058,7 @@ async function montarTimeBatalha(fonteVal) {
         const pData = await getPokeFullData(slot.name);
         let mvs = Array.isArray(slot.moves) && slot.moves.length > 0 ? slot.moves : [];
         if (mvs.length === 0) {
+            if (typeof garantirMovesCarregados === 'function') await garantirMovesCarregados();
             // Seleciona até 4 golpes variados priorizando os que já estão no moveMetaMap com poder
             const cand = pData.moves.map(m => m.move.name);
             cand.sort((a, b) => ((window.moveMetaMap[b]?.power || 0) - (window.moveMetaMap[a]?.power || 0)));

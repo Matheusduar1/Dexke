@@ -3,7 +3,7 @@ const dicionario = {
     pt_BR: {
         tab_dexke: "Dex", tab_minhadex: "Minha Dex", tab_moves: "Moves", tab_abilities: "Habilidades", tab_items: "Itens", tab_natures: "Naturezas", tab_types: "Tipos", tab_teams: "Times", tab_battle: "⚔️ Batalha 1v1",
         tab_gba: "🎮 Emulador GBA / GBC", gba_title: "Emulador GBA / GBC", gba_desc: "Selecione o arquivo do seu jogo (.gba, .gbc, .gb ou .zip). A ROM é lida apenas no seu navegador e não é enviada para nenhum servidor.", gba_note: "O Dexke não inclui nem distribui ROMs. Use apenas jogos que você possui legalmente. A ROM fica salva só neste navegador e abre sozinha nas próximas vezes. Use \"Trocar ROM\" para mudar de jogo.", gba_reset: "Trocar ROM", gba_close: "Fechar emulador", gba_close_confirm: "Fechar o emulador? Salve o jogo dentro do próprio jogo antes: o progresso não salvo será perdido.", gba_console: "Console (só importa para arquivos .zip):",
-        loading: "🔄 Carregando dados da PokéAPI...", loading_sub: "Isso pode levar alguns segundos na primeira vez.",
+        loading: "🔄 Carregando dados do Dexke...", loading_sub: "Isso leva apenas um instante.",
         choosing_poke: "Escolhendo Pokémon para o Time...", cancel: "Cancelar",
         search_poke: "Buscar Pokémon (Ex: Ursaluna, Bloodmoon)...", search_move: "Buscar Move...", search_ability: "Buscar Habilidade...", search_item: "Buscar Item...", search_nature: "Buscar Natureza...",
         all_regions: "Todas as Regiões & Especiais", all_types: "Todos os Tipos",
@@ -88,7 +88,7 @@ const dicionario = {
     en_US: {
         tab_dexke: "Dex", tab_minhadex: "My Dex", tab_moves: "Moves", tab_abilities: "Abilities", tab_items: "Items", tab_natures: "Natures", tab_types: "Type Chart", tab_teams: "Teams", tab_battle: "⚔️ 1v1 Battle",
         tab_gba: "🎮 GBA / GBC Emulator", gba_title: "GBA / GBC Emulator", gba_desc: "Select your game file (.gba, .gbc, .gb or .zip). The ROM is read only in your browser and is never uploaded to any server.", gba_note: "Dexke does not include or distribute ROMs. Only use games you legally own. The ROM is saved only in this browser and opens automatically next time. Use \"Change ROM\" to switch games.", gba_reset: "Change ROM", gba_close: "Close emulator", gba_close_confirm: "Close the emulator? Save inside the game first: unsaved progress will be lost.", gba_console: "Console (only matters for .zip files):",
-        loading: "🔄 Loading PokéAPI data...", loading_sub: "This may take a few seconds the first time.",
+        loading: "🔄 Loading Dexke data...", loading_sub: "This only takes a moment.",
         choosing_poke: "Choosing Pokémon for the Team...", cancel: "Cancel",
         search_poke: "Search Pokémon (e.g. Ursaluna, Bloodmoon)...", search_move: "Search Move...", search_ability: "Search Ability...", search_item: "Search Item...", search_nature: "Search Nature...",
         all_regions: "All Regions & Specials", all_types: "All Types",
@@ -173,7 +173,7 @@ const dicionario = {
     es_ES: {
         tab_dexke: "Dex", tab_minhadex: "Mi Dex", tab_moves: "Movimientos", tab_abilities: "Habilidades", tab_items: "Objetos", tab_natures: "Naturalezas", tab_types: "Tipos", tab_teams: "Equipos", tab_battle: "⚔️ Batalla 1v1",
         tab_gba: "🎮 Emulador GBA / GBC", gba_title: "Emulador GBA / GBC", gba_desc: "Selecciona el archivo de tu juego (.gba, .gbc, .gb o .zip). La ROM se lee solo en tu navegador y no se envía a ningún servidor.", gba_note: "Dexke no incluye ni distribuye ROMs. Usa solo juegos que poseas legalmente. La ROM se guarda solo en este navegador y se abre sola la próxima vez. Usa \"Cambiar ROM\" para cambiar de juego.", gba_reset: "Cambiar ROM", gba_close: "Cerrar emulador", gba_close_confirm: "¿Cerrar el emulador? Guarda dentro del juego antes: el progreso no guardado se perderá.", gba_console: "Consola (solo importa para archivos .zip):",
-        loading: "🔄 Cargando datos de PokéAPI...", loading_sub: "Esto puede tomar unos segundos.",
+        loading: "🔄 Cargando datos de Dexke...", loading_sub: "Esto toma solo un instante.",
         choosing_poke: "Eligiendo Pokémon para el Equipo...", cancel: "Cancelar",
         search_poke: "Buscar Pokémon (Ej: Ursaluna, Bloodmoon)...", search_move: "Buscar Movimiento...", search_ability: "Buscar Habilidad...", search_item: "Buscar Objeto...", search_nature: "Buscar Naturaleza...",
         all_regions: "Todas las Regiones y Especiales", all_types: "Todos los Tipos",
@@ -300,14 +300,37 @@ function mudarIdioma(lang, salvar = true) {
     if (typeof aoMudarIdiomaExtras === 'function') aoMudarIdiomaExtras(lang);
 }
 
+const translationCache = {};
+try {
+    const trMem = localStorage.getItem('dexke_tr_cache_v1');
+    if (trMem) Object.assign(translationCache, JSON.parse(trMem));
+} catch (e) {}
+
 async function traduzirTextoDinamico(textoIngles) {
     if (!textoIngles || idiomaAtual === 'en_US') return textoIngles;
     const target = idiomaAtual === 'es_ES' ? 'es' : 'pt-br';
+    const cacheKey = `${target}:${textoIngles}`;
+    if (translationCache[cacheKey]) return translationCache[cacheKey];
+
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), 2500);
     try {
-        const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(textoIngles)}&langpair=en|${target}`);
+        const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(textoIngles)}&langpair=en|${target}`, { signal: ctrl.signal });
+        clearTimeout(timer);
         const data = await res.json();
-        if(data && data.responseData && data.responseData.translatedText) return data.responseData.translatedText;
-    } catch (e) { console.warn("Erro ao traduzir"); }
+        if (data && data.responseData && data.responseData.translatedText && !data.responseData.translatedText.includes('MYMEMORY WARNING')) {
+            const trad = data.responseData.translatedText;
+            translationCache[cacheKey] = trad;
+            try {
+                const keys = Object.keys(translationCache);
+                if (keys.length > 400) delete translationCache[keys[0]];
+                localStorage.setItem('dexke_tr_cache_v1', JSON.stringify(translationCache));
+            } catch (e) {}
+            return trad;
+        }
+    } catch (e) {
+        clearTimeout(timer);
+    }
     return textoIngles;
 }
 
@@ -453,37 +476,175 @@ window.addEventListener('scroll', () => {
     lastScrollY = currentScrollY;
 });
 
-// --- 3. INICIALIZAÇÃO ---
+// --- 3. INICIALIZAÇÃO & CARREGAMENTO DE DADOS LOCAIS (MODELO HÍBRIDO) ---
+const localDataCache = {};
+const localDataPromises = {};
+let todosPokemonByName = {};
+let todosPokemonById = {};
+let moveDataByName = {};
+let pokemonAtualObj = null;
+
+const STAT_NAMES = ['hp', 'attack', 'defense', 'special-attack', 'special-defense', 'speed'];
+const LEARN_METHOD_NAMES = {
+    1: 'level-up', 2: 'egg', 3: 'tutor', 4: 'machine',
+    5: 'stadium-surfing-pikachu', 6: 'light-ball-egg', 7: 'colosseum-purification',
+    8: 'xd-shadow', 9: 'xd-purification', 10: 'form-change',
+    11: 'zygarde-cube', 12: 'train', 13: 'reminder'
+};
+
+async function loadLocalData(key) {
+    if (localDataCache[key]) return localDataCache[key];
+    if (!localDataPromises[key]) {
+        localDataPromises[key] = fetch(`data/${key}.json`).then(r => {
+            if (!r.ok) throw new Error(`Falha ao carregar data/${key}.json (${r.status})`);
+            return r.json();
+        }).then(data => {
+            localDataCache[key] = data;
+            return data;
+        });
+    }
+    return localDataPromises[key];
+}
+
+function construirUrlsPokemon(id, flags = 0) {
+    const base = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon';
+    const cryBase = 'https://raw.githubusercontent.com/PokeAPI/cries/main/cries/pokemon';
+    const spriteFront = `${base}/${id}.png`;
+    const spriteBack = `${base}/back/${id}.png`;
+    const spriteShiny = `${base}/shiny/${id}.png`;
+    const normalArt = (flags & 8) ? `${base}/other/official-artwork/${id}.png` : spriteFront;
+    const shinyArt = (flags & 4) ? `${base}/other/official-artwork/shiny/${id}.png` : spriteShiny;
+    const sdFront = (flags & 1) ? `${base}/other/showdown/${id}.gif` : '';
+    const sdBack = (flags & 2) ? `${base}/other/showdown/back/${id}.gif` : '';
+    const sdShiny = (flags & 64) ? `${base}/other/showdown/shiny/${id}.gif` : sdFront;
+    const cry = (flags & 16) ? `${cryBase}/latest/${id}.ogg` : ((flags & 32) ? `${cryBase}/legacy/${id}.ogg` : '');
+    return { normalArt, shinyArt, spriteFront, spriteBack, spriteShiny, sdFront, sdBack, sdShiny, cry };
+}
+
+function normalizarMoveLocal(m) {
+    return {
+        id: m.i,
+        name: m.n,
+        power: m.p || null,
+        accuracy: m.a || null,
+        pp: m.pp || 0,
+        priority: m.pr || 0,
+        type: { name: m.t || 'normal' },
+        damage_class: { name: m.c || 'status' },
+        meta: {
+            ailment: { name: m.al || 'none' },
+            ailment_chance: m.ac || 0
+        },
+        en: m.en || '',
+        es: m.es || ''
+    };
+}
+
+async function garantirMovesCarregados() {
+    if (localDataCache.moves && todosMoves.length > 0) return localDataCache.moves;
+    const data = await loadLocalData('moves');
+    const lista = data.list || [];
+    todosMoves = [];
+    window.moveMetaMap = window.moveMetaMap || {};
+    lista.forEach(m => {
+        const norm = normalizarMoveLocal(m);
+        moveCache[m.n] = norm;
+        moveDataByName[m.n] = norm;
+        window.moveMetaMap[m.n] = {
+            type: m.t || 'normal',
+            cls: m.c || 'status',
+            power: m.p || 0,
+            acc: m.a || 0,
+            pp: m.pp || 0
+        };
+        todosMoves.push({ name: escapeHTML(m.n) });
+    });
+    return data;
+}
+
+async function montarPokemonCompletoLocal(idOuNome, incluirMoves = false) {
+    if (!localDataCache.core) await loadLocalData('core');
+    const key = String(idOuNome).toLowerCase();
+    const base = todosPokemonByName[key] || todosPokemonById[idOuNome];
+    if (!base) throw new Error(`Pokémon não encontrado nos dados locais: ${idOuNome}`);
+
+    const urls = construirUrlsPokemon(base.id, base.flags);
+    let movesArr = [];
+    if (incluirMoves) {
+        const [lsData] = await Promise.all([loadLocalData('learnsets'), garantirMovesCarregados()]);
+        const entries = lsData.p[String(base.id)] || lsData.p[String(base.speciesId)] || [];
+        const seen = new Set();
+        entries.forEach(([moveId]) => {
+            const mName = lsData.m[String(moveId)];
+            if (mName && !seen.has(mName)) {
+                seen.add(mName);
+                movesArr.push({ move: { name: mName } });
+            }
+        });
+    }
+
+    return {
+        id: base.id,
+        name: base.name,
+        height: base.height,
+        weight: base.weight,
+        speciesId: base.speciesId,
+        flags: base.flags,
+        types: (base.types || []).map(tp => ({ type: { name: tp } })),
+        stats: STAT_NAMES.map((sn, idx) => ({ base_stat: (base.statsRaw && base.statsRaw[idx]) || 0, stat: { name: sn } })),
+        abilities: (base.abilities || []).map(ab => ({ ability: { name: ab } })),
+        sprites: {
+            front_default: urls.spriteFront,
+            back_default: urls.spriteBack,
+            front_shiny: urls.spriteShiny,
+            other: {
+                'official-artwork': { front_default: urls.normalArt, front_shiny: urls.shinyArt },
+                showdown: { front_default: urls.sdFront, back_default: urls.sdBack, front_shiny: urls.sdShiny }
+            }
+        },
+        cries: { latest: urls.cry, legacy: '' },
+        moves: movesArr
+    };
+}
+
 async function iniciarApp() {
     try {
-        const [resPoke, resMoves, resAbil, resItems] = await Promise.all([
-            fetch('https://pokeapi.co/api/v2/pokemon?limit=2000'),
-            fetch('https://pokeapi.co/api/v2/move?limit=1000'),
-            fetch('https://pokeapi.co/api/v2/ability?limit=370'),
-            fetch('https://pokeapi.co/api/v2/item?limit=3000')
+        const [core] = await Promise.all([
+            loadLocalData('core'),
+            garantirMovesCarregados()
         ]);
 
-        const mapTipos = {};
-        const promessasTipos = Object.keys(coresTipos).map(t => fetch(`https://pokeapi.co/api/v2/type/${t}`).then(r => r.json()));
-        const dadosTipos = await Promise.all(promessasTipos);
-        
-        dadosTipos.forEach(tipoAPI => {
-            cacheRelacoesTipos[tipoAPI.name] = tipoAPI.damage_relations;
-            tipoAPI.pokemon.forEach(p => {
-                const nomePoke = p.pokemon.name;
-                if(!mapTipos[nomePoke]) mapTipos[nomePoke] = [];
-                mapTipos[nomePoke][p.slot - 1] = tipoAPI.name;
-            });
+        Object.entries(core.types || {}).forEach(([tp, rel]) => {
+            cacheRelacoesTipos[tp] = {
+                double_damage_from: (rel.d || []).map(name => ({ name })),
+                half_damage_from: (rel.h || []).map(name => ({ name })),
+                no_damage_from: (rel.n || []).map(name => ({ name }))
+            };
         });
 
-        todosPokemon = (await resPoke.json()).results.map(p => {
-            const parts = p.url.split('/');
-            return { name: escapeHTML(p.name), id: parseInt(parts[parts.length - 2]), types: mapTipos[p.name] ? mapTipos[p.name].filter(Boolean) : [], bst: 0 };
+        todosPokemonByName = {};
+        todosPokemonById = {};
+        todosPokemon = (core.pokemon || []).map(p => {
+            const statsArr = p.s || [0, 0, 0, 0, 0, 0];
+            const obj = {
+                name: escapeHTML(p.n),
+                id: p.i,
+                types: p.t || [],
+                statsRaw: statsArr,
+                bst: statsArr.reduce((a, b) => a + b, 0),
+                height: p.h || 0,
+                weight: p.w || 0,
+                speciesId: p.sp || p.i,
+                abilities: p.a || [],
+                flags: p.f || 0
+            };
+            todosPokemonByName[p.n] = obj;
+            todosPokemonById[p.i] = obj;
+            return obj;
         });
-        
-        todosMoves = (await resMoves.json()).results.map(m => ({ name: escapeHTML(m.name) }));
-        todasAbilities = (await resAbil.json()).results.map(a => ({ name: escapeHTML(a.name) }));
-        todosItems = (await resItems.json()).results.map(i => ({ name: escapeHTML(i.name) }));
+
+        todasAbilities = (core.abilities || []).map(a => ({ name: escapeHTML(a) }));
+        todosItems = (core.items || []).map(i => ({ name: escapeHTML(i) }));
         
         document.getElementById('loading-global').style.display = 'none';
         const abaDex = document.getElementById('aba-dexke');
@@ -498,11 +659,12 @@ async function iniciarApp() {
         renderizarTime();
         filtrarListaTime();
         inicializarMinhaDex();
-        inicializarSimulador1v1();
+        if (typeof inicializarSimulador1v1 === 'function') inicializarSimulador1v1();
         inicializarSimuladorDoisTipos();
         configurarSwipeModais();
     } catch (e) {
-        document.getElementById('loading-global').innerHTML = "❌ Erro de conexão com a PokéAPI.";
+        console.error(e);
+        document.getElementById('loading-global').innerHTML = "❌ Erro ao carregar os arquivos locais de dados (<code>data/</code>).";
     }
 }
 
@@ -749,16 +911,9 @@ function filtrarListaTime() {
 }
 
 async function selecionarPokemonParaTime(idOuNome) {
-    let pObj = todosPokemon.find(p => p.name === idOuNome || p.id == idOuNome);
-    if (!pObj || !pObj.types || pObj.types.length === 0) {
-        try {
-            const apiData = await (await fetch(`https://pokeapi.co/api/v2/pokemon/${idOuNome}`)).json();
-            pObj = { id: apiData.id, name: escapeHTML(apiData.name), types: apiData.types.map(t => escapeHTML(t.type.name)) };
-        } catch (e) {
-            console.error("Erro ao buscar dados do Pokémon", e);
-            return;
-        }
-    }
+    const key = String(idOuNome).toLowerCase();
+    const pObj = todosPokemonByName[key] || todosPokemonById[idOuNome];
+    if (!pObj) return;
 
     const time = timesSalvos[timeAtualIndex];
     let slotAlvo = modoSelecaoTimeSlot;
@@ -770,7 +925,7 @@ async function selecionarPokemonParaTime(idOuNome) {
         }
     }
 
-    time[slotAlvo] = { id: pObj.id, name: pObj.name, types: pObj.types };
+    time[slotAlvo] = { id: pObj.id, name: pObj.name, types: pObj.types, ability: (pObj.abilities && pObj.abilities[0]) || '' };
     localStorage.setItem('dexke_times', JSON.stringify(timesSalvos));
 
     modoSelecaoTimeSlot = null;
@@ -784,7 +939,6 @@ async function selecionarPokemonParaTime(idOuNome) {
 
 let movesRenderizadosQtd = 120;
 let observerMoves = null;
-let observerMoveDetails = null;
 
 function getMoveMeta(name) {
     if (window.moveMetaMap && window.moveMetaMap[name]) return window.moveMetaMap[name];
@@ -811,35 +965,6 @@ function configurarAutoLoadMoves() {
             if (entries[0].isIntersecting) carregarMaisMoves();
         }, { rootMargin: '250px' });
         observerMoves.observe(sentinel);
-    }
-
-    if (observerMoveDetails) observerMoveDetails.disconnect();
-    const pendingBadges = document.querySelectorAll('#moves-list .move-lazy-badge[data-move]');
-    if (pendingBadges.length > 0 && 'IntersectionObserver' in window) {
-        observerMoveDetails = new IntersectionObserver((entries, obs) => {
-            entries.forEach(async entry => {
-                if (!entry.isIntersecting) return;
-                const el = entry.target;
-                obs.unobserve(el);
-                const mName = el.getAttribute('data-move');
-                if (!moveCache[mName]) {
-                    try { moveCache[mName] = await (await fetch(`https://pokeapi.co/api/v2/move/${mName}`)).json(); } catch (e) { return; }
-                }
-                const meta = getMoveMeta(mName);
-                const badge = document.getElementById(`badge-glb-${mName}`);
-                if (badge && meta) {
-                    badge.textContent = getIconeClasse(meta.cls);
-                    badge.className = `class-badge class-${meta.cls}`;
-                }
-                const typeBadge = document.getElementById(`type-glb-${mName}`);
-                if (typeBadge && meta) {
-                    typeBadge.textContent = getTipoNome(meta.type);
-                    typeBadge.style.backgroundColor = coresTipos[meta.type] || '#777';
-                    typeBadge.classList.remove('hidden');
-                }
-            });
-        }, { rootMargin: '150px' });
-        pendingBadges.forEach(el => observerMoveDetails.observe(el));
     }
 }
 
@@ -1190,31 +1315,23 @@ async function abrirDetalhes(idOuNome) {
     if (flavorEl) flavorEl.innerHTML = `<i>${t('js_translating')}</i>`;
     if (metaEl) metaEl.innerHTML = '';
 
-    const cachedPoke = todosPokemon.find(pk => pk.name === idOuNome || pk.id == idOuNome);
-    if (cachedPoke) {
-        atualModalPokemon = cachedPoke.name;
-        document.getElementById('detail-name').textContent = cachedPoke.name.replace(/-/g, ' ');
-        document.getElementById('detail-id').textContent = '#' + cachedPoke.id.toString().padStart(3, '0');
-        document.getElementById('detail-img').src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${cachedPoke.id}.png`;
-        document.getElementById('detail-types').innerHTML = cachedPoke.types.map(t => `<span class="type-badge" style="background-color: ${coresTipos[t]}">${escapeHTML(t)}</span>`).join('');
-    }
-    
-    const p = await (await fetch(`https://pokeapi.co/api/v2/pokemon/${idOuNome}`)).json();
-    const spc = await (await fetch(p.species.url)).json();
+    const p = await montarPokemonCompletoLocal(idOuNome, false);
+    const spData = await loadLocalData('species');
+    const spc = spData.species[String(p.speciesId)] || { n: p.name, g: 1, cr: 0, bh: 0, gr: -1, eg: [], gn: {}, fl: {}, ec: null, v: [] };
+
     atualModalPokemon = p.name;
-    pokemonAtualParaMoves = p.moves;
+    pokemonAtualObj = p;
+    pokemonAtualParaMoves = [];
     if (typeof sincronizarHashPokemon === 'function') sincronizarHashPokemon(p.name);
 
     isShiny = false;
     is3D = false;
 
-    // Sprites Oficiais e 3D/Showdown Nativos
     currentPokemonNormalUrl = p.sprites.other['official-artwork'].front_default || p.sprites.front_default;
     currentPokemonShinyUrl = p.sprites.other['official-artwork'].front_shiny || p.sprites.front_shiny || currentPokemonNormalUrl;
     currentPokemon3DNormalUrl = (p.sprites.other && p.sprites.other.showdown && p.sprites.other.showdown.front_default) ? p.sprites.other.showdown.front_default : '';
     currentPokemon3DShinyUrl = (p.sprites.other && p.sprites.other.showdown && p.sprites.other.showdown.front_shiny) ? p.sprites.other.showdown.front_shiny : '';
 
-    // Configuração do botão 3D
     const btn3D = document.getElementById('model3d-toggle');
     if (btn3D) {
         btn3D.style.background = '#333';
@@ -1226,8 +1343,7 @@ async function abrirDetalhes(idOuNome) {
         }
     }
 
-    // Configuração do Áudio (Cries)
-    currentCryUrl = p.cries && p.cries.latest ? p.cries.latest : (p.cries && p.cries.legacy ? p.cries.legacy : '');
+    currentCryUrl = p.cries && p.cries.latest ? p.cries.latest : '';
     const cryBtn = document.getElementById('cry-btn');
     if (cryBtn) {
         if (currentCryUrl) {
@@ -1239,34 +1355,34 @@ async function abrirDetalhes(idOuNome) {
 
     document.getElementById('shiny-toggle').style.color = '#ccc';
     atualizarImagemModal();
-    
+
+    const romanGens = ['', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX'];
     document.getElementById('detail-name').textContent = escapeHTML(p.name).replace(/-/g, ' ');
-    document.getElementById('detail-id').textContent = '#' + spc.id.toString().padStart(3, '0');
-    document.getElementById('detail-gen').textContent = spc.generation.name.toUpperCase().replace('GENERATION-', 'GEN ');
-    document.getElementById('detail-types').innerHTML = p.types.map(t => `<span class="type-badge" style="background-color: ${coresTipos[t.type.name]}">${escapeHTML(t.type.name)}</span>`).join('');
+    document.getElementById('detail-id').textContent = '#' + p.speciesId.toString().padStart(3, '0');
+    document.getElementById('detail-gen').textContent = 'GEN ' + (romanGens[spc.g] || spc.g || '');
+    document.getElementById('detail-types').innerHTML = p.types.map(tp => `<span class="type-badge" style="background-color: ${coresTipos[tp.type.name]}">${escapeHTML(tp.type.name)}</span>`).join('');
     document.getElementById('detail-height').textContent = (p.height / 10).toFixed(1);
     document.getElementById('detail-weight').textContent = (p.weight / 10).toFixed(1);
-    
-    document.getElementById('detail-abilities').innerHTML = p.abilities.map(a => 
+
+    document.getElementById('detail-abilities').innerHTML = p.abilities.map(a =>
         `<button class="ability-box-btn" onclick="abrirDetalheAbility('${a.ability.name}')">${escapeHTML(a.ability.name).replace(/-/g, ' ')}</button>`
     ).join('');
 
     let togglesHtml = '';
-    if(spc.varieties && spc.varieties.length > 1) {
-        togglesHtml += `<button class="form-btn form-base" onclick="abrirDetalhes('${spc.name}')">Base</button>`;
-        spc.varieties.forEach(v => {
-            const vName = v.pokemon.name;
-            if(vName === spc.name) return;
-            if(vName.includes('-mega-x')) togglesHtml += `<button class="form-btn form-mega-x" onclick="abrirDetalhes('${vName}')">X</button>`;
-            else if(vName.includes('-mega-y')) togglesHtml += `<button class="form-btn form-mega-y" onclick="abrirDetalhes('${vName}')">Y</button>`;
-            else if(vName.includes('-mega-z')) togglesHtml += `<button class="form-btn form-mega-z" onclick="abrirDetalhes('${vName}')">Z</button>`;
-            else if(vName.includes('-mega')) togglesHtml += `<button class="form-btn form-mega-x" style="background:#555;" onclick="abrirDetalhes('${vName}')">M</button>`;
-            else if(vName.includes('-gmax')) togglesHtml += `<button class="form-btn form-dmax" onclick="abrirDetalhes('${vName}')">DMax</button>`;
-            else if(vName.includes('-alola')) togglesHtml += `<button class="form-btn form-alola" onclick="abrirDetalhes('${vName}')">A</button>`;
-            else if(vName.includes('-hisui')) togglesHtml += `<button class="form-btn form-hisui" onclick="abrirDetalhes('${vName}')">H</button>`;
-            else if(vName.includes('-bloodmoon')) togglesHtml += `<button class="form-btn form-special" onclick="abrirDetalhes('${vName}')">🌕 Bloodmoon</button>`;
+    if (spc.v && spc.v.length > 1) {
+        togglesHtml += `<button class="form-btn form-base" onclick="abrirDetalhes('${spc.n}')">Base</button>`;
+        spc.v.forEach(([, vName]) => {
+            if (vName === spc.n) return;
+            if (vName.includes('-mega-x')) togglesHtml += `<button class="form-btn form-mega-x" onclick="abrirDetalhes('${vName}')">X</button>`;
+            else if (vName.includes('-mega-y')) togglesHtml += `<button class="form-btn form-mega-y" onclick="abrirDetalhes('${vName}')">Y</button>`;
+            else if (vName.includes('-mega-z')) togglesHtml += `<button class="form-btn form-mega-z" onclick="abrirDetalhes('${vName}')">Z</button>`;
+            else if (vName.includes('-mega')) togglesHtml += `<button class="form-btn form-mega-x" style="background:#555;" onclick="abrirDetalhes('${vName}')">M</button>`;
+            else if (vName.includes('-gmax')) togglesHtml += `<button class="form-btn form-dmax" onclick="abrirDetalhes('${vName}')">DMax</button>`;
+            else if (vName.includes('-alola')) togglesHtml += `<button class="form-btn form-alola" onclick="abrirDetalhes('${vName}')">A</button>`;
+            else if (vName.includes('-hisui')) togglesHtml += `<button class="form-btn form-hisui" onclick="abrirDetalhes('${vName}')">H</button>`;
+            else if (vName.includes('-bloodmoon')) togglesHtml += `<button class="form-btn form-special" onclick="abrirDetalhes('${vName}')">🌕 Bloodmoon</button>`;
             else {
-                const sufixo = vName.replace(spc.name + '-', '').toUpperCase().substring(0, 6);
+                const sufixo = vName.replace(spc.n + '-', '').toUpperCase().substring(0, 6);
                 togglesHtml += `<button class="form-btn form-special" onclick="abrirDetalhes('${vName}')">${sufixo}</button>`;
             }
         });
@@ -1295,19 +1411,18 @@ async function abrirDetalhes(idOuNome) {
     }).join('');
     document.getElementById('detail-total-stats').textContent = totalStats;
 
-    // Dados da Espécie (Categoria, Descrição, Taxa de Captura, Gênero, Felicidade, Egg Groups)
     if (metaEl && spc) {
-        const capRate = spc.capture_rate !== undefined ? spc.capture_rate : '--';
-        const baseHap = spc.base_happiness !== undefined ? spc.base_happiness : '--';
-        const genderRate = spc.gender_rate;
+        const capRate = spc.cr !== undefined ? spc.cr : '--';
+        const baseHap = spc.bh !== undefined ? spc.bh : '--';
+        const genderRate = spc.gr;
         let genderTxt = t('species_genderless');
         if (genderRate >= 0) {
             const fPct = Math.round((genderRate / 8) * 1000) / 10;
             const mPct = Math.round((100 - fPct) * 10) / 10;
             genderTxt = `♂ ${mPct}% / ♀ ${fPct}%`;
         }
-        const eggsTxt = (spc.egg_groups && spc.egg_groups.length > 0)
-            ? spc.egg_groups.map(eg => escapeHTML(eg.name).replace(/-/g, ' ')).join(', ')
+        const eggsTxt = (spc.eg && spc.eg.length > 0)
+            ? spc.eg.map(eg => escapeHTML(eg).replace(/-/g, ' ')).join(', ')
             : '--';
         metaEl.innerHTML = `
             <div class="species-meta-chip"><strong>${escapeHTML(t('species_capture'))}</strong> ${capRate}</div>
@@ -1317,42 +1432,37 @@ async function abrirDetalhes(idOuNome) {
         `;
     }
 
-    if (genusEl && spc && spc.genera) {
-        const gTarget = idiomaAtual === 'es_ES' ? 'es' : 'en';
-        const gObj = spc.genera.find(g => g.language.name === gTarget) || spc.genera.find(g => g.language.name === 'en');
-        if (gObj) {
+    calcularDano(p.types);
+    buscarEvolucoes(p.speciesId);
+    carregarLocaisDoPokemon(p.id, p.speciesId);
+
+    if (genusEl && spc.gn) {
+        const gBase = idiomaAtual === 'es_ES' ? (spc.gn.es || spc.gn.en) : (spc.gn.en || '');
+        if (gBase) {
             if (idiomaAtual === 'pt_BR') {
-                const gCacheKey = `g:${idiomaAtual}:${gObj.genus}`;
-                if (!speciesFlavorCache[gCacheKey]) speciesFlavorCache[gCacheKey] = await traduzirTextoDinamico(gObj.genus);
+                const gCacheKey = `g:${idiomaAtual}:${gBase}`;
+                if (!speciesFlavorCache[gCacheKey]) speciesFlavorCache[gCacheKey] = await traduzirTextoDinamico(gBase);
                 if (atualModalPokemon === p.name) genusEl.textContent = speciesFlavorCache[gCacheKey];
             } else {
-                genusEl.textContent = gObj.genus;
+                genusEl.textContent = gBase;
             }
         }
     }
 
-    if (flavorEl && spc && spc.flavor_text_entries) {
-        const fTarget = idiomaAtual === 'es_ES' ? 'es' : 'en';
-        const entries = spc.flavor_text_entries.filter(f => f.language.name === fTarget);
-        const fObj = entries.length > 0 ? entries[entries.length - 1] : spc.flavor_text_entries.find(f => f.language.name === 'en');
-        if (fObj) {
-            const cleanFlavor = fObj.flavor_text.replace(/[\n\f\r]+/g, ' ').replace(/\s+/g, ' ').trim();
+    if (flavorEl && spc.fl) {
+        const fBase = idiomaAtual === 'es_ES' ? (spc.fl.es || spc.fl.en) : (spc.fl.en || '');
+        if (fBase) {
             if (idiomaAtual === 'pt_BR') {
-                const fCacheKey = `f:${idiomaAtual}:${spc.id}`;
-                if (!speciesFlavorCache[fCacheKey]) speciesFlavorCache[fCacheKey] = await traduzirTextoDinamico(cleanFlavor);
+                const fCacheKey = `f:${idiomaAtual}:${p.speciesId}`;
+                if (!speciesFlavorCache[fCacheKey]) speciesFlavorCache[fCacheKey] = await traduzirTextoDinamico(fBase);
                 if (atualModalPokemon === p.name) flavorEl.textContent = speciesFlavorCache[fCacheKey];
             } else {
-                flavorEl.textContent = cleanFlavor;
+                flavorEl.textContent = fBase;
             }
         } else {
             flavorEl.textContent = t('js_no_desc');
         }
     }
-
-    calcularDano(p.types);
-    buscarEvolucoes(p.species.url);
-    const spcId = (spc && spc.id) ? spc.id : (p.species && p.species.url ? p.species.url.split('/')[6] : p.id);
-    carregarLocaisDoPokemon(p.id, spcId);
 }
 
 function getIconeClasse(classe) { return classe === 'physical' ? '⚔️ FIS' : (classe === 'special' ? '🔮 ESP' : '🛡 STA'); }
@@ -1360,45 +1470,16 @@ function getIconeClasse(classe) { return classe === 'physical' ? '⚔️ FIS' : 
 async function carregarMovesDoPokemon() {
     const container = document.getElementById('detail-moves-list');
     container.innerHTML = t('js_load_moves');
-    if (!pokemonAtualParaMoves || pokemonAtualParaMoves.length === 0) {
+    if (!pokemonAtualObj) {
         container.innerHTML = t('js_no_moves');
         return;
     }
 
-    // Pré-carregamento concorrente em lotes para acelerar o processo
-    const nomesSemCache = pokemonAtualParaMoves.map(m => m.move.name).filter(nome => !moveCache[nome]);
-    const tamanhoLote = 25;
-    for (let i = 0; i < nomesSemCache.length; i += tamanhoLote) {
-        const lote = nomesSemCache.slice(i, i + tamanhoLote);
-        await Promise.all(lote.map(async nome => {
-            try {
-                const res = await fetch(`https://pokeapi.co/api/v2/move/${nome}`);
-                if (res.ok) moveCache[nome] = await res.json();
-            } catch (e) {
-                console.error("Erro ao carregar move:", nome, e);
-            }
-        }));
-    }
-
-    const ordemGeracoes = [
-        'red-blue', 'yellow', 'gold-silver', 'crystal', 'ruby-sapphire', 'emerald',
-        'firered-leafgreen', 'diamond-pearl', 'platinum', 'heartgold-soulsilver',
-        'black-white', 'colosseum', 'xd', 'black-2-white-2', 'x-y', 'omega-ruby-alpha-sapphire',
-        'sun-moon', 'ultra-sun-ultra-moon', 'lets-go-pikachu-lets-go-eevee',
-        'sword-shield', 'the-isle-of-armor', 'the-crown-tundra',
-        'brilliant-diamond-shining-pearl', 'legends-arceus',
-        'scarlet-violet', 'the-teal-mask', 'the-indigo-disk'
-    ];
-
-    function getMelhorDetalhe(vgDetails, metodo) {
-        const filtrados = vgDetails.filter(d => !metodo || d.move_learn_method.name === metodo);
-        if (filtrados.length === 0) return null;
-        filtrados.sort((a, b) => {
-            const iA = ordemGeracoes.indexOf(a.version_group.name);
-            const iB = ordemGeracoes.indexOf(b.version_group.name);
-            return iA - iB;
-        });
-        return filtrados[filtrados.length - 1];
+    const [lsData] = await Promise.all([loadLocalData('learnsets'), garantirMovesCarregados()]);
+    const entries = lsData.p[String(pokemonAtualObj.id)] || lsData.p[String(pokemonAtualObj.speciesId)] || [];
+    if (entries.length === 0) {
+        container.innerHTML = t('js_no_moves');
+        return;
     }
 
     function gerarHtmlLinhaMove(nome, badgeMetodo) {
@@ -1416,42 +1497,49 @@ async function carregarMovesDoPokemon() {
         </div>`;
     }
 
+    const porMove = {};
+    entries.forEach(([moveId, methodId, lvl]) => {
+        if (!porMove[moveId]) porMove[moveId] = {};
+        porMove[moveId][methodId] = lvl;
+    });
+
     let levelMoves = [], machineMoves = [], eggMoves = [], tutorMoves = [], otherMoves = [];
 
-    for (let m of pokemonAtualParaMoves) {
-        const nome = m.move.name;
-        const vgd = m.version_group_details || [];
-        const lvlDet = getMelhorDetalhe(vgd, 'level-up');
-        const tmDet = getMelhorDetalhe(vgd, 'machine');
-        const eggDet = getMelhorDetalhe(vgd, 'egg');
-        const tutorDet = getMelhorDetalhe(vgd, 'tutor');
-
+    Object.entries(porMove).forEach(([moveId, methods]) => {
+        const nome = lsData.m[moveId];
+        if (!nome) return;
+        const hasLvl = methods[1] !== undefined;
+        const hasTm = methods[4] !== undefined;
+        const hasEgg = methods[2] !== undefined;
+        const hasTutor = methods[3] !== undefined;
         let categorizado = false;
-        if (lvlDet) {
-            const lvlTexto = lvlDet.level_learned_at === 0 ? 'Evo' : 'Lvl ' + lvlDet.level_learned_at;
-            levelMoves.push({ lvl: lvlDet.level_learned_at, html: gerarHtmlLinhaMove(nome, lvlTexto) });
+
+        if (hasLvl) {
+            const lvl = methods[1];
+            const lvlTexto = lvl === 0 ? 'Evo' : 'Lvl ' + lvl;
+            levelMoves.push({ lvl, nome, html: gerarHtmlLinhaMove(nome, lvlTexto) });
             categorizado = true;
         }
-        if (tmDet) {
-            machineMoves.push({ nome: nome, html: gerarHtmlLinhaMove(nome, 'TM/HM') });
+        if (hasTm) {
+            machineMoves.push({ nome, html: gerarHtmlLinhaMove(nome, 'TM/HM') });
             categorizado = true;
         }
-        if (eggDet && !lvlDet) {
-            eggMoves.push({ nome: nome, html: gerarHtmlLinhaMove(nome, 'Egg') });
+        if (hasEgg && !hasLvl) {
+            eggMoves.push({ nome, html: gerarHtmlLinhaMove(nome, 'Egg') });
             categorizado = true;
         }
-        if (tutorDet && !lvlDet && !tmDet) {
-            tutorMoves.push({ nome: nome, html: gerarHtmlLinhaMove(nome, 'Tutor') });
+        if (hasTutor && !hasLvl && !hasTm) {
+            tutorMoves.push({ nome, html: gerarHtmlLinhaMove(nome, 'Tutor') });
             categorizado = true;
         }
         if (!categorizado) {
-            const anyDet = vgd[vgd.length - 1];
-            const metodoNome = anyDet ? anyDet.move_learn_method.name.replace(/-/g, ' ') : 'Especial';
-            otherMoves.push({ nome: nome, html: gerarHtmlLinhaMove(nome, metodoNome) });
+            const mId = parseInt(Object.keys(methods)[0]);
+            const metodoNome = (LEARN_METHOD_NAMES[mId] || 'Especial').replace(/-/g, ' ');
+            otherMoves.push({ nome, html: gerarHtmlLinhaMove(nome, metodoNome) });
         }
-    }
+    });
 
-    levelMoves.sort((a, b) => a.lvl - b.lvl);
+    levelMoves.sort((a, b) => a.lvl - b.lvl || a.nome.localeCompare(b.nome));
     machineMoves.sort((a, b) => a.nome.localeCompare(b.nome));
     eggMoves.sort((a, b) => a.nome.localeCompare(b.nome));
     tutorMoves.sort((a, b) => a.nome.localeCompare(b.nome));
@@ -1476,12 +1564,11 @@ function renderizarMiniCardsPokemon(listaPokes, containerId) {
     }
     container.innerHTML = listaPokes.slice(0, 120).map(item => {
         const pokeObj = item.pokemon || item;
-        const urlParts = pokeObj.url.split('/');
-        const id = urlParts[urlParts.length - 2];
+        const id = pokeObj.id || (pokeObj.url ? pokeObj.url.split('/').filter(Boolean).pop() : '');
         const nome = escapeHTML(pokeObj.name);
         return `
             <div class="mini-poke-card" onclick="fecharModal('move-modal'); fecharModal('ability-modal'); abrirDetalhes('${nome}')">
-                <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png" loading="lazy" onerror="this.src='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png'">
+                <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png" alt="${nome}" loading="lazy" onerror="this.src='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png'">
                 <div>${nome.replace(/-/g, ' ')}</div>
             </div>
         `;
@@ -1493,37 +1580,60 @@ async function abrirDetalheMove(nome) {
     document.getElementById('move-modal').classList.remove('hidden');
     document.getElementById('gm-name').textContent = nome.replace(/-/g, ' ');
 
-    if(!moveCache[nome]) moveCache[nome] = await (await fetch(`https://pokeapi.co/api/v2/move/${nome}`)).json();
+    const [, lsData] = await Promise.all([garantirMovesCarregados(), loadLocalData('learnsets')]);
     const move = moveCache[nome];
-    
+    if (!move) return;
+
     document.getElementById('gm-name').textContent = move.name.replace(/-/g, ' ');
     document.getElementById('gm-type').textContent = move.type.name; document.getElementById('gm-type').style.backgroundColor = coresTipos[move.type.name];
     document.getElementById('gm-power').textContent = move.power || '--'; document.getElementById('gm-accuracy').textContent = move.accuracy ? move.accuracy + '%' : '--';
     document.getElementById('gm-pp').textContent = move.pp; document.getElementById('gm-class').textContent = getIconeClasse(move.damage_class.name); document.getElementById('gm-class').className = `class-badge class-${move.damage_class.name}`;
-    
-    renderizarMiniCardsPokemon(move.learned_by_pokemon, 'gm-pokemons');
 
-    document.getElementById('gm-desc').innerHTML = `<i>${t('js_translating')}</i>`;
-    const engEntry = move.flavor_text_entries.find(e => e.language.name === 'en');
-    let textoBase = engEntry ? engEntry.flavor_text.replace(/\n|\f/g, ' ') : t('js_no_desc');
-    document.getElementById('gm-desc').textContent = await traduzirTextoDinamico(textoBase);
+    const aprendizes = [];
+    const targetMoveId = move.id;
+    for (const [pidStr, entries] of Object.entries(lsData.p || {})) {
+        if (entries.some(e => e[0] === targetMoveId)) {
+            const pk = todosPokemonById[pidStr];
+            if (pk) aprendizes.push({ id: pk.id, name: pk.name });
+        }
+    }
+    renderizarMiniCardsPokemon(aprendizes, 'gm-pokemons');
+
+    const descEl = document.getElementById('gm-desc');
+    descEl.innerHTML = `<i>${t('js_translating')}</i>`;
+    const textoBase = idiomaAtual === 'es_ES' ? (move.es || move.en) : (move.en || '');
+    if (!textoBase) {
+        descEl.textContent = t('js_no_desc');
+    } else if (idiomaAtual === 'pt_BR') {
+        const trad = await traduzirTextoDinamico(textoBase);
+        if (atualModalMove === nome) descEl.textContent = trad;
+    } else {
+        descEl.textContent = textoBase;
+    }
 }
 
 async function abrirDetalheAbility(nome) {
     atualModalAbility = nome;
     document.getElementById('ability-modal').classList.remove('hidden');
-    document.getElementById('ab-name').textContent = nome.replace(/-/g, ' '); 
+    document.getElementById('ab-name').textContent = nome.replace(/-/g, ' ');
     document.getElementById('ab-desc').innerHTML = `<i>${t('js_translating')}</i>`;
     document.getElementById('ab-pokemons').innerHTML = '...';
-    
-    if(!abilityCache[nome]) abilityCache[nome] = await (await fetch(`https://pokeapi.co/api/v2/ability/${nome}`)).json();
-    const abData = abilityCache[nome];
 
-    renderizarMiniCardsPokemon(abData.pokemon, 'ab-pokemons');
+    const abilitiesData = await loadLocalData('abilities');
+    const ab = abilitiesData[nome] || {};
+    const pokesComAb = todosPokemon.filter(pk => pk.abilities && pk.abilities.includes(nome));
+    renderizarMiniCardsPokemon(pokesComAb, 'ab-pokemons');
 
-    const engEntry = abData.flavor_text_entries.find(e => e.language.name === 'en');
-    let textoBase = engEntry ? engEntry.flavor_text.replace(/\n|\f/g, ' ') : t('js_no_desc');
-    document.getElementById('ab-desc').textContent = await traduzirTextoDinamico(textoBase);
+    const textoBase = idiomaAtual === 'es_ES' ? (ab.es || ab.en) : (ab.en || '');
+    const descEl = document.getElementById('ab-desc');
+    if (!textoBase) {
+        descEl.textContent = t('js_no_desc');
+    } else if (idiomaAtual === 'pt_BR') {
+        const trad = await traduzirTextoDinamico(textoBase);
+        if (atualModalAbility === nome) descEl.textContent = trad;
+    } else {
+        descEl.textContent = textoBase;
+    }
 }
 
 async function abrirDetalheItem(nome) {
@@ -1538,8 +1648,12 @@ async function abrirDetalheItem(nome) {
     const obtainEl = document.getElementById('it-obtain');
     if (obtainEl) obtainEl.innerHTML = `<i>${t('js_calc')}</i>`;
 
-    if (!itemCache[nome]) itemCache[nome] = await (await fetch(`https://pokeapi.co/api/v2/item/${nome}`)).json();
-    const itData = itemCache[nome];
+    const itemsData = await loadLocalData('items');
+    const it = itemsData[nome] || {};
+    const itData = {
+        category: it.c ? { name: it.c } : null,
+        held_by_pokemon: (it.h || []).map(n => ({ pokemon: { name: n } }))
+    };
 
     if (catEl && itData.category) {
         const catNome = formatarCategoriaItem(itData.category.name);
@@ -1551,21 +1665,14 @@ async function abrirDetalheItem(nome) {
     }
 
     let descFinal = '';
-    if (idiomaAtual === 'es_ES') {
-        const esFlv = itData.flavor_text_entries ? itData.flavor_text_entries.find(e => e.language.name === 'es') : null;
-        if (esFlv) descFinal = esFlv.text.replace(/[\n\f]/g, ' ');
+    if (idiomaAtual === 'es_ES' && it.es) {
+        descFinal = it.es;
+    } else if (it.en) {
+        descFinal = (idiomaAtual === 'en_US') ? it.en : await traduzirTextoDinamico(it.en);
+    } else {
+        descFinal = t('js_no_desc');
     }
-    if (!descFinal) {
-        const engFlv = itData.flavor_text_entries ? itData.flavor_text_entries.find(e => e.language.name === 'en') : null;
-        const engEff = itData.effect_entries ? itData.effect_entries.find(e => e.language.name === 'en') : null;
-        let textoIngles = (engEff && engEff.short_effect) ? engEff.short_effect : (engFlv ? engFlv.text.replace(/[\n\f]/g, ' ') : '');
-        if (textoIngles) {
-            descFinal = (idiomaAtual === 'en_US') ? textoIngles : await traduzirTextoDinamico(textoIngles);
-        } else {
-            descFinal = t('js_no_desc');
-        }
-    }
-    document.getElementById('it-desc').textContent = descFinal;
+    if (atualModalItem === nome) document.getElementById('it-desc').textContent = descFinal;
 }
 
 function fecharModal(modalId) {
@@ -1576,38 +1683,36 @@ function fecharModal(modalId) {
 // --- 8. CÁLCULO DE DANO E ÁRVORE DE EVOLUÇÃO COMPLETA ---
 async function calcularDano(tiposPokemon) {
     const container = document.getElementById('detail-damage'); container.innerHTML = t('js_calc');
-    let multiplicadores = {}; Object.keys(coresTipos).forEach(t => multiplicadores[t] = 1); 
+    let multiplicadores = {}; Object.keys(coresTipos).forEach(tp => multiplicadores[tp] = 1);
 
-    for (let t of tiposPokemon) {
-        if (!cacheRelacoesTipos[t.type.name]) cacheRelacoesTipos[t.type.name] = (await (await fetch(t.type.url)).json()).damage_relations;
-        const rel = cacheRelacoesTipos[t.type.name];
+    for (let tp of tiposPokemon) {
+        const rel = cacheRelacoesTipos[tp.type.name];
+        if (!rel) continue;
         rel.double_damage_from.forEach(x => multiplicadores[x.name] *= 2);
         rel.half_damage_from.forEach(x => multiplicadores[x.name] *= 0.5);
         rel.no_damage_from.forEach(x => multiplicadores[x.name] *= 0);
     }
     let html = '';
     for (let [tipo, mult] of Object.entries(multiplicadores)) {
-        if (mult === 1) continue; 
+        if (mult === 1) continue;
         const estilo = getCorEficacia(mult);
         html += `<div class="dmg-item" style="background-color:${estilo.bg}; color:${estilo.text};"><span style="text-transform:capitalize">${escapeHTML(tipo)}</span> <span>${formatarMultiplicador(mult)}x</span></div>`;
     }
     container.innerHTML = html || t('js_normal_dmg');
 }
 
-function parseEvolutionMethod(details, speciesName) {
+function parseEvolutionMethod(d, speciesName) {
     if (speciesName === 'ursaluna') return 'Peat Block (Lua Cheia)';
-    if (!details || details.length === 0) return '';
-    const d = details[0];
-    const trigger = d.trigger.name;
-    if (trigger === 'level-up') {
-        if (d.min_level) return `${t('evo_lvl')} ${d.min_level}`;
-        if (d.known_move) return `Move: ${d.known_move.name.replace(/-/g, ' ')}`;
-        if (d.min_happiness) return t('evo_happy');
+    if (!d || !d.tr) return '';
+    if (d.tr === 'level-up') {
+        if (d.lvl) return `${t('evo_lvl')} ${d.lvl}`;
+        if (d.mv) return `Move: ${escapeHTML(d.mv).replace(/-/g, ' ')}`;
+        if (d.hap) return t('evo_happy');
         return t('evo_lvl');
     }
-    if (trigger === 'trade') return d.held_item ? `${t('evo_trade')} (${d.held_item.name.replace(/-/g, ' ')})` : t('evo_trade');
-    if (trigger === 'use-item' && d.item) return `${t('evo_item')} ${escapeHTML(d.item.name).replace(/-/g, ' ')}`;
-    return trigger.replace(/-/g, ' ');
+    if (d.tr === 'trade') return d.hit ? `${t('evo_trade')} (${escapeHTML(d.hit).replace(/-/g, ' ')})` : t('evo_trade');
+    if (d.tr === 'use-item' && d.it) return `${t('evo_item')} ${escapeHTML(d.it).replace(/-/g, ' ')}`;
+    return escapeHTML(d.tr).replace(/-/g, ' ');
 }
 
 
@@ -1948,55 +2053,17 @@ async function carregarLocaisDoPokemon(id, speciesId) {
     const container = document.getElementById('detail-locations');
     if (!container) return;
     container.innerHTML = `<i>${t('location_loading')}</i>`;
-    
+
     try {
-        if (!cacheLocaisPokemon[id]) {
-            const ctrl = new AbortController();
-            const tm = setTimeout(() => ctrl.abort(), 3500);
-            let res = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}/encounters`, { signal: ctrl.signal });
-            clearTimeout(tm);
-            let data = await res.json();
-            // Se for variedade e não tiver encontros próprios, busca da espécie base
-            if ((!data || data.length === 0) && speciesId && speciesId != id) {
-                const ctrlBase = new AbortController();
-                const tmBase = setTimeout(() => ctrlBase.abort(), 3500);
-                const resBase = await fetch(`https://pokeapi.co/api/v2/pokemon/${speciesId}/encounters`, { signal: ctrlBase.signal });
-                clearTimeout(tmBase);
-                data = await resBase.json();
-            }
-            cacheLocaisPokemon[id] = data;
-        }
-        const data = cacheLocaisPokemon[id];
-        if (!data || data.length === 0) {
-            container.innerHTML = `<div class="location-empty">${t('location_none')}</div>`;
-            return;
-        }
-
-        const porJogo = {};
-        data.forEach(item => {
-            const areaLimpa = item.location_area.name
-                .replace(/-area$/i, '')
-                .replace(/-/g, ' ')
-                .split(' ')
-                .map(w => w.charAt(0).toUpperCase() + w.slice(1))
-                .join(' ');
-            
-            item.version_details.forEach(vd => {
-                const vNome = vd.version.name;
-                if (!porJogo[vNome]) porJogo[vNome] = new Set();
-                porJogo[vNome].add(areaLimpa);
-            });
-        });
-
-        const jogosNomes = Object.keys(porJogo);
-        if (jogosNomes.length === 0) {
+        const encData = await loadLocalData('encounters');
+        const porJogo = encData[String(id)] || (speciesId ? encData[String(speciesId)] : null);
+        if (!porJogo || Object.keys(porJogo).length === 0) {
             container.innerHTML = `<div class="location-empty">${t('location_none')}</div>`;
             return;
         }
 
         let html = '';
-        for (let j of jogosNomes) {
-            const locaisArray = Array.from(porJogo[j]);
+        for (const [j, locaisArray] of Object.entries(porJogo)) {
             const badgeCor = getCorJogo(j);
             const nomeJogoFormatado = formatarNomeJogo(j);
             html += `
@@ -2012,32 +2079,30 @@ async function carregarLocaisDoPokemon(id, speciesId) {
     }
 }
 
-async function buscarEvolucoes(url) {
+async function buscarEvolucoes(speciesId) {
     const container = document.getElementById('detail-evolutions');
     try {
-        const spcData = await (await fetch(url)).json();
-        const evoData = await (await fetch(spcData.evolution_chain.url)).json();
+        const spData = await loadLocalData('species');
+        const spc = spData.species[String(speciesId)];
+        const chainNodes = (spc && spc.ec && spData.chains[String(spc.ec)]) ? spData.chains[String(spc.ec)] : [];
         let cadeia = [];
 
         function percorrerArvore(node) {
-            const spName = escapeHTML(node.species.name);
-            const spId = node.species.url.split('/')[6];
-            const method = parseEvolutionMethod(node.evolution_details, spName);
+            const spName = escapeHTML(node.n);
+            const spId = node.id;
+            const method = parseEvolutionMethod(node.d, spName);
             cadeia.push({ name: spName, id: spId, method: method });
-            if (node.evolves_to && node.evolves_to.length > 0) {
-                node.evolves_to.forEach(filho => percorrerArvore(filho));
-            }
+            chainNodes.filter(child => child.from === node.id).forEach(filho => percorrerArvore(filho));
         }
-        percorrerArvore(evoData.chain);
+        chainNodes.filter(n => !n.from).forEach(root => percorrerArvore(root));
 
         for (let item of [...cadeia]) {
-            const stSpc = await (await fetch(`https://pokeapi.co/api/v2/pokemon-species/${item.id}`)).json();
-            if (stSpc.varieties && stSpc.varieties.length > 1) {
-                stSpc.varieties.forEach(v => {
-                    if (!v.is_default && !v.pokemon.name.includes('-totem') && !v.pokemon.name.includes('-cap')) {
-                        const vId = v.pokemon.url.split('/')[6];
-                        const metodoEsp = obterMetodoEvolucaoForma(v.pokemon.name);
-                        cadeia.push({ name: escapeHTML(v.pokemon.name), id: vId, method: metodoEsp });
+            const stSpc = spData.species[String(item.id)];
+            if (stSpc && stSpc.v && stSpc.v.length > 1) {
+                stSpc.v.forEach(([vId, vName, isDef]) => {
+                    if (!isDef && !vName.includes('-totem') && !vName.includes('-cap')) {
+                        const metodoEsp = obterMetodoEvolucaoForma(vName);
+                        cadeia.push({ name: escapeHTML(vName), id: vId, method: metodoEsp });
                     }
                 });
             }
@@ -2046,7 +2111,7 @@ async function buscarEvolucoes(url) {
         container.innerHTML = cadeia.map((c, i) => `
             <div style="display:flex; flex-direction:column; align-items:center;">
                 <div class="evo-item" onclick="fecharModal('pokemon-modal'); abrirDetalhes('${c.name}')">
-                    <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${c.id}.png" onerror="this.src='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png'">
+                    <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${c.id}.png" alt="${c.name}" onerror="this.src='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png'">
                     <div>${c.name.replace(/-/g, ' ')}</div>
                 </div>
                 ${i > 0 && c.method ? `<div class="evo-method">${c.method}</div>` : ''}
@@ -2374,8 +2439,8 @@ async function atualizarSimuladorDoisTipos() {
 async function calcularMultiplicadorExato(tipoAtacante, tiposDefensor) {
     let mult = 1;
     for (let tipoDef of tiposDefensor) {
-        if (!cacheRelacoesTipos[tipoDef]) cacheRelacoesTipos[tipoDef] = (await (await fetch(`https://pokeapi.co/api/v2/type/${tipoDef}`)).json()).damage_relations;
         const rel = cacheRelacoesTipos[tipoDef];
+        if (!rel) continue;
         if (rel.double_damage_from.find(t => t.name === tipoAtacante)) mult *= 2;
         if (rel.half_damage_from.find(t => t.name === tipoAtacante)) mult *= 0.5;
         if (rel.no_damage_from.find(t => t.name === tipoAtacante)) mult *= 0;
@@ -3181,14 +3246,21 @@ function gbaRestaurarPosicao() {
     window.addEventListener('resize', gbaRestaurarPosicao);
 })();
 
-iniciarApp().finally(() => {
-    // Depois de fechar o emulador, volta para a aba em que você estava
-    try {
-        const aba = sessionStorage.getItem('dexke_aba_restaurar');
-        if (aba) {
-            sessionStorage.removeItem('dexke_aba_restaurar');
-            const btn = document.querySelector('.nav-btn[onclick*="\'' + aba + '\'"]');
-            if (btn) btn.click();
-        }
-    } catch (e) {}
-});
+function bootDexke() {
+    iniciarApp().finally(() => {
+        // Depois de fechar o emulador, volta para a aba em que você estava
+        try {
+            const aba = sessionStorage.getItem('dexke_aba_restaurar');
+            if (aba) {
+                sessionStorage.removeItem('dexke_aba_restaurar');
+                const btn = document.querySelector('.nav-btn[onclick*="\'' + aba + '\'"]');
+                if (btn) btn.click();
+            }
+        } catch (e) {}
+    });
+}
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', bootDexke);
+} else {
+    bootDexke();
+}

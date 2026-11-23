@@ -19,7 +19,7 @@
   <img src="https://img.shields.io/badge/HTML5-Semântico%20%26%20A11y-E34F26?style=for-the-badge&logo=html5&logoColor=white" alt="HTML5 Semântico" />
   <img src="https://img.shields.io/badge/CSS3-Modern%20Flex%2FGrid-1572B6?style=for-the-badge&logo=css3&logoColor=white" alt="CSS3" />
   <img src="https://img.shields.io/badge/JavaScript-Vanilla%20ES6%2B-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" alt="JavaScript Vanilla" />
-  <img src="https://img.shields.io/badge/PokéAPI-RESTful%20Data-EE1515?style=for-the-badge&logo=pokemon&logoColor=white" alt="PokéAPI" />
+  <img src="https://img.shields.io/badge/PokéAPI-Dados%20Locais%20%2B%20CDN-EE1515?style=for-the-badge&logo=pokemon&logoColor=white" alt="PokéAPI" />
   <img src="https://img.shields.io/badge/WebAssembly-EmulatorJS-654FF0?style=for-the-badge&logo=webassembly&logoColor=white" alt="WebAssembly" />
   <img src="https://img.shields.io/badge/i18n-PT%20%7C%20EN%20%7C%20ES-2ea44f?style=for-the-badge" alt="Internacionalização" />
 </p>
@@ -122,34 +122,41 @@ O Dexke foi construído priorizando performance, ausência de dependências pesa
 
 ```
 Dexke/
-├── index.html        # Estrutura semântica HTML5 completa (Acessibilidade A11y & ARIA)
-├── style.css         # CSS3 moderno: Variáveis, Flexbox/Grid, Modo Escuro e Animações
-├── app.js            # Lógica SPA Vanilla JS (ES6+), estado, cache e i18n
-├── features.js       # Módulo avançado: GraphQL, Comparador, Set Editor, 6v6 e UX
-├── manifest.json     # Manifesto PWA instalável
-├── sitemap.xml       # Mapa do site para indexação de motores de busca
-├── CNAME             # Configuração de domínio personalizado (dexke.com.br)
-└── README.md         # Documentação completa do projeto
+├── index.html             # Estrutura semântica HTML5 completa (Acessibilidade A11y & ARIA)
+├── style.css              # CSS3 moderno: Variáveis, Flexbox/Grid, Modo Escuro e Animações
+├── app.js                 # Lógica SPA Vanilla JS (ES6+), carregamento JSON sob demanda, cache e i18n
+├── features.js            # Módulo avançado: Dark Mode, Comparador, Set Editor, 6v6 e UX
+├── manifest.json          # Manifesto PWA instalável
+├── sitemap.xml            # Mapa do site para indexação de motores de busca
+├── CNAME                  # Configuração de domínio personalizado (dexke.com.br)
+├── data/                  # Datasets JSON compactos e lazy-loaded (core, moves, abilities, items, species, learnsets, encounters)
+├── scripts/
+│   └── build_data.py      # Script Python 3 (stdlib) para regenerar/atualizar os arquivos de data/ via PokéAPI GraphQL
+└── README.md              # Documentação completa do projeto
 ```
 
 ### Destaques Técnicos:
+- **Arquitetura Híbrida (JSON Local + CDN de Mídia):** Os dados estruturados de Pokémon, tipos, moves, habilidades, itens, espécies, cadeias evolutivas, learnsets e encontros residem em arquivos JSON minificados sob `data/`, carregados sob demanda da própria origem sem dependência da REST API em tempo de execução. Sprites, artworks oficiais, GIFs 3D do Showdown, ícones e áudios `.ogg` são carregados diretamente da CDN oficial no GitHub (`raw.githubusercontent.com/PokeAPI`).
 - **Semântica HTML5 Estrita:** Uso deliberado de `<main>`, `<section>`, `<article>`, `<header>`, `<nav>`, `<search>`, `<aside>`, `<figure>`, `<figcaption>`, `<output>` e `<button>`, limitando `<div>` apenas a estruturas essenciais de Grid/Flexbox e contêineres de injeção dinâmica de scripts.
 - **Acessibilidade (A11y):** Inclusão de atributos ARIA (`role="dialog"`, `aria-modal="true"`, `role="status"`, `aria-live="polite"`, `aria-label`).
 - **Animação Estilo Baralho de Cartas:** Abertura e fechamento de modais com aceleração de hardware (`will-change`, perspectiva 3D) e suporte a gestos de arrasto/swipe para fechar em telas de toque.
-- **Armazenamento e Performance:** Cache em memória durante a sessão e `localStorage` para persistência de equipes e idioma, eliminando chamadas repetitivas de rede.
+- **Armazenamento e Performance:** Cache em memória durante a sessão e `localStorage` para persistência de equipes, traduções dinâmicas e idioma, eliminando chamadas repetitivas de rede.
 
 ---
 
-## 🔗 Integração & Consumo da PokéAPI
+## 🔗 Origem dos Dados & Atualização (`scripts/build_data.py`)
 
-Os dados de Pokémon, movimentos, espécies e itens são fornecidos pela extraordinária API pública **[PokéAPI](https://pokeapi.co/)**.
+Os datasets locais de Pokémon, movimentos, espécies e itens foram extraídos da extraordinária API open-source **[PokéAPI](https://pokeapi.co/)** (via endpoint GraphQL `v1beta2`) e organizados nos seguintes arquivos em `data/`:
+- `core.json`: Catálogo base (1.351 Pokémon/formas com stats e habilidades, matriz de 18 tipos, nomes de habilidades e itens).
+- `moves.json`: Metadados e descrições de movimentos (`EN`/`ES`).
+- `abilities.json` & `items.json`: Descrições e custos/categorias carregados sob demanda nas respectivas abas e modais.
+- `species.json`: Metadados de espécie, flags de lendário/mítico e todas as cadeias evolutivas.
+- `learnsets.json` & `encounters.json`: Compatibilidade completa de golpes (Level-Up/TM) e locais de captura carregados apenas quando necessários.
 
-O Dexke consome os seguintes *endpoints*:
-- `/pokemon` e `/pokemon-species`: Informações vitais, tipos, stats, descrições e formas.
-- `/evolution-chain`: Resolução recursiva das ramificações evolutivas.
-- `/type`: Matrizes de efetividade e cálculo defensivo/ofensivo.
-- `/move` e `/ability`: Mecânicas, categorias, prioridades e listas de compatibilidade.
-- `/item` e `/nature`: Efeitos de itens e tabelas de atributos.
+Para atualizar os arquivos JSON caso a PokéAPI receba novas gerações ou formas:
+```bash
+python scripts/build_data.py
+```
 
 Agradecemos imensamente aos mantenedores e colaboradores do projeto open-source PokéAPI:  
 👉 **Repositório Oficial:** [https://github.com/PokeAPI/pokeapi](https://github.com/PokeAPI/pokeapi)
